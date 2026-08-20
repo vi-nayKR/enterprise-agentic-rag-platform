@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Agentic RAG</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Marked.js for rich markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-top">
+                <button class="new-chat-btn" id="new-chat-btn">
+                    <i data-lucide="plus"></i>
+                    <span>New Chat</span>
+                </button>
+                <button class="icon-btn close-sidebar-btn" id="toggle-sidebar-btn" title="Toggle sidebar">
+                    <i data-lucide="panel-left-close"></i>
+                </button>
+            </div>
+
+            <!-- Ingested Documents Accordion -->
+            <div class="sidebar-section">
+                <div class="section-title">
+                    <span><i data-lucide="database"></i> Knowledge Base</span>
+                    <label for="file-upload-input" class="upload-trigger-btn" title="Upload Document">
+                        <i data-lucide="upload-cloud"></i>
+                    </label>
+                    <input type="file" id="file-upload-input" style="display: none;" accept=".md,.txt,.pdf,.json">
+                </div>
+                <div id="upload-progress-bar" class="upload-progress hidden">
+                    <div class="spinner"></div>
+                    <span id="upload-status-text">Ingesting file...</span>
+                </div>
+                <div class="doc-list-wrapper">
+                    <ul id="documents-list" class="doc-list">
+                        <li class="empty-docs"><i data-lucide="folder-open"></i> No documents indexed</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Active MCP Tools Accordion -->
+            <div class="sidebar-section">
+                <div class="section-title">
+                    <span><i data-lucide="cpu"></i> MCP Connected Tools</span>
+                    <span class="badge" id="tools-count-badge">4 Active</span>
+                </div>
+                <ul id="mcp-tools-list" class="mcp-list">
+                    <!-- Populated dynamically -->
+                </ul>
+            </div>
+
+            <!-- Sidebar User Profile & Health -->
+            <div class="sidebar-footer">
+                <div class="status-badge" id="platform-status-badge">
+                    <span class="status-dot"></span>
+                    <span id="system-status-label">FastAPI & LangGraph Ready</span>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar-user">AI</div>
+                    <div class="user-meta">
+                        <div class="user-name">Enterprise Admin</div>
+                        <div class="user-role">System Administrator</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="chat-workspace">
+            <!-- Top Navbar -->
+            <header class="top-nav">
+                <div class="nav-left">
+                    <button class="icon-btn mobile-menu-btn" id="mobile-menu-btn">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div class="model-selector-pill">
+                        <i data-lucide="layers" style="width: 14px; height: 14px; color: var(--accent-cyan);"></i>
+                        <span class="model-name">Enterprise Agentic RAG</span>
+                        <span class="version-tag">v1.0</span>
+                    </div>
+                </div>
+                <div class="nav-right">
+                    <a href="/docs" target="_blank" class="nav-link" title="FastAPI Swagger UI">
+                        <i data-lucide="file-code-2"></i> API Docs
+                    </a>
+                </div>
+            </header>
+
+            <!-- Chat History Container -->
+            <div class="chat-scroll-container" id="chat-scroll-container">
+                <div class="chat-inner" id="chat-inner">
+                    <!-- Empty State Welcome Screen -->
+                    <div class="welcome-screen" id="welcome-screen">
+                        <div class="welcome-badge">
+                            <i data-lucide="sparkles"></i> Autonomous Multi-Agent Intelligence
+                        </div>
+                        <h1 class="welcome-title">What would you like to discover today?</h1>
+                        <p class="welcome-subtitle">Search documentation using <strong>pgvector HNSW + BM25 Reciprocal Rank Fusion</strong> or query enterprise databases with <strong>Model Context Protocol (MCP)</strong>.</p>
+                        
+                        <!-- Suggestion Cards Grid -->
+                        <div class="suggestions-grid">
+                            <div class="suggestion-card" onclick="sendSuggestedQuery('Explain how pgvector HNSW indexing and BM25 search are fused using Reciprocal Rank Fusion (k=60).')">
+                                <div class="card-icon"><i data-lucide="git-merge"></i></div>
+                                <h4>Hybrid Search (RRF)</h4>
+                                <p>Learn how dense and sparse lexical rankings combine</p>
+                            </div>
+                            <div class="suggestion-card" onclick="sendSuggestedQuery('How does LangGraph supervisor routing, reflection grading, and query rewriting prevent hallucinations?')">
+                                <div class="card-icon"><i data-lucide="repeat"></i></div>
+                                <h4>Multi-Agent Self-Reflection</h4>
+                                <p>Explore cyclic state graphs and reflection loops</p>
+                            </div>
+                            <div class="suggestion-card" onclick="sendSuggestedQuery('List all customer accounts in the database with Enterprise tier.')">
+                                <div class="card-icon"><i data-lucide="database"></i></div>
+                                <h4>Query Database via MCP</h4>
+                                <p>Execute read-only SQL queries via MCP server</p>
+                            </div>
+                            <div class="suggestion-card" onclick="sendSuggestedQuery('Fetch the real-time health and latency metrics for all internal microservices.')">
+                                <div class="card-icon"><i data-lucide="activity"></i></div>
+                                <h4>Microservice Telemetry</h4>
+                                <p>Inspect service uptime and latency over MCP</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Floating Prompt Bar (ChatGPT-style) -->
+            <div class="prompt-bar-container">
+                <div class="prompt-bar-wrapper">
+                    <form id="chat-form" class="prompt-form">
+                        <button type="button" class="attachment-btn" id="attach-btn" title="Upload knowledge document" onclick="document.getElementById('file-upload-input').click()">
+                            <i data-lucide="paperclip"></i>
+                        </button>
+                        <textarea 
+                            id="user-prompt-input" 
+                            placeholder="Message Enterprise RAG... (Shift + Enter for new line)"
+                            rows="1"
+                            required
+                        ></textarea>
+                        <button type="submit" id="submit-btn" class="send-prompt-btn" disabled>
+                            <i data-lucide="arrow-up"></i>
+                        </button>
+                    </form>
+                    <div class="prompt-disclaimer">
+                        Enterprise Agentic RAG Platform • Grounded in pgvector & Model Context Protocol.
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Slide-out Citation Inspection Drawer -->
+        <div id="citation-drawer" class="citation-drawer">
+            <div class="drawer-header">
+                <div class="drawer-title">
+                    <i data-lucide="file-search"></i>
+                    <span>Citation Inspector</span>
+                </div>
+                <button id="close-drawer-btn" class="icon-btn"><i data-lucide="x"></i></button>
+            </div>
+            <div class="drawer-content" id="drawer-content">
+                <!-- Populated on click -->
+            </div>
+        </div>
+
+        <!-- Fullscreen Drag & Drop Overlay -->
+        <div id="drag-overlay" class="drag-overlay hidden">
+            <div class="drag-modal">
+                <i data-lucide="upload" class="drag-icon"></i>
+                <h2>Drop documents to ingest</h2>
+                <p>Supports .md, .txt, .pdf, .json into pgvector HNSW index</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
