@@ -1,4 +1,4 @@
-# 🚀 Enterprise Agentic RAG Platform with Model Context Protocol (MCP)
+# Enterprise Agentic RAG Platform with Model Context Protocol (MCP)
 
 [![Python](https://img.shields.io/badge/Python-3.12%2B-blue.svg?logo=python&logoColor=white)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
@@ -13,111 +13,111 @@ Built with **Python FastAPI**, **LangGraph cyclic multi-agent state graphs**, **
 
 ---
 
-## 🏛️ System Architecture
+## System Architecture
 
 ```mermaid
 flowchart TD
-    User([Client / Angular 22 Signals]) -->|SSE Stream / POST /query| API[FastAPI Gateway]
-    
-    subgraph AgenticCore["🤖 LangGraph Multi-Agent Orchestrator"]
-        Supervisor[Supervisor Agent] --> Router{Query Router}
-        Router -->|Document Retrieval| RAGAgent[RAG Specialist Agent]
-        Router -->|DB / API Tools| MCPAgent[MCP Tool Agent]
-        Router -->|Direct Synthesis| SynthAgent[Synthesis Agent]
-        
-        RAGAgent --> Evaluator[Self-Reflection / Hallucination Grader]
-        Evaluator -->|Faithful & Relevant| SynthAgent
-        Evaluator -->|Hallucination Detected / Missing Context| QueryRewriter[Query Rewriter & Loop]
-        QueryRewriter --> RAGAgent
-    end
+ User([Client / Angular 22 Signals]) -->|SSE Stream / POST /query| API[FastAPI Gateway]
+ 
+ subgraph AgenticCore[" LangGraph Multi-Agent Orchestrator"]
+ Supervisor[Supervisor Agent] --> Router{Query Router}
+ Router -->|Document Retrieval| RAGAgent[RAG Specialist Agent]
+ Router -->|DB / API Tools| MCPAgent[MCP Tool Agent]
+ Router -->|Direct Synthesis| SynthAgent[Synthesis Agent]
+ 
+ RAGAgent --> Evaluator[Self-Reflection / Hallucination Grader]
+ Evaluator -->|Faithful & Relevant| SynthAgent
+ Evaluator -->|Hallucination Detected / Missing Context| QueryRewriter[Query Rewriter & Loop]
+ QueryRewriter --> RAGAgent
+ end
 
-    API --> AgenticCore
+ API --> AgenticCore
 
-    subgraph StorageLayer["🗄️ Storage & Retrieval Engine"]
-        HybridEngine[Hybrid Retrieval Engine]
-        Dense[pgvector HNSW Cosine Search]
-        Sparse[PostgreSQL BM25 Full-Text Search]
-        RRF[Reciprocal Rank Fusion k=60]
-        Reranker[Cross-Encoder Reranker]
-        
-        HybridEngine --> Dense
-        HybridEngine --> Sparse
-        Dense --> RRF
-        Sparse --> RRF
-        RRF --> Reranker
-    end
+ subgraph StorageLayer[" Storage & Retrieval Engine"]
+ HybridEngine[Hybrid Retrieval Engine]
+ Dense[pgvector HNSW Cosine Search]
+ Sparse[PostgreSQL BM25 Full-Text Search]
+ RRF[Reciprocal Rank Fusion k=60]
+ Reranker[Cross-Encoder Reranker]
+ 
+ HybridEngine --> Dense
+ HybridEngine --> Sparse
+ Dense --> RRF
+ Sparse --> RRF
+ RRF --> Reranker
+ end
 
-    RAGAgent --> StorageLayer
-    MCPAgent -->|JSON-RPC 2.0| MCPServer[Enterprise MCP Servers / SQL & APIs]
+ RAGAgent --> StorageLayer
+ MCPAgent -->|JSON-RPC 2.0| MCPServer[Enterprise MCP Servers / SQL & APIs]
 
-    subgraph Observability["📊 Evaluation & Tracing"]
-        OTel[OpenTelemetry Distributed Tracing]
-        Ragas[Ragas 0.2 Triad Evaluator]
-    end
+ subgraph Observability[" Evaluation & Tracing"]
+ OTel[OpenTelemetry Distributed Tracing]
+ Ragas[Ragas 0.2 Triad Evaluator]
+ end
 
-    SynthAgent -->|Citation Grounded Tokens| API
-    AgenticCore -.-> OTel
-    AgenticCore -.-> Ragas
+ SynthAgent -->|Citation Grounded Tokens| API
+ AgenticCore -.-> OTel
+ AgenticCore -.-> Ragas
 ```
 
 ---
 
-## ✨ Key Capabilities
+## Key Capabilities
 
 1. **Advanced Hybrid Retrieval with RRF:**
-   - Combines semantic dense embeddings (`text-embedding-3-large` or local `bge-large-en-v1.5`) via **pgvector HNSW cosine index** with exact keyword search via **PostgreSQL `tsvector` BM25**.
-   - Fuses ranked candidate lists using **Reciprocal Rank Fusion (RRF, $k=60$)**, boosting domain recall by **+34%** over single-vector retrieval.
-   - Cross-encoder reranking (e.g., `bge-reranker-large`) filters top-5 context windows with citation metadata.
+ - Combines semantic dense embeddings (`text-embedding-3-large` or local `bge-large-en-v1.5`) via **pgvector HNSW cosine index** with exact keyword search via **PostgreSQL `tsvector` BM25**.
+ - Fuses ranked candidate lists using **Reciprocal Rank Fusion (RRF, $k=60$)**, boosting domain recall by **+34%** over single-vector retrieval.
+ - Cross-encoder reranking (e.g., `bge-reranker-large`) filters top-5 context windows with citation metadata.
 
 2. **Stateful Multi-Agent Orchestration (LangGraph):**
-   - Cyclic graph supervisor with conditional routing, self-correction, query rewriting, and human-in-the-loop validation checkpoints.
-   - Self-reflective RAG loop validates context relevance and answer faithfulness before output emission.
+ - Cyclic graph supervisor with conditional routing, self-correction, query rewriting, and human-in-the-loop validation checkpoints.
+ - Self-reflective RAG loop validates context relevance and answer faithfulness before output emission.
 
 3. **Model Context Protocol (MCP) Tool Integration:**
-   - Standardized client interface executing tools across external MCP servers (PostgreSQL schemas, REST APIs, Jira/Confluence tickets) over JSON-RPC 2.0.
+ - Standardized client interface executing tools across external MCP servers (PostgreSQL schemas, REST APIs, Jira/Confluence tickets) over JSON-RPC 2.0.
 
 4. **Real-time SSE Token Streaming:**
-   - Asynchronous FastAPI token emitters providing instant visual response latency (<400ms time-to-first-token).
+ - Asynchronous FastAPI token emitters providing instant visual response latency (<400ms time-to-first-token).
 
 5. **Automated Quality Evaluation (Ragas Triad):**
-   - Continuous CI/CD evaluation benchmarking **Faithfulness (>0.92)**, **Answer Relevance (>0.90)**, and **Context Recall (>0.88)**.
+ - Continuous CI/CD evaluation benchmarking **Faithfulness (>0.92)**, **Answer Relevance (>0.90)**, and **Context Recall (>0.88)**.
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 enterprise-agentic-rag-platform/
-├── config/
-│   └── settings.py             # Pydantic BaseSettings environment configuration
-├── src/
-│   ├── main.py                 # FastAPI application factory & lifespan
-│   ├── api/
-│   │   ├── routes.py           # REST endpoints (/query, /ingest, /health)
-│   │   └── sse.py              # Server-Sent Events token streamer
-│   ├── agents/
-│   │   ├── state.py            # LangGraph TypedDict agent state definition
-│   │   ├── graph.py            # StateGraph definition, conditional edges, supervisor
-│   │   └── tools.py            # ReAct tools & reflection validators
-│   ├── rag/
-│   │   ├── ingestion.py        # Semantic chunker & metadata enricher
-│   │   ├── hybrid_retriever.py # pgvector HNSW + BM25 dual search
-│   │   └── rrf.py              # Reciprocal Rank Fusion implementation
-│   ├── mcp/
-│   │   └── client.py           # Model Context Protocol stdio/SSE client
-│   └── evals/
-│       └── ragas_pipeline.py   # Ragas automated evaluation harness
-├── tests/
-│   └── test_rag.py             # Pytest asynchronous unit & integration tests
-├── docker-compose.yml          # Postgres + pgvector, Redis, OpenTelemetry Jaeger
-├── Dockerfile                  # Production multi-stage container build
-├── requirements.txt            # Locked Python dependencies
-└── pyproject.toml              # Tooling & linting configs (Ruff, Pyright)
+ config/
+ settings.py # Pydantic BaseSettings environment configuration
+ src/
+ main.py # FastAPI application factory & lifespan
+ api/
+ routes.py # REST endpoints (/query, /ingest, /health)
+ sse.py # Server-Sent Events token streamer
+ agents/
+ state.py # LangGraph TypedDict agent state definition
+ graph.py # StateGraph definition, conditional edges, supervisor
+ tools.py # ReAct tools & reflection validators
+ rag/
+ ingestion.py # Semantic chunker & metadata enricher
+ hybrid_retriever.py # pgvector HNSW + BM25 dual search
+ rrf.py # Reciprocal Rank Fusion implementation
+ mcp/
+ client.py # Model Context Protocol stdio/SSE client
+ evals/
+ ragas_pipeline.py # Ragas automated evaluation harness
+ tests/
+ test_rag.py # Pytest asynchronous unit & integration tests
+ docker-compose.yml # Postgres + pgvector, Redis, OpenTelemetry Jaeger
+ Dockerfile # Production multi-stage container build
+ requirements.txt # Locked Python dependencies
+ pyproject.toml # Tooling & linting configs (Ruff, Pyright)
 ```
 
 ---
 
-## ⚡ Quickstart & Local Setup
+## Quickstart & Local Setup
 
 ### 1. Prerequisites
 - Python 3.12+
@@ -147,7 +147,7 @@ Interactive Swagger UI available at `http://localhost:8000/docs`.
 
 ---
 
-## 🧪 Running Tests & Evals
+## Running Tests & Evals
 
 ```bash
 # Run unit & integration test suite
@@ -159,5 +159,5 @@ python -m src.evals.ragas_pipeline
 
 ---
 
-## 📄 License & Maintainers
+## License & Maintainers
 Engineered for Enterprise Multi-Agent Systems & Distributed RAG. Licensed under the [MIT License](LICENSE).

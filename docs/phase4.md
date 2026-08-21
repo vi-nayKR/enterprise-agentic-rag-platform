@@ -1,44 +1,44 @@
-# 📚 Phase 4 Deep-Dive: API Gateway, SSE Streaming & Ingestion Endpoints
+# Phase 4 Deep-Dive: API Gateway, SSE Streaming & Ingestion Endpoints
 
 ---
 
-## 🗺️ API Gateway & Streaming Architecture
+## API Gateway & Streaming Architecture
 
 ```mermaid
 sequenceDiagram
-    autonumber
-    actor Client as Web Client
-    participant API as FastAPI Gateway
-    participant Streamer as SSE Streamer (sse.py)
-    participant Graph as LangGraph Multi-Agent
-    participant Store as DocumentStore
+ autonumber
+ actor Client as Web Client
+ participant API as FastAPI Gateway
+ participant Streamer as SSE Streamer (sse.py)
+ participant Graph as LangGraph Multi-Agent
+ participant Store as DocumentStore
 
-    %% Ingestion
-    Note over Client,Store: 1. Ingestion Pipeline
-    Client->>API: POST /api/v1/documents/upload (PDF/MD/TXT)
-    API->>Store: Semantic Chunking + Embeddings + Indexing
-    Store-->>API: Ingestion Success
-    API-->>Client: 200 OK (document_id, chunk_count)
+ %% Ingestion
+ Note over Client,Store: 1. Ingestion Pipeline
+ Client->>API: POST /api/v1/documents/upload (PDF/MD/TXT)
+ API->>Store: Semantic Chunking + Embeddings + Indexing
+ Store-->>API: Ingestion Success
+ API-->>Client: 200 OK (document_id, chunk_count)
 
-    %% Real-time Streaming
-    Note over Client,Graph: 2. Real-Time SSE Token Streaming
-    Client->>API: POST /api/v1/query/stream { query, session_id }
-    API->>Streamer: Initiate Async EventSource Stream
-    Streamer-->>Client: event: status ("Processing query")
-    Streamer->>Graph: Execute Agentic Workflow
-    Graph-->>Streamer: Thought Trail emitted
-    Streamer-->>Client: event: thought ("Supervisor routed to RAG...")
-    Graph-->>Streamer: Synthesized tokens
-    Streamer-->>Client: event: token (live token deltas)
-    Streamer-->>Client: event: citation (source document chunks)
-    Streamer-->>Client: event: done (execution latency & metrics)
+ %% Real-time Streaming
+ Note over Client,Graph: 2. Real-Time SSE Token Streaming
+ Client->>API: POST /api/v1/query/stream { query, session_id }
+ API->>Streamer: Initiate Async EventSource Stream
+ Streamer-->>Client: event: status ("Processing query")
+ Streamer->>Graph: Execute Agentic Workflow
+ Graph-->>Streamer: Thought Trail emitted
+ Streamer-->>Client: event: thought ("Supervisor routed to RAG...")
+ Graph-->>Streamer: Synthesized tokens
+ Streamer-->>Client: event: token (live token deltas)
+ Streamer-->>Client: event: citation (source document chunks)
+ Streamer-->>Client: event: done (execution latency & metrics)
 ```
 
 ---
 
-## 🛠️ Step 4.1: Server-Sent Events (SSE) Protocol Design (`src/api/sse.py`)
+## Step 4.1: Server-Sent Events (SSE) Protocol Design (`src/api/sse.py`)
 
-### 🧠 Why SSE over WebSockets?
+### Why SSE over WebSockets?
 For generative AI token streaming, Server-Sent Events (SSE) provide:
 1. **Unidirectional Efficiency**: Token emission flows from server $\rightarrow$ client over standard HTTP/1.1 or HTTP/2 without WebSocket handshake overhead.
 2. **Native Reconnection**: Browser EventSource automatically handles reconnects and heartbeat pings.
@@ -46,7 +46,7 @@ For generative AI token streaming, Server-Sent Events (SSE) provide:
 
 ---
 
-## 🔌 Step 4.2: FastAPI Route Endpoints (`src/api/routes.py`)
+## Step 4.2: FastAPI Route Endpoints (`src/api/routes.py`)
 
 | Endpoint | Method | Purpose |
 | :--- | :--- | :--- |
@@ -59,13 +59,13 @@ For generative AI token streaming, Server-Sent Events (SSE) provide:
 
 ---
 
-## 🏆 Phase 4 Verification Summary
+## Phase 4 Verification Summary
 - **Pytest Suite:** `tests/test_api.py`
 - **Result:** `5 passed in 1.15s` (100% Pass Rate)
 - **Deliverables Created:**
-  - `src/api/sse.py`
-  - `src/api/telemetry.py`
-  - `src/api/routes.py`
-  - `src/main.py`
-  - `tests/test_api.py`
-  - `docs/phase4.md`
+ - `src/api/sse.py`
+ - `src/api/telemetry.py`
+ - `src/api/routes.py`
+ - `src/main.py`
+ - `tests/test_api.py`
+ - `docs/phase4.md`

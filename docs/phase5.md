@@ -1,37 +1,37 @@
-# 📚 Phase 5 Deep-Dive: Ragas Automated Quality Evaluation & Benchmarking
+# Phase 5 Deep-Dive: Ragas Automated Quality Evaluation & Benchmarking
 
 ---
 
-## 🗺️ Quality Evaluation Architecture
+## Quality Evaluation Architecture
 
 ```mermaid
 flowchart TD
-    Dataset[Golden Evaluation Dataset] --> Runner[Ragas Benchmark Pipeline]
-    Runner --> AgentGraph[LangGraph Multi-Agent RAG]
-    AgentGraph --> Answer[Synthesized Grounded Answer]
-    AgentGraph --> Contexts[Retrieved Document Passages]
-    
-    Answer --> Faithfulness[1. Faithfulness Metric]
-    Contexts --> Faithfulness
-    
-    Answer --> Relevance[2. Answer Relevance Metric]
-    Dataset --> Relevance
-    
-    Contexts --> Recall[3. Context Recall Metric]
-    Dataset --> Recall
+ Dataset[Golden Evaluation Dataset] --> Runner[Ragas Benchmark Pipeline]
+ Runner --> AgentGraph[LangGraph Multi-Agent RAG]
+ AgentGraph --> Answer[Synthesized Grounded Answer]
+ AgentGraph --> Contexts[Retrieved Document Passages]
+ 
+ Answer --> Faithfulness[1. Faithfulness Metric]
+ Contexts --> Faithfulness
+ 
+ Answer --> Relevance[2. Answer Relevance Metric]
+ Dataset --> Relevance
+ 
+ Contexts --> Recall[3. Context Recall Metric]
+ Dataset --> Recall
 
-    Contexts --> Precision[4. Context Precision Metric]
-    Dataset --> Precision
-    
-    Faithfulness --> Report[Executive Benchmark Scorecard]
-    Relevance --> Report
-    Recall --> Report
-    Precision --> Report
+ Contexts --> Precision[4. Context Precision Metric]
+ Dataset --> Precision
+ 
+ Faithfulness --> Report[Executive Benchmark Scorecard]
+ Relevance --> Report
+ Recall --> Report
+ Precision --> Report
 ```
 
 ---
 
-## 📐 The Ragas Triad Metrics & Mathematics
+## The Ragas Triad Metrics & Mathematics
 
 ### 1. Faithfulness (Target: $\ge 0.90$)
 Measures whether the claims in the generated response are strictly grounded in the retrieved context (preventing hallucinations):
@@ -55,26 +55,26 @@ $$\text{Context Precision} = \frac{|\text{Relevant Chunks in Top-K}|}{K}$$
 
 ---
 
-## 📊 Benchmark Scorecard Output
+## Benchmark Scorecard Output
 ```text
 ======================================================================
-🏆 RAGAS BENCHMARK SUMMARY
+ RAGAS BENCHMARK SUMMARY
 ======================================================================
-• Mean Faithfulness:        0.960 (Target: >= 0.85) ✅ PASS
-• Mean Answer Relevance:   1.000 (Target: >= 0.85) ✅ PASS
-• Mean Context Recall:     0.860 (Target: >= 0.85) ✅ PASS
-• Mean Context Precision:  1.000 (Target: >= 0.75) ✅ PASS
+• Mean Faithfulness: 0.960 (Target: >= 0.85) PASS
+• Mean Answer Relevance: 1.000 (Target: >= 0.85) PASS
+• Mean Context Recall: 0.860 (Target: >= 0.85) PASS
+• Mean Context Precision: 1.000 (Target: >= 0.75) PASS
 ======================================================================
 ```
 
 ---
 
-## 🏆 Phase 5 Verification Summary
+## Phase 5 Verification Summary
 - **Pytest Suite:** `tests/test_evals.py`
 - **Result:** `2 passed in 0.44s` (100% Pass Rate)
 - **Deliverables Created:**
-  - `src/evals/dataset.py`
-  - `src/evals/metrics.py`
-  - `src/evals/ragas_pipeline.py`
-  - `tests/test_evals.py`
-  - `docs/phase5.md`
+ - `src/evals/dataset.py`
+ - `src/evals/metrics.py`
+ - `src/evals/ragas_pipeline.py`
+ - `tests/test_evals.py`
+ - `docs/phase5.md`
