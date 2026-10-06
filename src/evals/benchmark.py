@@ -302,16 +302,21 @@ async def run(args: argparse.Namespace) -> None:
             selected = [configurations[question_index % len(configurations)]] if args.prepare_labels else configurations
             for name, chunking, mode, rewrite in selected:
                 row = {"id": name + ":" + case["id"], "configuration": name, "split": case["split"],
+                       "question_id": case["id"], "question_origin": case["origin"],
+                       "gold_source_chunk_id": case["source_chunk_id"],
                        "question": case["question"], "reference_answers": [answer["text"] for answer in case["answers"]],
                        "answer_origin": "model_generated", "answer": None, "judgement": None, "metrics": {},
                        "error": None, "cost_usd": "0"}
                 started, spent = time.perf_counter(), client.spent if client else 0
+                call_start = len(client.calls) if client else 0
                 try:
                     results, rewritten = await retrieve_case(retrievers[name], case, rewrite, client)
                     row["retrieval_latency_ms"] = (time.perf_counter() - started) * 1000
                     row["rewritten_query"] = rewritten
                     gold = relevant_chunks(case, list(stores[chunking].chunks.values()))
                     row["gold_chunk_count"] = len(gold)
+                    row["gold_chunk_ids"] = sorted(gold)
+                    row["ranked_chunk_ids"] = [result.chunk_id for result in results]
                     row["metrics"] = ranking_metrics([result.chunk_id for result in results], gold)
                     row["contexts"] = [{"chunk_id": result.chunk_id, "text": result.text,
                                         "document_id": result.document_id, "metadata": result.metadata} for result in results[:3]]
@@ -329,6 +334,7 @@ async def run(args: argparse.Namespace) -> None:
                         raise
                 finally:
                     row["cost_usd"] = str(client.spent - spent) if client else "0"
+                    row["call_range"] = [call_start, len(client.calls) if client else 0]
                     records.append(row)
                     report["summaries"] = summarize(records)
                     report["calls"] = client.calls if client else []
@@ -368,6 +374,8 @@ def main() -> None:
     parser.add_argument("--retrieval-only", action="store_true", help="Debug retrieval only; omits rewriting and answer metrics")
     parser.add_argument("--prepare-labels", action="store_true", help="Generate actual dev answers with blank human labels")
     args = parser.parse_args()
+    if args.prepare_labels:
+        args.split = "dev"
     if args.prepare_labels and args.retrieval_only:
         parser.error("Label preparation requires actual LLM answers")
     asyncio.run(run(args))
