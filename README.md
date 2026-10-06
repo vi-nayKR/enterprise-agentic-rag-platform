@@ -57,11 +57,15 @@ billing statement or proof that this API key is on the free tier.
 
 ### Evaluation limitations
 
-The configured Gemini run uses `gemini-2.5-flash` for answering and judging:
+The configured Gemini run uses `gemini-3.8-flash` for answering and judging:
 **same-model judge**. This may correlate answer and judge errors; independent human
-labels remain necessary. No separate Pro judge is configured. Gemini 2.5 Flash
-thinking is disabled for these short structured responses so thinking does not
-consume the bounded output allowance. Free-tier daily quotas can still interrupt
+labels remain necessary. No separate Pro judge is configured. The API refused
+Gemini 2.5 Flash for this key as unavailable to new users, despite listing the ID;
+Google's error directed migration to 3.8 Flash. Gemini 3.8 Flash uses low thinking
+effort; thinking cannot be disabled and remains included in cost accounting.
+The configured rates are $0.75/M input and $3.75/M output tokens, including
+thinking, under [Google's current introductory pricing](https://ai.google.dev/gemini-api/docs/pricing).
+Free-tier daily quotas can still interrupt
 a slow run; retrying cannot create additional daily quota.
 
 ```bash

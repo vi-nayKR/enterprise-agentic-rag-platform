@@ -103,6 +103,8 @@ class LLMClient:
                 # Flash's default thinking can consume the bounded output allowance.
                 if self._gemini and "flash" in self.model and self.model.startswith("gemini-2.5"):
                     body["reasoning_effort"] = "none"
+                elif self._gemini and self.model.startswith("gemini-3"):
+                    body["reasoning_effort"] = "low"
                 response = await self._http.post("chat/completions", json=body)
                 record["http_status"] = response.status_code
                 response.raise_for_status()
