@@ -9,3 +9,4 @@ build/
 *.egg-info/
 .DS_Store
 data/squad_v1/upstream-dev-v1.1.json
+.cache/

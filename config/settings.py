@@ -1,4 +1,6 @@
 from typing import Optional
+from decimal import Decimal
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
@@ -15,6 +17,15 @@ class Settings(BaseSettings):
     OPENAI_BASE_URL: Optional[str] = None
     EMBEDDING_MODEL: str = "text-embedding-3-large"
     LLM_MODEL: str = "gpt-4o"
+
+    # Full-run evaluation uses local inference unless explicitly priced otherwise.
+    EVAL_LLM_BASE_URL: str = "http://127.0.0.1:8091/v1"
+    EVAL_LLM_MODEL: str = "evidencerag-local"
+    EVAL_LLM_LOCAL: bool = True
+    EVAL_LLM_API_KEY: str = ""
+    EVAL_BUDGET_USD: Decimal = Field(default=Decimal("2.99"), gt=0, lt=3)
+    EVAL_INPUT_USD_PER_MILLION: Decimal = Field(default=Decimal("0"), ge=0)
+    EVAL_OUTPUT_USD_PER_MILLION: Decimal = Field(default=Decimal("0"), ge=0)
     
     # RAG Settings
     CHUNK_SIZE: int = 800
