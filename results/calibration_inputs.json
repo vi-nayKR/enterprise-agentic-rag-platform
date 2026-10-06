@@ -1,0 +1,2126 @@
+{
+  "status": "measured",
+  "dataset": "squad_v1",
+  "split": "dev",
+  "source_commit": "87482117b5927d6c0b0ab4227396f1eade4bf169",
+  "python": "3.12.10",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "package_versions": {
+    "sentence-transformers": "5.7.0",
+    "torch": "2.14.1+cpu",
+    "langchain-text-splitters": "1.1.3",
+    "pydantic": "2.13.5"
+  },
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "judge_model": "evidencerag-local",
+  "test_review_sha256": "bfc0861be8fd99cf473c4a24f72956719ab9b1264222c22f161fa308f62fb9dc",
+  "ranking_depth": 10,
+  "warm_index": true,
+  "result_cache": false,
+  "experiment_design": "one factor at a time; not a complete factorial or global optimum search",
+  "cost_scope": "provider token charges, excluding electricity/hardware",
+  "records": [
+    {
+      "id": "fixed_hybrid:56e1ec83cd28a01900c67c0e",
+      "configuration": "fixed_hybrid",
+      "split": "dev",
+      "question": "What is the most well-known algorithm associated with the integer factorization problem?",
+      "reference_answers": [
+        "the general number field sieve",
+        "RSA",
+        "general number field sieve"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "The most well-known algorithm associated with the integer factorization problem is the general number field sieve.",
+            "citation_ids": [
+              "30408117680a406f_fixed_0"
+            ]
+          },
+          {
+            "text": "Shor's algorithm, a quantum algorithm, runs in polynomial time for integer factorization.",
+            "citation_ids": [
+              "30408117680a406f_fixed_1"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 118.43339999904856,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "contexts": [
+        {
+          "chunk_id": "30408117680a406f_fixed_0",
+          "text": "The integer factorization problem is the computational problem of determining the prime factorization of a given integer. Phrased as a decision problem, it is the problem of deciding whether the input has a factor less than k. No efficient integer factorization algorithm is known, and this fact forms the basis of several modern cryptographic systems, such as the RSA algorithm. The integer factorization problem is in NP and in co-NP (and even in UP and co-UP). If the problem is NP-complete, the polynomial time hierarchy will collapse to its first level (i.e., NP will equal co-NP). The best known algorithm for integer factorization is the general number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer. However, the best known quantum algori",
+          "document_id": "30408117680a406f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 800,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "30408117680a406f_fixed_1",
+          "text": "al number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer. However, the best known quantum algorithm for this problem, Shor's algorithm, does run in polynomial time. Unfortunately, this fact doesn't say much about where the problem lies with respect to non-quantum complexity classes.",
+          "document_id": "30408117680a406f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 2,
+            "start_offset": 650,
+            "end_offset": 987,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "d04e1468058f4742_fixed_0",
+          "text": "The most commonly used reduction is a polynomial-time reduction. This means that the reduction process takes polynomial time. For example, the problem of squaring an integer can be reduced to the problem of multiplying two integers. This means an algorithm for multiplying two integers can be used to square an integer. Indeed, this can be done by giving the same input to both inputs of the multiplication algorithm. Thus we see that squaring is not more difficult than multiplication, since squaring can be reduced to multiplication.",
+          "document_id": "d04e1468058f4742",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 535,
+            "chunking": "fixed"
+          }
+        }
+      ],
+      "answer_latency_ms": 59881.00420000046
+    },
+    {
+      "id": "recursive_dense:56e19557e3433e1400422ff0",
+      "configuration": "recursive_dense",
+      "split": "dev",
+      "question": "What is the term for the set of all connected graphs related to this decision problem?",
+      "reference_answers": [
+        "formal language",
+        "The formal language",
+        "The formal language associated with this decision problem"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "The term for the set of all connected graphs related to this decision problem is the set of all connected graphs.",
+            "citation_ids": [
+              "efd5797a31b38b7c_recursive_0"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 324.0996000004088,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "contexts": [
+        {
+          "chunk_id": "efd5797a31b38b7c_recursive_0",
+          "text": "An example of a decision problem is the following. The input is an arbitrary graph. The problem consists in deciding whether the given graph is connected, or not. The formal language associated with this decision problem is then the set of all connected graphs—of course, to obtain a precise definition of this language, one has to decide how graphs are encoded as binary strings.",
+          "document_id": "efd5797a31b38b7c",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 380,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "d80b4274696501d7_recursive_0",
+          "text": "The graph isomorphism problem is the computational problem of determining whether two finite graphs are isomorphic. An important unsolved problem in complexity theory is whether the graph isomorphism problem is in P, NP-complete, or NP-intermediate. The answer is not known, but it is believed that the problem is at least not NP-complete. If graph isomorphism is NP-complete, the polynomial time hierarchy collapses to its second level. Since it is widely believed that the polynomial hierarchy does not collapse to any finite level, it is believed that graph isomorphism is not NP-complete. The best algorithm for this problem, due to Laszlo Babai and Eugene Luks has run time 2O(√(n log(n))) for graphs with n vertices.",
+          "document_id": "d80b4274696501d7",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 722,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "66f46350d5031bc5_recursive_0",
+          "text": "Decision problems are one of the central objects of study in computational complexity theory. A decision problem is a special type of computational problem whose answer is either yes or no, or alternately either 1 or 0. A decision problem can be viewed as a formal language, where the members of the language are instances whose output is yes, and the non-members are those instances whose output is no. The objective is to decide, with the aid of an algorithm, whether a given input string is a member of the formal language under consideration. If the algorithm deciding this problem returns the answer yes, the algorithm is said to accept the input string, otherwise it is said to reject the input.",
+          "document_id": "66f46350d5031bc5",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 701,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "answer_latency_ms": 44002.542399999584
+    },
+    {
+      "id": "recursive_bm25:56e1ee4de3433e1400423211",
+      "configuration": "recursive_bm25",
+      "split": "dev",
+      "question": "What is an expression that can be used to illustrate the suspected inequality of complexity classes?",
+      "reference_answers": [
+        "P ⊆ NP ⊆ PP ⊆ PSPACE",
+        "P ⊆ NP ⊆ PP ⊆ PSPACE",
+        "P ⊆ NP ⊆ PP ⊆ PSPACE"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "Many known complexity classes are suspected to be unequal, but this has not been proved. For instance, P ⊆ NP ⊆ PP ⊆ PSPACE, but it is possible that P = PSPACE.",
+            "citation_ids": [
+              "5bb25560ef1aa2dc"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 73.7738999996509,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "contexts": [
+        {
+          "chunk_id": "5bb25560ef1aa2dc_recursive_0",
+          "text": "Many known complexity classes are suspected to be unequal, but this has not been proved. For instance P ⊆ NP ⊆ PP ⊆ PSPACE, but it is possible that P = PSPACE. If P is not equal to NP, then P is not equal to PSPACE either. Since there are many known complexity classes between P and PSPACE, such as RP, BPP, PP, BQP, MA, PH, etc., it is possible that all these complexity classes collapse to one class. Proving that any of these classes are unequal would be a major breakthrough in complexity theory.",
+          "document_id": "5bb25560ef1aa2dc",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 500,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "ee64759552e3c527_recursive_0",
+          "text": "Many important complexity classes can be defined by bounding the time or space used by the algorithm. Some important complexity classes of decision problems defined in this manner are the following:",
+          "document_id": "ee64759552e3c527",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 198,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "024f915ba795f37a_recursive_0",
+          "text": "Closely related fields in theoretical computer science are analysis of algorithms and computability theory. A key distinction between analysis of algorithms and computational complexity theory is that the former is devoted to analyzing the amount of resources needed by a particular algorithm to solve a problem, whereas the latter asks a more general question about all possible algorithms that could be used to solve the same problem. More precisely, it tries to classify problems that can or cannot be solved with appropriately restricted resources. In turn, imposing restrictions on the available resources is what distinguishes computational complexity from computability theory: the latter theory asks what kind of problems can, in principle, be solved algorithmically.",
+          "document_id": "024f915ba795f37a",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 775,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "answer_latency_ms": 48711.52339999935
+    },
+    {
+      "id": "recursive_hybrid:56e1dc62cd28a01900c67bce",
+      "configuration": "recursive_hybrid",
+      "split": "dev",
+      "question": "In what theoretical machine is it confirmed that a problem in P belies membership in the NP class?",
+      "reference_answers": [
+        "Turing machines",
+        "deterministic Turing machines",
+        "deterministic Turing machines"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "The Cobham–Edmonds thesis confirms that a problem in P is also a member of the NP class.",
+            "citation_ids": [
+              "52d2e20e1f64fd5f_recursive_0"
+            ]
+          },
+          {
+            "text": "It is believed that NP is not equal to co-NP, but this has not yet been proven.",
+            "citation_ids": [
+              "5ba5eddda63e4719_recursive_0"
+            ]
+          },
+          {
+            "text": "If a problem X is in C and hard for C, then X is complete for C, meaning it is the hardest problem in C.",
+            "citation_ids": [
+              "a78cc2bfe0b1062a_recursive_0"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 455.4874000004929,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "contexts": [
+        {
+          "chunk_id": "52d2e20e1f64fd5f_recursive_0",
+          "text": "The complexity class P is often seen as a mathematical abstraction modeling those computational tasks that admit an efficient algorithm. This hypothesis is called the Cobham–Edmonds thesis. The complexity class NP, on the other hand, contains many problems that people would like to solve efficiently, but for which no efficient algorithm is known, such as the Boolean satisfiability problem, the Hamiltonian path problem and the vertex cover problem. Since deterministic Turing machines are special non-deterministic Turing machines, it is easily observed that each problem in P is also member of the class NP.",
+          "document_id": "52d2e20e1f64fd5f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 611,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "5ba5eddda63e4719_recursive_0",
+          "text": "Along the same lines, co-NP is the class containing the complement problems (i.e. problems with the yes/no answers reversed) of NP problems. It is believed that NP is not equal to co-NP; however, it has not yet been proven. It has been shown that if these two complexity classes are not equal then P is not equal to NP.",
+          "document_id": "5ba5eddda63e4719",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 319,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "a78cc2bfe0b1062a_recursive_0",
+          "text": "If a problem X is in C and hard for C, then X is said to be complete for C. This means that X is the hardest problem in C. (Since many problems could be equally hard, one might say that X is one of the hardest problems in C.) Thus the class of NP-complete problems contains the most difficult problems in NP, in the sense that they are the ones most likely not to be in P. Because the problem P = NP is not solved, being able to reduce a known NP-complete problem, Π2, to another problem, Π1, would indicate that there is no known polynomial-time solution for Π1. This is because a polynomial-time solution to Π1 would yield a polynomial-time solution to Π2",
+          "document_id": "a78cc2bfe0b1062a",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 657,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "answer_latency_ms": 63142.827300000135
+    },
+    {
+      "id": "recursive_hybrid_rerank:5726446a89cfff1900a8404e",
+      "configuration": "recursive_hybrid_rerank",
+      "split": "dev",
+      "question": "What did AUSTPAC support ",
+      "reference_answers": [
+        "supporting applications such as on-line betting, financial applications",
+        "applications such as on-line betting, financial applications",
+        "applications such as on-line betting, financial applications"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "AUSTPAC supported applications such as on-line betting, financial applications, and remote terminal access to academic institutions.",
+            "citation_ids": [
+              "e937f6a874321ceb"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 2121.057099999234,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "contexts": [
+        {
+          "chunk_id": "e937f6a874321ceb_recursive_0",
+          "text": "AUSTPAC was an Australian public X.25 network operated by Telstra. Started by Telecom Australia in the early 1980s, AUSTPAC was Australia's first public packet-switched data network, supporting applications such as on-line betting, financial applications — the Australian Tax Office made use of AUSTPAC — and remote terminal access to academic institutions, who maintained their connections to AUSTPAC up until the mid-late 1990s in some cases. Access can be via a dial-up terminal to a PAD, or, by linking a permanent X.25 node to the network.[citation needed]",
+          "document_id": "e937f6a874321ceb",
+          "metadata": {
+            "title": "Packet_switching",
+            "filename": "Packet_switching.txt",
+            "section": "Packet_switching",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 561,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "2857830cd5daacdc_recursive_0",
+          "text": "Merit Network, Inc., an independent non-profit 501(c)(3) corporation governed by Michigan's public universities, was formed in 1966 as the Michigan Educational Research Information Triad to explore computer networking between three of Michigan's public universities as a means to help the state's educational and economic development. With initial support from the State of Michigan and the National Science Foundation (NSF), the packet-switched network was first demonstrated in December 1971 when an interactive host to host connection was made between the IBM mainframe computer systems at the University of Michigan in Ann Arbor and Wayne State University in Detroit. In October 1972 connections to the CDC mainframe at Michigan State University in East Lansing completed the triad",
+          "document_id": "2857830cd5daacdc",
+          "metadata": {
+            "title": "Packet_switching",
+            "filename": "Packet_switching.txt",
+            "section": "Packet_switching",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 785,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "388bef4a9f040d30_recursive_0",
+          "text": "The CYCLADES packet switching network was a French research network designed and directed by Louis Pouzin. First demonstrated in 1973, it was developed to explore alternatives to the early ARPANET design and to support network research generally. It was the first network to make the hosts responsible for reliable delivery of data, rather than the network itself, using unreliable datagrams and associated end-to-end protocol mechanisms. Concepts of this network influenced later ARPANET architecture.",
+          "document_id": "388bef4a9f040d30",
+          "metadata": {
+            "title": "Packet_switching",
+            "filename": "Packet_switching.txt",
+            "section": "Packet_switching",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 502,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "answer_latency_ms": 42521.47890000015
+    },
+    {
+      "id": "semantic_hybrid:5726431aec44d21400f3dd16",
+      "configuration": "semantic_hybrid",
+      "split": "dev",
+      "question": "The business allowed for private companies to do what ",
+      "reference_answers": [
+        "government agencies and large companies (mostly banks and airlines) to build their own dedicated networks",
+        "build their own dedicated networks",
+        "build their own dedicated networks"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "The business allowed government agencies and large companies (mostly banks and airlines) to build their own dedicated networks.",
+            "citation_ids": [
+              "36b2b83b334c55b8_semantic_2"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 281.24299999944924,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "contexts": [
+        {
+          "chunk_id": "36b2b83b334c55b8_semantic_2",
+          "text": "large companies, educational institutions, and government agencies. Users typically connected via dial-up connections or dedicated async connections. The business consisted of a large public network that supported dial-up users and a private network business that allowed government agencies and large companies (mostly banks and airlines) to build their own dedicated networks. The private networks were often connected via gateways to the public network to reach locations not on the private network. ",
+          "document_id": "36b2b83b334c55b8",
+          "metadata": {
+            "title": "Packet_switching",
+            "filename": "Packet_switching.txt",
+            "section": "Packet_switching",
+            "total_chunks": 6,
+            "start_offset": 241,
+            "end_offset": 744,
+            "chunking": "semantic"
+          }
+        },
+        {
+          "chunk_id": "36b2b83b334c55b8_semantic_3",
+          "text": "r own dedicated networks. The private networks were often connected via gateways to the public network to reach locations not on the private network. Tymnet was also connected to dozens of other public networks in the U.S. ",
+          "document_id": "36b2b83b334c55b8",
+          "metadata": {
+            "title": "Packet_switching",
+            "filename": "Packet_switching.txt",
+            "section": "Packet_switching",
+            "total_chunks": 6,
+            "start_offset": 594,
+            "end_offset": 817,
+            "chunking": "semantic"
+          }
+        },
+        {
+          "chunk_id": "9c1ac6dee0b7e3e4_semantic_2",
+          "text": "first commercial online service. (In addition to selling GE computers, the centers were computer service bureaus, offering batch processing services. They lost money from the beginning, and Sinback, a high-level marketing manager, was given the job of turning the business around. ",
+          "document_id": "9c1ac6dee0b7e3e4",
+          "metadata": {
+            "title": "Packet_switching",
+            "filename": "Packet_switching.txt",
+            "section": "Packet_switching",
+            "total_chunks": 5,
+            "start_offset": 280,
+            "end_offset": 561,
+            "chunking": "semantic"
+          }
+        }
+      ],
+      "answer_latency_ms": 38067.17899999967
+    },
+    {
+      "id": "recursive_hybrid_rewrite:5726398589a1e219009ac589",
+      "configuration": "recursive_hybrid_rewrite",
+      "split": "dev",
+      "question": "What is a connection identifier ",
+      "reference_answers": [
+        "a connection identifier rather than address information and are negotiated between endpoints so that they are delivered in order and with error checking",
+        "negotiated between endpoints"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "A connection identifier is included in each packet to establish the parameters of communication and is negotiated between endpoints.",
+            "citation_ids": [
+              "b99dec72f71f2374",
+              "bdd8f989d9bb644f"
+            ]
+          },
+          {
+            "text": "The packet header can be small, containing only the connection identifier and any additional information such as length, timestamp, or sequence number.",
+            "citation_ids": [
+              "b99dec72f71f2374",
+              "b99dec72f71f2374_recursive_1"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 2481.2526000005164,
+      "rewritten_query": "connection identifier",
+      "gold_chunk_count": 1,
+      "contexts": [
+        {
+          "chunk_id": "b99dec72f71f2374_recursive_0",
+          "text": "Connection-oriented transmission requires a setup phase in each involved node before any packet is transferred to establish the parameters of communication. The packets include a connection identifier rather than address information and are negotiated between endpoints so that they are delivered in order and with error checking. Address information is only transferred to each node during the connection set-up phase, when the route to the destination is discovered and an entry is added to the switching table in each network node through which the connection passes. The signaling protocols used allow the application to specify its requirements and discover link parameters. Acceptable values for service parameters may be negotiated",
+          "document_id": "b99dec72f71f2374",
+          "metadata": {
+            "title": "Packet_switching",
+            "filename": "Packet_switching.txt",
+            "section": "Packet_switching",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 738,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "bdd8f989d9bb644f_recursive_1",
+          "text": ". Each packet is dispatched and may go via different routes; potentially, the system has to do as much work for every packet as the connection-oriented system has to do in connection set-up, but with less information as to the application's requirements. At the destination, the original message/data is reassembled in the correct order, based on the packet sequence number. Thus a virtual connection, also known as a virtual circuit or byte stream is provided to the end-user by a transport layer protocol, although intermediate network nodes only provides a connectionless network layer service.",
+          "document_id": "bdd8f989d9bb644f",
+          "metadata": {
+            "title": "Packet_switching",
+            "filename": "Packet_switching.txt",
+            "section": "Packet_switching",
+            "total_chunks": 2,
+            "start_offset": 606,
+            "end_offset": 1203,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "b99dec72f71f2374_recursive_1",
+          "text": ". Acceptable values for service parameters may be negotiated. Routing a packet requires the node to look up the connection id in a table. The packet header can be small, as it only needs to contain this code and any information, such as length, timestamp, or sequence number, which is different for different packets.",
+          "document_id": "b99dec72f71f2374",
+          "metadata": {
+            "title": "Packet_switching",
+            "filename": "Packet_switching.txt",
+            "section": "Packet_switching",
+            "total_chunks": 2,
+            "start_offset": 678,
+            "end_offset": 995,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "answer_latency_ms": 86418.26570000012
+    },
+    {
+      "id": "fixed_hybrid:5726378238643c19005ad313",
+      "configuration": "fixed_hybrid",
+      "split": "dev",
+      "question": "Who developed the same technology as Baran ",
+      "reference_answers": [
+        "Donald Davies",
+        "Donald Davies",
+        "Donald Davies"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "Donald Davies at the National Physical Laboratory, UK, independently developed the same message routing methodology as developed by Baran.",
+            "citation_ids": [
+              "59728959092280aa_fixed_0"
+            ]
+          },
+          {
+            "text": "Paul Baran developed the concept of Distributed Adaptive Message Block Switching during his research at the RAND Corporation for the US Air Force into survivable communications networks.",
+            "citation_ids": [
+              "96b9416fc7950c15_fixed_0"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 576.5319999991334,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "contexts": [
+        {
+          "chunk_id": "59728959092280aa_fixed_0",
+          "text": "Starting in 1965, Donald Davies at the National Physical Laboratory, UK, independently developed the same message routing methodology as developed by Baran. He called it packet switching, a more accessible name than Baran's, and proposed to build a nationwide network in the UK. He gave a talk on the proposal in 1966, after which a person from the Ministry of Defence (MoD) told him about Baran's work. A member of Davies' team (Roger Scantlebury) met Lawrence Roberts at the 1967 ACM Symposium on Operating System Principles and suggested it for use in the ARPANET.",
+          "document_id": "59728959092280aa",
+          "metadata": {
+            "title": "Packet_switching",
+            "filename": "Packet_switching.txt",
+            "section": "Packet_switching",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 567,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "0c8186b63e82c9d0_fixed_0",
+          "text": "Baran developed the concept of distributed adaptive message block switching during his research at the RAND Corporation for the US Air Force into survivable communications networks, first presented to the Air Force in the summer of 1961 as briefing B-265, later published as RAND report P-2626 in 1962, and finally in report RM 3420 in 1964. Report P-2626 described a general architecture for a large-scale, distributed, survivable communications network. The work focuses on three key ideas: use of a decentralized network with multiple paths between any two points, dividing user messages into message blocks, later called packets, and delivery of these messages by store and forward switching.",
+          "document_id": "0c8186b63e82c9d0",
+          "metadata": {
+            "title": "Packet_switching",
+            "filename": "Packet_switching.txt",
+            "section": "Packet_switching",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 696,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "96b9416fc7950c15_fixed_0",
+          "text": "Starting in the late 1950s, American computer scientist Paul Baran developed the concept Distributed Adaptive Message Block Switching with the goal to provide a fault-tolerant, efficient routing method for telecommunication messages as part of a research program at the RAND Corporation, funded by the US Department of Defense. This concept contrasted and contradicted the theretofore established principles of pre-allocation of network bandwidth, largely fortified by the development of telecommunications in the Bell System. The new concept found little resonance among network implementers until the independent work of Donald Davies at the National Physical Laboratory (United Kingdom) (NPL) in the late 1960s. Davies is credited with coining the modern name packet switching and inspiring numero",
+          "document_id": "96b9416fc7950c15",
+          "metadata": {
+            "title": "Packet_switching",
+            "filename": "Packet_switching.txt",
+            "section": "Packet_switching",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 800,
+            "chunking": "fixed"
+          }
+        }
+      ],
+      "answer_latency_ms": 57934.937199999695
+    },
+    {
+      "id": "recursive_dense:5711628a2419e314009555e1",
+      "configuration": "recursive_dense",
+      "split": "dev",
+      "question": "How much less steam did the Corliss engine use compared to the Watt engine?",
+      "reference_answers": [
+        "30%",
+        "30% less steam",
+        "30%"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "The Corliss engine used 30% less steam compared to the Watt engine.",
+            "citation_ids": [
+              "0069ac7865818c29"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 99.02289999990899,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "contexts": [
+        {
+          "chunk_id": "0069ac7865818c29_recursive_0",
+          "text": "The acme of the horizontal engine was the Corliss steam engine, patented in 1849, which was a four-valve counter flow engine with separate steam admission and exhaust valves and automatic variable steam cutoff. When Corliss was given the Rumford medal the committee said that \"no one invention since Watt's time has so enhanced the efficiency of the steam engine\". In addition to using 30% less steam, it provided more uniform speed due to variable steam cut off, making it well suited to manufacturing, especially cotton spinning.",
+          "document_id": "0069ac7865818c29",
+          "metadata": {
+            "title": "Steam_engine",
+            "filename": "Steam_engine.txt",
+            "section": "Steam_engine",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 531,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "c569be8582c6ee29_recursive_0",
+          "text": "The historical measure of a steam engine's energy efficiency was its \"duty\". The concept of duty was first introduced by Watt in order to illustrate how much more efficient his engines were over the earlier Newcomen designs. Duty is the number of foot-pounds of work delivered by burning one bushel (94 pounds) of coal. The best examples of Newcomen designs had a duty of about 7 million, but most were closer to 5 million. Watt's original low-pressure designs were able to deliver duty as high as 25 million, but averaged about 17. This was a three-fold improvement over the average Newcomen design. Early Watt engines equipped with high-pressure steam improved this to 65 million.",
+          "document_id": "c569be8582c6ee29",
+          "metadata": {
+            "title": "Steam_engine",
+            "filename": "Steam_engine.txt",
+            "section": "Steam_engine",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 682,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "96628b459552f1a8_recursive_0",
+          "text": "The weight of boilers and condensers generally makes the power-to-weight ratio of a steam plant lower than for internal combustion engines. For mobile applications steam has been largely superseded by internal combustion engines or electric motors. However, most electric power is generated using steam turbine plant, so that indirectly the world's industry is still dependent on steam power. Recent concerns about fuel sources and pollution have incited a renewed interest in steam both as a component of cogeneration processes and as a prime mover. This is becoming known as the Advanced Steam movement.[citation needed]",
+          "document_id": "96628b459552f1a8",
+          "metadata": {
+            "title": "Steam_engine",
+            "filename": "Steam_engine.txt",
+            "section": "Steam_engine",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 622,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "answer_latency_ms": 37187.90220000119
+    },
+    {
+      "id": "recursive_bm25:57114dfb50c2381900b54a56",
+      "configuration": "recursive_bm25",
+      "split": "dev",
+      "question": "What is the typical working fluid in a steam engine?",
+      "reference_answers": [
+        "water",
+        "water",
+        "water"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "Water is the typical working fluid in a steam engine due to its favourable properties such as non-toxic and unreactive chemistry, abundance, low cost, and its thermodynamic properties.",
+            "citation_ids": [
+              "aef24a44901cf1a7",
+              "8c113acd4fdc7912"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 41.63270000026387,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "contexts": [
+        {
+          "chunk_id": "aef24a44901cf1a7_recursive_0",
+          "text": "The working fluid in a Rankine cycle can operate as a closed loop system, where the working fluid is recycled continuously, or may be an \"open loop\" system, where the exhaust steam is directly released to the atmosphere, and a separate source of water feeding the boiler is supplied. Normally water is the fluid of choice due to its favourable properties, such as non-toxic and unreactive chemistry, abundance, low cost, and its thermodynamic properties. Mercury is the working fluid in the mercury vapor turbine. Low boiling hydrocarbons can be used in a binary cycle.",
+          "document_id": "aef24a44901cf1a7",
+          "metadata": {
+            "title": "Steam_engine",
+            "filename": "Steam_engine.txt",
+            "section": "Steam_engine",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 569,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "86c90a8ba82d0f65_recursive_0",
+          "text": "The efficiency of a Rankine cycle is usually limited by the working fluid. Without the pressure reaching supercritical levels for the working fluid, the temperature range the cycle can operate over is quite small; in steam turbines, turbine entry temperatures are typically 565 °C (the creep limit of stainless steel) and condenser temperatures are around 30 °C. This gives a theoretical Carnot efficiency of about 63% compared with an actual efficiency of 42% for a modern coal-fired power station. This low turbine entry temperature (compared with a gas turbine) is why the Rankine cycle is often used as a bottoming cycle in combined-cycle gas turbine power stations.[citation needed]",
+          "document_id": "86c90a8ba82d0f65",
+          "metadata": {
+            "title": "Steam_engine",
+            "filename": "Steam_engine.txt",
+            "section": "Steam_engine",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 687,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "8c113acd4fdc7912_recursive_0",
+          "text": "Steam engines are external combustion engines, where the working fluid is separate from the combustion products. Non-combustion heat sources such as solar power, nuclear power or geothermal energy may be used. The ideal thermodynamic cycle used to analyze this process is called the Rankine cycle. In the cycle, water is heated and transforms into steam within a boiler operating at a high pressure. When expanded through pistons or turbines, mechanical work is done. The reduced-pressure steam is then condensed and pumped back into the boiler.",
+          "document_id": "8c113acd4fdc7912",
+          "metadata": {
+            "title": "Steam_engine",
+            "filename": "Steam_engine.txt",
+            "section": "Steam_engine",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 545,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "answer_latency_ms": 39864.62019999999
+    },
+    {
+      "id": "recursive_hybrid:57113f83b654c5140001fc2c",
+      "configuration": "recursive_hybrid",
+      "split": "dev",
+      "question": "What product was notably shipped in vessels equipped with double and triple expansion engines?",
+      "reference_answers": [
+        "coal",
+        "coal"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "The product notably shipped in vessels equipped with double and triple expansion engines was the steam engine.",
+            "citation_ids": [
+              "306716f09c0c157e_recursive_0",
+              "306716f09c0c157e_recursive_1"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 0.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 0.3333333333333333,
+        "ndcg@10": 0.5
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 171.57700000097975,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "contexts": [
+        {
+          "chunk_id": "306716f09c0c157e_recursive_1",
+          "text": ". Multiple expansion engines typically had the cylinders arranged inline, but various other formations were used. In the late 19th century, the Yarrow-Schlick-Tweedy balancing 'system' was used on some marine triple expansion engines. Y-S-T engines divided the low-pressure expansion stages between two cylinders, one at each end of the engine. This allowed the crankshaft to be better balanced, resulting in a smoother, faster-responding engine which ran with less vibration. This made the 4-cylinder triple-expansion engine popular with large passenger liners (such as the Olympic class), but this was ultimately replaced by the virtually vibration-free turbine engine.[citation needed]",
+          "document_id": "306716f09c0c157e",
+          "metadata": {
+            "title": "Steam_engine",
+            "filename": "Steam_engine.txt",
+            "section": "Steam_engine",
+            "total_chunks": 2,
+            "start_offset": 603,
+            "end_offset": 1291,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "306716f09c0c157e_recursive_0",
+          "text": "It is a logical extension of the compound engine (described above) to split the expansion into yet more stages to increase efficiency. The result is the multiple expansion engine. Such engines use either three or four expansion stages and are known as triple and quadruple expansion engines respectively. These engines use a series of cylinders of progressively increasing diameter. These cylinders are designed to divide the work into equal shares for each expansion stage. As with the double expansion engine, if space is at a premium, then two smaller cylinders may be used for the low-pressure stage. Multiple expansion engines typically had the cylinders arranged inline, but various other formations were used",
+          "document_id": "306716f09c0c157e",
+          "metadata": {
+            "title": "Steam_engine",
+            "filename": "Steam_engine.txt",
+            "section": "Steam_engine",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 715,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "390dfef31bd7f81f_recursive_0",
+          "text": "Near the end of the 19th century compound engines came into widespread use. Compound engines exhausted steam in to successively larger cylinders to accommodate the higher volumes at reduced pressures, giving improved efficiency. These stages were called expansions, with double and triple expansion engines being common, especially in shipping where efficiency was important to reduce the weight of coal carried. Steam engines remained the dominant source of power until the early 20th century, when advances in the design of electric motors and internal combustion engines gradually resulted in the replacement of reciprocating (piston) steam engines, with shipping in the 20th-century relying upon the steam turbine.",
+          "document_id": "390dfef31bd7f81f",
+          "metadata": {
+            "title": "Steam_engine",
+            "filename": "Steam_engine.txt",
+            "section": "Steam_engine",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 718,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "answer_latency_ms": 61705.72370000082
+    },
+    {
+      "id": "recursive_hybrid_rerank:571161092419e314009555d7",
+      "configuration": "recursive_hybrid_rerank",
+      "split": "dev",
+      "question": "What is an example of a rotary engine without pistons?",
+      "reference_answers": [
+        "Wankel",
+        "Wankel",
+        "the Wankel engine"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "An example of a rotary engine without pistons is the Wankel engine.",
+            "citation_ids": [
+              "40986f319bc9682c_recursive_0"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 3475.5048000006354,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "contexts": [
+        {
+          "chunk_id": "40986f319bc9682c_recursive_0",
+          "text": "It is possible to use a mechanism based on a pistonless rotary engine such as the Wankel engine in place of the cylinders and valve gear of a conventional reciprocating steam engine. Many such engines have been designed, from the time of James Watt to the present day, but relatively few were actually built and even fewer went into quantity production; see link at bottom of article for more details. The major problem is the difficulty of sealing the rotors to make them steam-tight in the face of wear and thermal expansion; the resulting leakage made them very inefficient. Lack of expansive working, or any means of control of the cutoff is also a serious problem with many such designs.[citation needed]",
+          "document_id": "40986f319bc9682c",
+          "metadata": {
+            "title": "Steam_engine",
+            "filename": "Steam_engine.txt",
+            "section": "Steam_engine",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 709,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "575ff8e78b61c39f_recursive_0",
+          "text": "With two-cylinder compounds used in railway work, the pistons are connected to the cranks as with a two-cylinder simple at 90° out of phase with each other (quartered). When the double expansion group is duplicated, producing a 4-cylinder compound, the individual pistons within the group are usually balanced at 180°, the groups being set at 90° to each other. In one case (the first type of Vauclain compound), the pistons worked in the same phase driving a common crosshead and crank, again set at 90° as for a two-cylinder engine. With the 3-cylinder compound arrangement, the LP cranks were either set at 90° with the HP one at 135° to the other two, or in some cases all three cranks were set at 120°.[citation needed]",
+          "document_id": "575ff8e78b61c39f",
+          "metadata": {
+            "title": "Steam_engine",
+            "filename": "Steam_engine.txt",
+            "section": "Steam_engine",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 724,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "6981723433c9b96c_recursive_0",
+          "text": "In most reciprocating piston engines, the steam reverses its direction of flow at each stroke (counterflow), entering and exhausting from the cylinder by the same port. The complete engine cycle occupies one rotation of the crank and two piston strokes; the cycle also comprises four events – admission, expansion, exhaust, compression. These events are controlled by valves often working inside a steam chest adjacent to the cylinder; the valves distribute the steam by opening and closing steam ports communicating with the cylinder end(s) and are driven by valve gear, of which there are many types.[citation needed]",
+          "document_id": "6981723433c9b96c",
+          "metadata": {
+            "title": "Steam_engine",
+            "filename": "Steam_engine.txt",
+            "section": "Steam_engine",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 619,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "answer_latency_ms": 58347.70180000123
+    },
+    {
+      "id": "semantic_hybrid:56e0ef90231d4119001ac46b",
+      "configuration": "semantic_hybrid",
+      "split": "dev",
+      "question": "What sort of power transmission did Tesla show off at his labs?",
+      "reference_answers": [
+        "wireless",
+        "wireless",
+        "wireless"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "Tesla showed off wireless power transmission at his labs.",
+            "citation_ids": [
+              "ca0f04fde4a85715_semantic_1"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 0.5,
+        "recall@5": 0.5,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 0.8175295903539445
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 387.1300999999221,
+      "rewritten_query": null,
+      "gold_chunk_count": 2,
+      "contexts": [
+        {
+          "chunk_id": "ca0f04fde4a85715_semantic_1",
+          "text": "at 46 E. Houston Street, in New York. He lit electric lamps wirelessly at both locations, demonstrating the potential of wireless power transmission. In the same year, he patented the Tesla coil.",
+          "document_id": "ca0f04fde4a85715",
+          "metadata": {
+            "title": "Nikola_Tesla",
+            "filename": "Nikola_Tesla.txt",
+            "section": "Nikola_Tesla",
+            "total_chunks": 2,
+            "start_offset": 161,
+            "end_offset": 356,
+            "chunking": "semantic"
+          }
+        },
+        {
+          "chunk_id": "d7889870d1a44ce1_semantic_0",
+          "text": "While experimenting, Tesla inadvertently faulted a power station generator, causing a power outage. In August 1917, Tesla explained what had happened in The Electrical Experimenter: \"As an example of what has been done with several hundred kilowatts of high frequency energy liberated, it was found that the dynamos in a power house six miles away were repeatedly burned out, due to the powerful high frequency currents set up in them, and which caused heavy sparks to jump through the windings and destroy the insulation!\"",
+          "document_id": "d7889870d1a44ce1",
+          "metadata": {
+            "title": "Nikola_Tesla",
+            "filename": "Nikola_Tesla.txt",
+            "section": "Nikola_Tesla",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 523,
+            "chunking": "semantic"
+          }
+        },
+        {
+          "chunk_id": "25a6311f83343dc2_semantic_2",
+          "text": "adiation). In his research, Tesla devised several experimental setups to produce X-rays. Tesla held that, with his circuits, the \"instrument will ... enable one to generate Roentgen rays of much greater power than obtainable with ordinary apparatus.\"",
+          "document_id": "25a6311f83343dc2",
+          "metadata": {
+            "title": "Nikola_Tesla",
+            "filename": "Nikola_Tesla.txt",
+            "section": "Nikola_Tesla",
+            "total_chunks": 3,
+            "start_offset": 402,
+            "end_offset": 652,
+            "chunking": "semantic"
+          }
+        }
+      ],
+      "answer_latency_ms": 39934.68059999941
+    },
+    {
+      "id": "recursive_hybrid_rewrite:56dfaa047aa994140058dfc1",
+      "configuration": "recursive_hybrid_rewrite",
+      "split": "dev",
+      "question": "what did tesla do at his old school in 1879?",
+      "reference_answers": [
+        "taught",
+        "Higher Real Gymnasium",
+        "taught a large class of students"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "In 1879, Tesla taught a large class of students in his old school, Higher Real Gymnasium, in Gospić.",
+            "citation_ids": [
+              "2a8c1de5efa31b53"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 0.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 0.5,
+        "ndcg@10": 0.6309297535714575
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 4658.294900000328,
+      "rewritten_query": "what did tesla do at his old school in 1879",
+      "gold_chunk_count": 1,
+      "contexts": [
+        {
+          "chunk_id": "d9bfbf406be488cb_recursive_0",
+          "text": "In 1875, Tesla enrolled at Austrian Polytechnic in Graz, Austria, on a Military Frontier scholarship. During his first year, Tesla never missed a lecture, earned the highest grades possible, passed nine exams (nearly twice as many required), started a Serbian culture club, and even received a letter of commendation from the dean of the technical faculty to his father, which stated, \"Your son is a star of first rank.\" Tesla claimed that he worked from 3 a.m. to 11 p.m., no Sundays or holidays excepted. He was \"mortified when [his] father made light of [those] hard won honors.\" After his father's death in 1879, Tesla found a package of letters from his professors to his father, warning that unless he were removed from the school, Tesla would be killed through overwork",
+          "document_id": "d9bfbf406be488cb",
+          "metadata": {
+            "title": "Nikola_Tesla",
+            "filename": "Nikola_Tesla.txt",
+            "section": "Nikola_Tesla",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 776,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "2a8c1de5efa31b53_recursive_0",
+          "text": "On 24 March 1879, Tesla was returned to Gospić under police guard for not having a residence permit. On 17 April 1879, Milutin Tesla died at the age of 60 after contracting an unspecified illness (although some sources say that he died of a stroke). During that year, Tesla taught a large class of students in his old school, Higher Real Gymnasium, in Gospić.",
+          "document_id": "2a8c1de5efa31b53",
+          "metadata": {
+            "title": "Nikola_Tesla",
+            "filename": "Nikola_Tesla.txt",
+            "section": "Nikola_Tesla",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 359,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "7e0a5ac339a66a17_recursive_0",
+          "text": "In 1870, Tesla moved to Karlovac, to attend school at the Higher Real Gymnasium, where he was profoundly influenced by a math teacher Martin Sekulić.:32 The classes were held in German, as it was a school within the Austro-Hungarian Military Frontier. Tesla was able to perform integral calculus in his head, which prompted his teachers to believe that he was cheating. He finished a four-year term in three years, graduating in 1873.:33",
+          "document_id": "7e0a5ac339a66a17",
+          "metadata": {
+            "title": "Nikola_Tesla",
+            "filename": "Nikola_Tesla.txt",
+            "section": "Nikola_Tesla",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 437,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "answer_latency_ms": 54138.15720000093
+    },
+    {
+      "id": "fixed_hybrid:56e10043e3433e1400422a87",
+      "configuration": "fixed_hybrid",
+      "split": "dev",
+      "question": "What is another possible explanation for the source of the signals?",
+      "reference_answers": [
+        "intercepted Marconi's European experiments",
+        "he may have intercepted Marconi's European experiments",
+        "he may have intercepted Marconi's European experiments in July 1899"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "Tesla may have intercepted Marconi's European experiments in July 1899, where Marconi transmitted the letter S (dot/dot/dot) in a naval demonstration, the same three impulses that Tesla hinted at hearing in Colorado.",
+            "citation_ids": [
+              "c2be5b5e55a789d8_fixed_1"
+            ]
+          },
+          {
+            "text": "Tesla observed unusual signals from his receiver which he concluded may be communications from another planet, and he mentioned them in a letter to reporter Julian Hawthorne in December 1899.",
+            "citation_ids": [
+              "c2be5b5e55a789d8_fixed_0"
+            ]
+          },
+          {
+            "text": "Tesla investigated atmospheric electricity, observing lightning signals via his receivers, and stated that he observed stationary waves during this time.",
+            "citation_ids": [
+              "b2e3d4474409ba9b_fixed_0"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 193.37280000036117,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "contexts": [
+        {
+          "chunk_id": "c2be5b5e55a789d8_fixed_1",
+          "text": "re he said it had not been immediately apparent to him that he was hearing \"intelligently controlled signals\" and that the signals could come from Mars, Venus, or other planets. It has been hypothesized that he may have intercepted Marconi's European experiments in July 1899—Marconi may have transmitted the letter S (dot/dot/dot) in a naval demonstration, the same three impulses that Tesla hinted at hearing in Colorado—or signals from another experimenter in wireless transmission.",
+          "document_id": "c2be5b5e55a789d8",
+          "metadata": {
+            "title": "Nikola_Tesla",
+            "filename": "Nikola_Tesla.txt",
+            "section": "Nikola_Tesla",
+            "total_chunks": 2,
+            "start_offset": 650,
+            "end_offset": 1135,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "c2be5b5e55a789d8_fixed_0",
+          "text": "During his time at his lab, Tesla observed unusual signals from his receiver which he concluded may be communications from another planet. He mentioned them in a letter to reporter Julian Hawthorne at the Philadelphia North American on 8 December 1899 and in a December 1900 letter about possible discoveries in the new century to the Red Cross Society where he referred to messages \"from another world\" that read \"1... 2... 3...\". Reporters treated it as a sensational story and jumped to the conclusion Tesla was hearing signals from Mars. He expanded on the signals he heard in a 9 February 1901 Collier's Weekly article \"Talking With Planets\" where he said it had not been immediately apparent to him that he was hearing \"intelligently controlled signals\" and that the signals could come from Mar",
+          "document_id": "c2be5b5e55a789d8",
+          "metadata": {
+            "title": "Nikola_Tesla",
+            "filename": "Nikola_Tesla.txt",
+            "section": "Nikola_Tesla",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 800,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "b2e3d4474409ba9b_fixed_0",
+          "text": "Tesla investigated atmospheric electricity, observing lightning signals via his receivers. He stated that he observed stationary waves during this time. The great distances and the nature of what Tesla was detecting from lightning storms confirmed his belief that the earth had a resonant frequency.",
+          "document_id": "b2e3d4474409ba9b",
+          "metadata": {
+            "title": "Nikola_Tesla",
+            "filename": "Nikola_Tesla.txt",
+            "section": "Nikola_Tesla",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 299,
+            "chunking": "fixed"
+          }
+        }
+      ],
+      "answer_latency_ms": 68067.11969999924
+    },
+    {
+      "id": "recursive_dense:56e12477e3433e1400422c61",
+      "configuration": "recursive_dense",
+      "split": "dev",
+      "question": "What entity did Tesla believe would not be able to solve the problems of the time?",
+      "reference_answers": [
+        "League of Nations",
+        "the League of Nations",
+        "League of Nations"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "Tesla believed that the League of Nations was not a remedy for the times and issues.",
+            "citation_ids": [
+              "370cedf89f598410"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 0.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 0.3333333333333333,
+        "ndcg@10": 0.5
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 98.05369999958202,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "contexts": [
+        {
+          "chunk_id": "8f0ce568cf4d6c27_recursive_0",
+          "text": "Tesla was generally antagonistic towards theories about the conversion of matter into energy.:247 He was also critical of Einstein's theory of relativity, saying:",
+          "document_id": "8f0ce568cf4d6c27",
+          "metadata": {
+            "title": "Nikola_Tesla",
+            "filename": "Nikola_Tesla.txt",
+            "section": "Nikola_Tesla",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 162,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "b31d2b96dbbed7a3_recursive_0",
+          "text": "Tesla exhibited a pre-atomic understanding of physics in his writings; he disagreed with the theory of atoms being composed of smaller subatomic particles, stating there was no such thing as an electron creating an electric charge (he believed that if electrons existed at all, they were some fourth state of matter or \"sub-atom\" that could only exist in an experimental vacuum and that they had nothing to do with electricity).:249 Tesla believed that atoms are immutable—they could not change state or be split in any way. He was a believer in the 19th century concept of an all pervasive \"ether\" that transmitted electrical energy.",
+          "document_id": "b31d2b96dbbed7a3",
+          "metadata": {
+            "title": "Nikola_Tesla",
+            "filename": "Nikola_Tesla.txt",
+            "section": "Nikola_Tesla",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 634,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "370cedf89f598410_recursive_0",
+          "text": "Tesla made predictions about the relevant issues of a post-World War I environment in a printed article, \"Science and Discovery are the great Forces which will lead to the Consummation of the War\" (20 December 1914). Tesla believed that the League of Nations was not a remedy for the times and issues.[citation needed]",
+          "document_id": "370cedf89f598410",
+          "metadata": {
+            "title": "Nikola_Tesla",
+            "filename": "Nikola_Tesla.txt",
+            "section": "Nikola_Tesla",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 318,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "answer_latency_ms": 47043.49259999981
+    },
+    {
+      "id": "recursive_bm25:571c4132dd7acb1400e4c0b4",
+      "configuration": "recursive_bm25",
+      "split": "dev",
+      "question": "What effect did breathing Priestley's discovered gas have on the experiment's mouse?",
+      "reference_answers": [
+        "active",
+        "more active and lived longer",
+        "was more active and lived longer",
+        "more active and lived longer while breathing it",
+        "was more active and lived longer"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "Breathing Priestley's discovered gas caused the mouse to be more active and live longer.",
+            "citation_ids": [
+              "7bf5fd67a6fb4d25_recursive_0"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 138.55169999987993,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "contexts": [
+        {
+          "chunk_id": "7bf5fd67a6fb4d25_recursive_0",
+          "text": "In the meantime, on August 1, 1774, an experiment conducted by the British clergyman Joseph Priestley focused sunlight on mercuric oxide (HgO) inside a glass tube, which liberated a gas he named \"dephlogisticated air\". He noted that candles burned brighter in the gas and that a mouse was more active and lived longer while breathing it. After breathing the gas himself, he wrote: \"The feeling of it to my lungs was not sensibly different from that of common air, but I fancied that my breast felt peculiarly light and easy for some time afterwards.\" Priestley published his findings in 1775 in a paper titled \"An Account of Further Discoveries in Air\" which was included in the second volume of his book titled Experiments and Observations on Different Kinds of Air",
+          "document_id": "7bf5fd67a6fb4d25",
+          "metadata": {
+            "title": "Oxygen",
+            "filename": "Oxygen.txt",
+            "section": "Oxygen",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 766,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "37af730a4a114ba4_recursive_0",
+          "text": "Breathing pure O\n2 in space applications, such as in some modern space suits, or in early spacecraft such as Apollo, causes no damage due to the low total pressures used. In the case of spacesuits, the O\n2 partial pressure in the breathing gas is, in general, about 30 kPa (1.4 times normal), and the resulting O\n2 partial pressure in the astronaut's arterial blood is only marginally more than normal sea-level O\n2 partial pressure (for more information on this, see space suit and arterial blood gas).",
+          "document_id": "37af730a4a114ba4",
+          "metadata": {
+            "title": "Oxygen",
+            "filename": "Oxygen.txt",
+            "section": "Oxygen",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 503,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "ad35de847b35e5cf_recursive_0",
+          "text": "Oxygen toxicity to the lungs and central nervous system can also occur in deep scuba diving and surface supplied diving. Prolonged breathing of an air mixture with an O\n2 partial pressure more than 60 kPa can eventually lead to permanent pulmonary fibrosis. Exposure to a O\n2 partial pressures greater than 160 kPa (about 1.6 atm) may lead to convulsions (normally fatal for divers). Acute oxygen toxicity (causing seizures, its most feared effect for divers) can occur by breathing an air mixture with 21% O\n2 at 66 m or more of depth; the same thing can occur by breathing 100% O\n2 at only 6 m.",
+          "document_id": "ad35de847b35e5cf",
+          "metadata": {
+            "title": "Oxygen",
+            "filename": "Oxygen.txt",
+            "section": "Oxygen",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 596,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "answer_latency_ms": 56268.342599998505
+    },
+    {
+      "id": "recursive_hybrid:571a49de4faf5e1900b8a94c",
+      "configuration": "recursive_hybrid",
+      "split": "dev",
+      "question": "_____ Helps the biospher from UV.",
+      "reference_answers": [
+        "high-altitude ozone layer",
+        "ozone",
+        "ozone layer",
+        "ozone"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "The high-altitude ozone layer helps protect the biosphere from ultraviolet radiation.",
+            "citation_ids": [
+              "b700fb5785336ddb"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 0.5,
+        "recall@5": 0.5,
+        "recall@10": 0.5,
+        "mrr": 1.0,
+        "ndcg@10": 0.6131471927654584
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 215.23200000046927,
+      "rewritten_query": null,
+      "gold_chunk_count": 2,
+      "contexts": [
+        {
+          "chunk_id": "b700fb5785336ddb_recursive_1",
+          "text": "\n3), strongly absorbs UVB radiation and consequently the high-altitude ozone layer helps protect the biosphere from ultraviolet radiation, but is a pollutant near the surface where it is a by-product of smog. At even higher low earth orbit altitudes, sufficient atomic oxygen is present to cause erosion for spacecraft.",
+          "document_id": "b700fb5785336ddb",
+          "metadata": {
+            "title": "Oxygen",
+            "filename": "Oxygen.txt",
+            "section": "Oxygen",
+            "total_chunks": 2,
+            "start_offset": 667,
+            "end_offset": 986,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "1185ecf10ebe12c1_recursive_0",
+          "text": "After a chloroplast polypeptide is synthesized on a ribosome in the cytosol, an enzyme specific to chloroplast proteins phosphorylates, or adds a phosphate group to many (but not all) of them in their transit sequences. Phosphorylation helps many proteins bind the polypeptide, keeping it from folding prematurely. This is important because it prevents chloroplast proteins from assuming their active form and carrying out their chloroplast functions in the wrong place—the cytosol. At the same time, they have to keep just enough shape so that they can be recognized by the chloroplast. These proteins also help the polypeptide get imported into the chloroplast.",
+          "document_id": "1185ecf10ebe12c1",
+          "metadata": {
+            "title": "Chloroplast",
+            "filename": "Chloroplast.txt",
+            "section": "Chloroplast",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 663,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "49ba66beb22d128a_recursive_0",
+          "text": "Chloroplasts' main role is to conduct photosynthesis, where the photosynthetic pigment chlorophyll captures the energy from sunlight and converts it and stores it in the energy-storage molecules ATP and NADPH while freeing oxygen from water. They then use the ATP and NADPH to make organic molecules from carbon dioxide in a process known as the Calvin cycle. Chloroplasts carry out a number of other functions, including fatty acid synthesis, much amino acid synthesis, and the immune response in plants. The number of chloroplasts per cell varies from 1 in algae up to 100 in plants like Arabidopsis and wheat.",
+          "document_id": "49ba66beb22d128a",
+          "metadata": {
+            "title": "Chloroplast",
+            "filename": "Chloroplast.txt",
+            "section": "Chloroplast",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 612,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "answer_latency_ms": 37250.98860000071
+    },
+    {
+      "id": "recursive_hybrid_rerank:571ce5055efbb31900334e2d",
+      "configuration": "recursive_hybrid_rerank",
+      "split": "dev",
+      "question": "What si the comparison to sea level with the oxygen level in space suits?",
+      "reference_answers": [
+        "only marginally more",
+        "marginally more than normal",
+        "marginally more",
+        "marginally more",
+        "only marginally more"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "In spacesuits, the oxygen partial pressure in the breathing gas is about 30 kPa, which is 1.4 times the normal sea-level oxygen partial pressure.",
+            "citation_ids": [
+              "37af730a4a114ba4"
+            ]
+          },
+          {
+            "text": "The oxygen partial pressure in the astronaut's arterial blood in spacesuits is only marginally more than the normal sea-level oxygen partial pressure.",
+            "citation_ids": [
+              "37af730a4a114ba4"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 1986.2755999984074,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "contexts": [
+        {
+          "chunk_id": "37af730a4a114ba4_recursive_0",
+          "text": "Breathing pure O\n2 in space applications, such as in some modern space suits, or in early spacecraft such as Apollo, causes no damage due to the low total pressures used. In the case of spacesuits, the O\n2 partial pressure in the breathing gas is, in general, about 30 kPa (1.4 times normal), and the resulting O\n2 partial pressure in the astronaut's arterial blood is only marginally more than normal sea-level O\n2 partial pressure (for more information on this, see space suit and arterial blood gas).",
+          "document_id": "37af730a4a114ba4",
+          "metadata": {
+            "title": "Oxygen",
+            "filename": "Oxygen.txt",
+            "section": "Oxygen",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 503,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "b0637caf9155caa2_recursive_0",
+          "text": "Oxygen is more soluble in water than nitrogen is. Water in equilibrium with air contains approximately 1 molecule of dissolved O\n2 for every 2 molecules of N\n2, compared to an atmospheric ratio of approximately 1:4. The solubility of oxygen in water is temperature-dependent, and about twice as much (14.6 mg·L−1) dissolves at 0 °C than at 20 °C (7.6 mg·L−1). At 25 °C and 1 standard atmosphere (101.3 kPa) of air, freshwater contains about 6.04 milliliters (mL) of oxygen per liter, whereas seawater contains about 4.95 mL per liter. At 5 °C the solubility increases to 9.0 mL (50% more than at 25 °C) per liter for water and 7.2 mL (45% more) per liter for sea water.",
+          "document_id": "b0637caf9155caa2",
+          "metadata": {
+            "title": "Oxygen",
+            "filename": "Oxygen.txt",
+            "section": "Oxygen",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 669,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "55027cd8f4f490d0_recursive_0",
+          "text": "Oxygen gas (O\n2) can be toxic at elevated partial pressures, leading to convulsions and other health problems.[j] Oxygen toxicity usually begins to occur at partial pressures more than 50 kilopascals (kPa), equal to about 50% oxygen composition at standard pressure or 2.5 times the normal sea-level O\n2 partial pressure of about 21 kPa. This is not a problem except for patients on mechanical ventilators, since gas supplied through oxygen masks in medical applications is typically composed of only 30%–50% O\n2 by volume (about 30 kPa at standard pressure). (although this figure also is subject to wide variation, depending on type of mask).",
+          "document_id": "55027cd8f4f490d0",
+          "metadata": {
+            "title": "Oxygen",
+            "filename": "Oxygen.txt",
+            "section": "Oxygen",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 644,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "answer_latency_ms": 60762.792999999874
+    },
+    {
+      "id": "semantic_hybrid:571cac5d5efbb31900334dd3",
+      "configuration": "semantic_hybrid",
+      "split": "dev",
+      "question": "What type of process was involved the the depletion of the Sun's oxygen 16?",
+      "reference_answers": [
+        "unknown",
+        "an unknown process",
+        "unknown",
+        "unknown",
+        "an unknown process"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "An unknown process depleted oxygen-16 from the Sun's protoplanetary material prior to the coalescence of dust grains that formed the Earth.",
+            "citation_ids": [
+              "c517c963ccbe5b57_semantic_1"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 386.58220000070287,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "contexts": [
+        {
+          "chunk_id": "c517c963ccbe5b57_semantic_1",
+          "text": ", but were long unable to obtain reference values for the isotope ratios in the Sun, believed to be the same as those of the primordial solar nebula. Analysis of a silicon wafer exposed to the solar wind in space and returned by the crashed Genesis spacecraft has shown that the Sun has a higher proportion of oxygen-16 than does the Earth. The measurement implies that an unknown process depleted oxygen-16 from the Sun's disk of protoplanetary material prior to the coalescence of dust grains that formed the Earth.",
+          "document_id": "c517c963ccbe5b57",
+          "metadata": {
+            "title": "Oxygen",
+            "filename": "Oxygen.txt",
+            "section": "Oxygen",
+            "total_chunks": 2,
+            "start_offset": 132,
+            "end_offset": 649,
+            "chunking": "semantic"
+          }
+        },
+        {
+          "chunk_id": "961e6fc9e85e5465_semantic_0",
+          "text": "Paleoclimatologists measure the ratio of oxygen-18 and oxygen-16 in the shells and skeletons of marine organisms to determine what the climate was like millions of years ago (see oxygen isotope ratio cycle). Seawater molecules that contain the lighter isotope, oxygen-16, evaporate at a slightly faster rate than water molecules containing the 12% heavier oxygen-18; this disparity increases at lower temperatures. During periods of lower global temperatures, snow and rain from that evaporated water tends to be higher in oxygen-16, and the seawater left behind tends to be higher in oxygen-18. Marine organisms then incorporate more oxygen-18 into their skeletons and shells than they would in a warmer climate. ",
+          "document_id": "961e6fc9e85e5465",
+          "metadata": {
+            "title": "Oxygen",
+            "filename": "Oxygen.txt",
+            "section": "Oxygen",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 714,
+            "chunking": "semantic"
+          }
+        },
+        {
+          "chunk_id": "23bf66470f5e39a5_semantic_1",
+          "text": "iable process for producing liquid oxygen was independently developed in 1895 by German engineer Carl von Linde and British engineer William Hampson. Both men lowered the temperature of air until it liquefied and then distilled the component gases by boiling them off one at a time and capturing them. ",
+          "document_id": "23bf66470f5e39a5",
+          "metadata": {
+            "title": "Oxygen",
+            "filename": "Oxygen.txt",
+            "section": "Oxygen",
+            "total_chunks": 4,
+            "start_offset": 112,
+            "end_offset": 414,
+            "chunking": "semantic"
+          }
+        }
+      ],
+      "answer_latency_ms": 53471.83290000066
+    }
+  ],
+  "calibration": {
+    "status": "pending_human_labels",
+    "agreement": null
+  },
+  "summaries": [
+    {
+      "configuration": "fixed_hybrid",
+      "split": "dev",
+      "questions": 3,
+      "valid_answers": 3,
+      "valid_judgements": 0,
+      "failed_queries": 0,
+      "unrepresentable_gold": 0,
+      "recall@1": 1.0,
+      "recall@1_samples": 3,
+      "recall@5": 1.0,
+      "recall@5_samples": 3,
+      "recall@10": 1.0,
+      "recall@10_samples": 3,
+      "mrr": 1.0,
+      "mrr_samples": 3,
+      "ndcg@10": 1.0,
+      "ndcg@10_samples": 3,
+      "faithfulness": null,
+      "faithfulness_samples": 0,
+      "answer_relevance": null,
+      "answer_relevance_samples": 0,
+      "citation_accuracy": null,
+      "citation_accuracy_samples": 0,
+      "citation_coverage": null,
+      "citation_coverage_samples": 0,
+      "abstained": null,
+      "abstained_samples": 0,
+      "retrieval_p50_ms": 193.37280000036117,
+      "retrieval_p95_ms": 576.5319999991334,
+      "answer_p50_ms": 59881.00420000046,
+      "answer_p95_ms": 68067.11969999924,
+      "provider_cost_usd_per_query": 0.0
+    },
+    {
+      "configuration": "recursive_dense",
+      "split": "dev",
+      "questions": 3,
+      "valid_answers": 3,
+      "valid_judgements": 0,
+      "failed_queries": 0,
+      "unrepresentable_gold": 0,
+      "recall@1": 0.6666666666666666,
+      "recall@1_samples": 3,
+      "recall@5": 1.0,
+      "recall@5_samples": 3,
+      "recall@10": 1.0,
+      "recall@10_samples": 3,
+      "mrr": 0.7777777777777778,
+      "mrr_samples": 3,
+      "ndcg@10": 0.8333333333333334,
+      "ndcg@10_samples": 3,
+      "faithfulness": null,
+      "faithfulness_samples": 0,
+      "answer_relevance": null,
+      "answer_relevance_samples": 0,
+      "citation_accuracy": null,
+      "citation_accuracy_samples": 0,
+      "citation_coverage": null,
+      "citation_coverage_samples": 0,
+      "abstained": null,
+      "abstained_samples": 0,
+      "retrieval_p50_ms": 99.02289999990899,
+      "retrieval_p95_ms": 324.0996000004088,
+      "answer_p50_ms": 44002.542399999584,
+      "answer_p95_ms": 47043.49259999981,
+      "provider_cost_usd_per_query": 0.0
+    },
+    {
+      "configuration": "recursive_bm25",
+      "split": "dev",
+      "questions": 3,
+      "valid_answers": 3,
+      "valid_judgements": 0,
+      "failed_queries": 0,
+      "unrepresentable_gold": 0,
+      "recall@1": 1.0,
+      "recall@1_samples": 3,
+      "recall@5": 1.0,
+      "recall@5_samples": 3,
+      "recall@10": 1.0,
+      "recall@10_samples": 3,
+      "mrr": 1.0,
+      "mrr_samples": 3,
+      "ndcg@10": 1.0,
+      "ndcg@10_samples": 3,
+      "faithfulness": null,
+      "faithfulness_samples": 0,
+      "answer_relevance": null,
+      "answer_relevance_samples": 0,
+      "citation_accuracy": null,
+      "citation_accuracy_samples": 0,
+      "citation_coverage": null,
+      "citation_coverage_samples": 0,
+      "abstained": null,
+      "abstained_samples": 0,
+      "retrieval_p50_ms": 73.7738999996509,
+      "retrieval_p95_ms": 138.55169999987993,
+      "answer_p50_ms": 48711.52339999935,
+      "answer_p95_ms": 56268.342599998505,
+      "provider_cost_usd_per_query": 0.0
+    },
+    {
+      "configuration": "recursive_hybrid",
+      "split": "dev",
+      "questions": 3,
+      "valid_answers": 3,
+      "valid_judgements": 0,
+      "failed_queries": 0,
+      "unrepresentable_gold": 0,
+      "recall@1": 0.5,
+      "recall@1_samples": 3,
+      "recall@5": 0.8333333333333334,
+      "recall@5_samples": 3,
+      "recall@10": 0.8333333333333334,
+      "recall@10_samples": 3,
+      "mrr": 0.7777777777777778,
+      "mrr_samples": 3,
+      "ndcg@10": 0.7043823975884861,
+      "ndcg@10_samples": 3,
+      "faithfulness": null,
+      "faithfulness_samples": 0,
+      "answer_relevance": null,
+      "answer_relevance_samples": 0,
+      "citation_accuracy": null,
+      "citation_accuracy_samples": 0,
+      "citation_coverage": null,
+      "citation_coverage_samples": 0,
+      "abstained": null,
+      "abstained_samples": 0,
+      "retrieval_p50_ms": 215.23200000046927,
+      "retrieval_p95_ms": 455.4874000004929,
+      "answer_p50_ms": 61705.72370000082,
+      "answer_p95_ms": 63142.827300000135,
+      "provider_cost_usd_per_query": 0.0
+    },
+    {
+      "configuration": "recursive_hybrid_rerank",
+      "split": "dev",
+      "questions": 3,
+      "valid_answers": 3,
+      "valid_judgements": 0,
+      "failed_queries": 0,
+      "unrepresentable_gold": 0,
+      "recall@1": 1.0,
+      "recall@1_samples": 3,
+      "recall@5": 1.0,
+      "recall@5_samples": 3,
+      "recall@10": 1.0,
+      "recall@10_samples": 3,
+      "mrr": 1.0,
+      "mrr_samples": 3,
+      "ndcg@10": 1.0,
+      "ndcg@10_samples": 3,
+      "faithfulness": null,
+      "faithfulness_samples": 0,
+      "answer_relevance": null,
+      "answer_relevance_samples": 0,
+      "citation_accuracy": null,
+      "citation_accuracy_samples": 0,
+      "citation_coverage": null,
+      "citation_coverage_samples": 0,
+      "abstained": null,
+      "abstained_samples": 0,
+      "retrieval_p50_ms": 2121.057099999234,
+      "retrieval_p95_ms": 3475.5048000006354,
+      "answer_p50_ms": 58347.70180000123,
+      "answer_p95_ms": 60762.792999999874,
+      "provider_cost_usd_per_query": 0.0
+    },
+    {
+      "configuration": "semantic_hybrid",
+      "split": "dev",
+      "questions": 3,
+      "valid_answers": 3,
+      "valid_judgements": 0,
+      "failed_queries": 0,
+      "unrepresentable_gold": 0,
+      "recall@1": 0.8333333333333334,
+      "recall@1_samples": 3,
+      "recall@5": 0.8333333333333334,
+      "recall@5_samples": 3,
+      "recall@10": 1.0,
+      "recall@10_samples": 3,
+      "mrr": 1.0,
+      "mrr_samples": 3,
+      "ndcg@10": 0.9391765301179814,
+      "ndcg@10_samples": 3,
+      "faithfulness": null,
+      "faithfulness_samples": 0,
+      "answer_relevance": null,
+      "answer_relevance_samples": 0,
+      "citation_accuracy": null,
+      "citation_accuracy_samples": 0,
+      "citation_coverage": null,
+      "citation_coverage_samples": 0,
+      "abstained": null,
+      "abstained_samples": 0,
+      "retrieval_p50_ms": 386.58220000070287,
+      "retrieval_p95_ms": 387.1300999999221,
+      "answer_p50_ms": 39934.68059999941,
+      "answer_p95_ms": 53471.83290000066,
+      "provider_cost_usd_per_query": 0.0
+    },
+    {
+      "configuration": "recursive_hybrid_rewrite",
+      "split": "dev",
+      "questions": 2,
+      "valid_answers": 2,
+      "valid_judgements": 0,
+      "failed_queries": 0,
+      "unrepresentable_gold": 0,
+      "recall@1": 0.5,
+      "recall@1_samples": 2,
+      "recall@5": 1.0,
+      "recall@5_samples": 2,
+      "recall@10": 1.0,
+      "recall@10_samples": 2,
+      "mrr": 0.75,
+      "mrr_samples": 2,
+      "ndcg@10": 0.8154648767857288,
+      "ndcg@10_samples": 2,
+      "faithfulness": null,
+      "faithfulness_samples": 0,
+      "answer_relevance": null,
+      "answer_relevance_samples": 0,
+      "citation_accuracy": null,
+      "citation_accuracy_samples": 0,
+      "citation_coverage": null,
+      "citation_coverage_samples": 0,
+      "abstained": null,
+      "abstained_samples": 0,
+      "retrieval_p50_ms": 2481.2526000005164,
+      "retrieval_p95_ms": 4658.294900000328,
+      "answer_p50_ms": 54138.15720000093,
+      "answer_p95_ms": 86418.26570000012,
+      "provider_cost_usd_per_query": 0.0
+    }
+  ],
+  "calls": [
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 885,
+      "completion_tokens": 125,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 867,
+      "completion_tokens": 73,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 781,
+      "completion_tokens": 88,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 840,
+      "completion_tokens": 187,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 838,
+      "completion_tokens": 71,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 660,
+      "completion_tokens": 75,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 58,
+      "completion_tokens": 7,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 753,
+      "completion_tokens": 158,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 907,
+      "completion_tokens": 140,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 841,
+      "completion_tokens": 67,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 816,
+      "completion_tokens": 99,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 860,
+      "completion_tokens": 92,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 907,
+      "completion_tokens": 68,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 703,
+      "completion_tokens": 62,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 68,
+      "completion_tokens": 20,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 874,
+      "completion_tokens": 77,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 825,
+      "completion_tokens": 228,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 725,
+      "completion_tokens": 65,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 900,
+      "completion_tokens": 68,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 786,
+      "completion_tokens": 63,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 935,
+      "completion_tokens": 140,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 794,
+      "completion_tokens": 82,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    }
+  ],
+  "provider_cost_usd": "0",
+  "calibration_cost_usd": "0"
+}
