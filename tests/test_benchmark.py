@@ -4,7 +4,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
-from src.evals.benchmark import DATA, calibration_agreement, relevant_chunks, reviewed_test_cases, summarize, write_report
+from src.evals.benchmark import AMBIGUOUS_TEST_ID, DATA, calibration_agreement, relevant_chunks, reviewed_test_cases, summarize, write_report
 from src.rag.models import DocumentChunk
 
 
@@ -43,3 +43,16 @@ def test_generated_table_does_not_round_small_paid_costs_to_zero():
         assert "0.00000300" in (Path(folder) / "test.md").read_text(encoding="utf-8")
         saved = json.loads((Path(folder) / "test.json").read_text(encoding="utf-8"))
         assert saved["summaries"][0]["provider_cost_usd_per_query"] == 0.000003
+
+
+def test_ambiguous_test_sensitivity_uses_same_predictions_without_affecting_dev():
+    rows = [{"configuration": "test", "split": split, "question_id": question_id,
+             "metrics": {"recall@5": score}, "cost_usd": "0"}
+            for split, question_id, score in (("dev", "dev-id", 0.5),
+                                              ("test", AMBIGUOUS_TEST_ID, 0), ("test", "other", 1))]
+    summaries = {row["split"]: row for row in summarize(rows)}
+    assert summaries["dev"]["recall@5"] == 0.5
+    assert summaries["test"]["questions"] == 2 and summaries["test"]["recall@5"] == 0.5
+    assert summaries["test_without_ambiguous"]["questions"] == 1
+    assert summaries["test_without_ambiguous"]["recall@5"] == 1
+    assert len(rows) == 3

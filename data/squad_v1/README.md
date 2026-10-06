@@ -34,6 +34,15 @@ in `corrected_answers` (the same text/answer_start schema), and explain them in
 Regenerating the dataset never overwrites this review file. The agent must not
 mark cases reviewed on your behalf.
 
+The user authorized held-out evaluation on 2026-10-06 using the current
+AI-assisted review, pending their personal spot-check. All 40 rows are marked
+reviewed; six answer-span corrections are recorded. This is not yet independent
+human review. The correction row numbers supplied by the user are zero-based
+(file lines 2, 3, 10, 15, 24, 40). Reports include all 40 cases and a sensitivity
+table excluding the ambiguous question `573786b51c4567190057448e` (row 23 / line 24),
+using identical predictions. Case `57297a276aef051400154f8a` (file line 11) has a
+garbled formula in the source; exact-match scoring is not computed.
+
 ## Limits
 
 This is a small, single-hop, extractive Wikipedia benchmark, not evidence of

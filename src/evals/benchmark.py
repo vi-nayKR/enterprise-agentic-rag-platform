@@ -28,6 +28,9 @@ from src.rag.reranker import CrossEncoderReranker
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data" / "squad_v1"
 RESULTS = ROOT / "results"
+# User-requested sensitivity analysis: zero-based review row 23 (file line 24).
+AMBIGUOUS_TEST_ID = "573786b51c4567190057448e"
+GARBLED_FORMULA_ID = "57297a276aef051400154f8a"
 CONFIGS = [
     ("fixed_hybrid", "fixed", "hybrid", False),
     ("recursive_dense", "recursive", "dense", False),
@@ -59,6 +62,9 @@ def reviewed_test_cases(review_path: Path = DATA / "test_review.jsonl") -> list[
         if review.get("reviewed") is not True or not isinstance(review.get("reviewer"), str) or not review["reviewer"].strip():
             raise ValueError("Test split has pending human reviews; edit test_review.jsonl before held-out evaluation")
         row = dict(original[review["id"]])
+        row["reviewer"] = review["reviewer"]
+        row["review_notes"] = review.get("notes")
+        row["review_provenance"] = "ai_assisted" if "ai-assisted" in review["reviewer"].lower() else "reviewer_declared"
         if review["question"] != row["question"] or review["source_chunk_id"] != row["source_chunk_id"]:
             raise ValueError("Question/source changes require a new version, not a silent review-file edit")
         if review.get("corrected_answers") is not None:
@@ -66,7 +72,7 @@ def reviewed_test_cases(review_path: Path = DATA / "test_review.jsonl") -> list[
             if not isinstance(answers, list) or not answers:
                 raise ValueError("Corrected answers must be a nonempty list of text/answer_start records")
             row["answers"] = answers
-            row["origin"] = "human_reviewed_squad"
+            row["origin"] = "review_corrected_squad"
         text = corpus[row["source_chunk_id"]]["text"]
         for answer in row["answers"]:
             start, value = answer["answer_start"], answer["text"]
@@ -220,6 +226,8 @@ def summarize(records: list[dict]) -> list[dict]:
     groups = defaultdict(list)
     for row in records:
         groups[(row["configuration"], row["split"])].append(row)
+        if row["split"] == "test" and row["question_id"] != AMBIGUOUS_TEST_ID:
+            groups[(row["configuration"], "test_without_ambiguous")].append(row)
     summaries = []
     metrics = ["recall@1", "recall@5", "recall@10", "mrr", "ndcg@10", "faithfulness",
                "answer_relevance", "citation_accuracy", "citation_coverage", "abstained"]
@@ -255,6 +263,13 @@ def write_report(report: dict, stem: str) -> None:
                "answer_p50_ms", "answer_p95_ms", "provider_cost_usd_per_query", "valid_judgements", "failed_queries"]
     lines = [f"Status: **{report['status']}**. Judge calibration: **{report['calibration']['status']}**.\n",
              "| " + " | ".join(columns) + " |", "| " + " | ".join("---" for _ in columns) + " |"]
+    if report.get("test_review_provenance"):
+        lines.insert(1, "Test review: " + ", ".join(report["test_review_provenance"]) +
+                     ". AI-assisted review remains provisional pending the user's spot-check.\n")
+        lines.insert(2, f"`test` includes all 40 questions; `test_without_ambiguous` excludes `{AMBIGUOUS_TEST_ID}` "
+                     "(zero-based row 23 / file line 24). Both use the same frozen predictions. "
+                     f"Formula case `{GARBLED_FORMULA_ID}` retains the source's garbled formula; "
+                     "exact-match scoring is not computed.\n")
     for summary in report["summaries"]:
         lines.append("| " + " | ".join("pending" if summary[column] is None else
                                       format(summary[column], ".8f" if "cost" in column else ".4f")
@@ -299,6 +314,9 @@ async def run(args: argparse.Namespace) -> None:
               "chunk_indexes": {mode: {"chunks": len(store.chunks)} for mode, store in stores.items()},
               "judge_model": client.model if client else None,
               "test_review_sha256": hashlib.sha256((DATA / "test_review.jsonl").read_bytes()).hexdigest(),
+              "test_review_provenance": sorted({case["review_provenance"] for case in cases if case["split"] == "test"}),
+              "test_sensitivity_excluded_id": AMBIGUOUS_TEST_ID,
+              "garbled_formula_id": GARBLED_FORMULA_ID, "exact_match_computed": False,
               "ranking_depth": 10, "warm_index": True, "result_cache": False,
               "experiment_design": "one factor at a time; not a complete factorial or global optimum search",
               "cost_scope": "provider token charges, excluding electricity/hardware", "records": records,
@@ -309,6 +327,8 @@ async def run(args: argparse.Namespace) -> None:
             for name, chunking, mode, rewrite in selected:
                 row = {"id": name + ":" + case["id"], "configuration": name, "split": case["split"],
                        "question_id": case["id"], "question_origin": case["origin"],
+                       "reviewer": case.get("reviewer"), "review_provenance": case.get("review_provenance"),
+                       "review_notes": case.get("review_notes"),
                        "gold_source_chunk_id": case["source_chunk_id"],
                        "question": case["question"], "reference_answers": [answer["text"] for answer in case["answers"]],
                        "answer_origin": "model_generated", "answer": None, "judgement": None, "metrics": {},
