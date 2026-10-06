@@ -15,7 +15,8 @@ async def test_rate_limit_backoff_keeps_every_attempt_in_shared_budget():
     def respond(request):
         requests.append(json.loads(request.content))
         if len(requests) == 1:
-            return httpx.Response(429, headers={"retry-after": "7"})
+            return httpx.Response(429, headers={"retry-after": "7"},
+                                  json=[{"error": {"message": "Quota refused for test-key", "status": "RESOURCE_EXHAUSTED"}}])
         if len(requests) == 2:
             return httpx.Response(503)
         return httpx.Response(200, json={"usage": {"prompt_tokens": 10, "completion_tokens": 5},
@@ -32,6 +33,8 @@ async def test_rate_limit_backoff_keeps_every_attempt_in_shared_budget():
         assert len(client.calls) == 3
         assert client.calls[0]["http_status"] == 429 and client.calls[0]["backoff_seconds"] == 7
         assert client.calls[0]["cost_kind"] == "reserved_upper_bound"
+        assert "test-key" not in json.dumps(client.calls)
+        assert client.calls[0]["provider_error_status"] == "RESOURCE_EXHAUSTED"
         assert client.spent == sum(Decimal(row["cost_usd"]) for row in client.calls)
     finally:
         await client.close()
