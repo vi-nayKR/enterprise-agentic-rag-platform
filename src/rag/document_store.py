@@ -86,10 +86,12 @@ class DocumentStore:
         if not query_terms:
             return []
 
-        total_chunks = max(1, len(self.chunks))
+        tokenized = {chunk.id: re.findall(r"\w+", chunk.text.lower()) for chunk in self.chunks.values()}
+        total_chunks = max(1, len(tokenized))
+        average_length = sum(map(len, tokenized.values())) / total_chunks or 1.0
         doc_freq: Dict[str, int] = {}
         for term in query_terms:
-            doc_freq[term] = sum(1 for c in self.chunks.values() if term in c.text.lower())
+            doc_freq[term] = sum(term in terms for terms in tokenized.values())
 
         results: List[SearchResult] = []
         for chunk in self.chunks.values():
@@ -98,7 +100,7 @@ class DocumentStore:
                 if not match:
                     continue
 
-            chunk_terms = re.findall(r"\w+", chunk.text.lower())
+            chunk_terms = tokenized[chunk.id]
             if not chunk_terms:
                 continue
 
@@ -110,7 +112,7 @@ class DocumentStore:
                     unique_matches += 1
                     df = doc_freq.get(term, 1)
                     idf = math.log(1.0 + (total_chunks - df + 0.5) / (df + 0.5))
-                    norm_len = len(chunk_terms) / 50.0
+                    norm_len = len(chunk_terms) / average_length
                     tf_saturated = (tf * 2.5) / (tf + 1.5 * (0.25 + 0.75 * norm_len))
                     score += idf * tf_saturated
 

@@ -21,6 +21,13 @@ retriever instances and keyed only by query text; provider errors silently fall
 back to hash vectors; BM25 document frequency uses substring matching; a reranker
 constructed with a fixed output count can truncate a larger requested top-k.
 
+These hazards were reproduced by failing regression checks before fixes. The
+shared fixes isolate each retriever's cache, include result options in cache
+keys, preserve the requested reranker output count, use exact-token BM25 document
+frequency and measured mean chunk length, and propagate embedding-provider errors.
+The original suite and new dataset/regression checks passed after these changes.
+GitHub Actions is configured; no hosted workflow run is claimed before pushing.
+
 ## Required gates
 
 - Report failing tests before changing the affected behaviour. Preserve the

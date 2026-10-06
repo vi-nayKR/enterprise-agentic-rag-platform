@@ -6,7 +6,7 @@ from src.rag.embeddings import EmbeddingsService
 from src.rag.document_store import DocumentStore
 from src.rag.rrf import reciprocal_rank_fusion
 from src.rag.reranker import CrossEncoderReranker
-from src.rag.cache import query_cache
+from src.rag.cache import SemanticQueryCache
 from src.rag.compressor import compressor
 from config.settings import settings
 
@@ -35,7 +35,7 @@ class HybridRetriever:
         self.reranker = CrossEncoderReranker(top_n=top_k)
         self.rrf_k = rrf_k
         self.top_k = top_k
-        self.cache = query_cache
+        self.cache = SemanticQueryCache()
         self.compressor = compressor
 
     async def ingest_document(
@@ -70,10 +70,11 @@ class HybridRetriever:
         reranks, and compresses candidate contexts.
         """
         k = top_k or self.top_k
+        cache_key = f"{query}|top_k={k}|compression={use_compression}"
 
         # 1. Check Semantic Query Cache
         if use_cache and not filters:
-            cached_res = self.cache.get_results(query)
+            cached_res = self.cache.get_results(cache_key)
             if cached_res is not None:
                 return cached_res[:k]
 
@@ -92,7 +93,7 @@ class HybridRetriever:
         fused = reciprocal_rank_fusion(dense_results, sparse_results, k=self.rrf_k)
 
         # 5. Cross-Encoder Rerank
-        final_ranked = await self.reranker.rerank(query, fused)
+        final_ranked = await self.reranker.rerank(query, fused, top_n=k)
 
         # 6. Extractive Context Compression
         if use_compression:
@@ -102,7 +103,7 @@ class HybridRetriever:
 
         # 7. Store in Cache
         if use_cache and not filters:
-            self.cache.set_results(query, results)
+            self.cache.set_results(cache_key, results)
 
         return results
 

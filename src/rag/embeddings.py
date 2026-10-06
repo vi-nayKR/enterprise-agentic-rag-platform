@@ -30,17 +30,13 @@ class EmbeddingsService:
         )
         self._client: Any = None
         if self.use_openai and OpenAIEmbeddings is not None:
-            try:
-                kwargs: dict[str, Any] = {
-                    "model": settings.EMBEDDING_MODEL,
-                    "openai_api_key": settings.OPENAI_API_KEY,
-                }
-                if settings.OPENAI_BASE_URL:
-                    kwargs["base_url"] = settings.OPENAI_BASE_URL
-                self._client = OpenAIEmbeddings(**cast(dict[str, Any], kwargs))
-            except Exception:
-                self.use_openai = False
-                self._client = None
+            kwargs: dict[str, Any] = {
+                "model": settings.EMBEDDING_MODEL,
+                "openai_api_key": settings.OPENAI_API_KEY,
+            }
+            if settings.OPENAI_BASE_URL:
+                kwargs["base_url"] = settings.OPENAI_BASE_URL
+            self._client = OpenAIEmbeddings(**cast(dict[str, Any], kwargs))
 
     def _generate_token_vector(self, token: str) -> List[float]:
         """Generates a deterministic 1536-dim unit vector for a single token."""
@@ -76,21 +72,11 @@ class EmbeddingsService:
     async def embed_documents(self, texts: List[str]) -> List[List[float]]:
         """Generates embeddings for a batch of text chunks."""
         if self.use_openai:
-            try:
-                return await self._client.aembed_documents(texts)
-            except Exception as e:
-                print(
-                    f"[Embeddings] OpenAI failed ({e}), falling back to offline generator."
-                )
+            return await self._client.aembed_documents(texts)
         return [self._generate_offline_embedding(t) for t in texts]
 
     async def embed_query(self, text: str) -> List[float]:
         """Generates an embedding for a single user query."""
         if self.use_openai:
-            try:
-                return await self._client.aembed_query(text)
-            except Exception as e:
-                print(
-                    f"[Embeddings] OpenAI failed ({e}), falling back to offline generator."
-                )
+            return await self._client.aembed_query(text)
         return self._generate_offline_embedding(text)

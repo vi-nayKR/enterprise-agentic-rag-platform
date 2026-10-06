@@ -1,5 +1,5 @@
 import re
-from typing import List
+from typing import List, Optional
 from src.rag.models import SearchResult
 
 
@@ -12,7 +12,7 @@ class CrossEncoderReranker:
         self.top_n = top_n
 
     async def rerank(
-        self, query: str, candidates: List[SearchResult]
+        self, query: str, candidates: List[SearchResult], top_n: Optional[int] = None
     ) -> List[SearchResult]:
         """Rescores and sorts candidates based on query-passage interaction."""
         if not candidates:
@@ -38,4 +38,4 @@ class CrossEncoderReranker:
 
         # Sort by rerank_score descending
         ranked = sorted(candidates, key=lambda c: c.rerank_score or 0.0, reverse=True)
-        return ranked[: self.top_n]
+        return ranked[: self.top_n if top_n is None else top_n]
