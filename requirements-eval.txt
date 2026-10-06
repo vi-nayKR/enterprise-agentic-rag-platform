@@ -1,0 +1,3 @@
+-r requirements.txt
+# Install a CPU PyTorch wheel first when GPU acceleration is unnecessary.
+sentence-transformers==5.7.0

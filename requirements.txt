@@ -4,6 +4,7 @@ pydantic>=2.8.0
 pydantic-settings>=2.4.0
 langgraph>=0.2.20
 langchain-core>=0.3.0
+langchain-text-splitters>=0.3.0
 langchain-openai>=0.2.0
 langchain-postgres>=0.0.12
 pgvector>=0.3.2

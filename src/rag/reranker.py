@@ -1,4 +1,5 @@
 import re
+import asyncio
 from typing import List, Optional
 from src.rag.models import SearchResult
 
@@ -8,8 +9,16 @@ class CrossEncoderReranker:
     Reranks candidate search results using cross-attentive contextual scoring.
     """
 
-    def __init__(self, top_n: int = 5):
+    def __init__(self, top_n: int = 5, learned: bool = False):
         self.top_n = top_n
+        self.model = None
+        if learned:
+            from sentence_transformers import CrossEncoder
+
+            self.model = CrossEncoder(
+                "cross-encoder/ms-marco-MiniLM-L6-v2",
+                revision="233902d25c440f23af6f7d6e94d2946bac0bee0a", device="cpu",
+            )
 
     async def rerank(
         self, query: str, candidates: List[SearchResult], top_n: Optional[int] = None
@@ -17,6 +26,15 @@ class CrossEncoderReranker:
         """Rescores and sorts candidates based on query-passage interaction."""
         if not candidates:
             return []
+
+        if self.model is not None:
+            scores = await asyncio.to_thread(self.model.predict,
+                                            [(query, item.text) for item in candidates],
+                                            batch_size=16, show_progress_bar=False)
+            for candidate, score in zip(candidates, scores):
+                candidate.rerank_score = float(score)
+            return sorted(candidates, key=lambda item: item.rerank_score, reverse=True)[:
+                self.top_n if top_n is None else top_n]
 
         query_tokens = set(re.findall(r"\w+", query.lower()))
 

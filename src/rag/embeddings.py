@@ -1,5 +1,6 @@
 import hashlib
 import math
+import asyncio
 from typing import Any, List, cast
 
 from config.settings import settings
@@ -80,3 +81,27 @@ class EmbeddingsService:
         if self.use_openai:
             return await self._client.aembed_query(text)
         return self._generate_offline_embedding(text)
+
+
+class LocalEmbeddings:
+    """Pinned, normalized sentence-transformer vectors; never hash fallbacks."""
+
+    model_name = "sentence-transformers/all-MiniLM-L6-v2"
+    revision = "1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
+
+    def __init__(self):
+        import torch
+        from sentence_transformers import SentenceTransformer
+
+        torch.set_num_threads(2)
+        self.model = SentenceTransformer(self.model_name, revision=self.revision, device="cpu")
+
+    async def embed_documents(self, texts: List[str]) -> List[List[float]]:
+        if not texts:
+            return []
+        vectors = await asyncio.to_thread(self.model.encode, texts, normalize_embeddings=True,
+                                         batch_size=16, show_progress_bar=False)
+        return vectors.tolist()
+
+    async def embed_query(self, text: str) -> List[float]:
+        return (await self.embed_documents([text]))[0]

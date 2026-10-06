@@ -6,6 +6,8 @@ from src.rag.document_store import DocumentStore
 from src.rag.embeddings import EmbeddingsService
 from src.rag.hybrid_retriever import HybridRetriever
 from src.rag.models import DocumentChunk
+from src.rag.models import Document
+from src.rag.chunking import SemanticChunker
 
 
 @pytest.mark.asyncio
@@ -48,3 +50,15 @@ async def test_embedding_provider_errors_do_not_change_vector_space():
     service._client = BrokenClient()
     with pytest.raises(RuntimeError, match="provider unavailable"):
         await service.embed_query("cat")
+
+
+def test_chunking_bounds_long_unbroken_input_without_losing_source_text():
+    document = Document(filename="unbroken.txt", text="x" * 29)
+    chunks = SemanticChunker(chunk_size=8, chunk_overlap=2).chunk_document(document)
+    assert all(len(chunk.text) <= 8 for chunk in chunks)
+    covered = set()
+    for chunk in chunks:
+        start, end = chunk.metadata["start_offset"], chunk.metadata["end_offset"]
+        assert chunk.text == document.text[start:end]
+        covered.update(range(start, end))
+    assert len(covered) == len(document.text)

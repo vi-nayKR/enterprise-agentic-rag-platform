@@ -26,13 +26,23 @@ class HybridRetriever:
         chunk_overlap: int = settings.CHUNK_OVERLAP,
         rrf_k: int = settings.RRF_K,
         top_k: int = settings.TOP_K,
+        retrieval_mode: str = "hybrid_rerank",
+        chunking: str = "recursive",
+        embeddings=None,
+        store=None,
+        learned_reranker: bool = False,
     ):
+        if retrieval_mode not in {"dense", "bm25", "hybrid", "hybrid_rerank"}:
+            raise ValueError("Unknown retrieval mode")
+        if top_k < 1:
+            raise ValueError("top_k must be positive")
+        self.retrieval_mode = retrieval_mode
         self.chunker = SemanticChunker(
-            chunk_size=chunk_size, chunk_overlap=chunk_overlap
+            chunk_size=chunk_size, chunk_overlap=chunk_overlap, mode=chunking
         )
-        self.embeddings = EmbeddingsService()
-        self.store = DocumentStore()
-        self.reranker = CrossEncoderReranker(top_n=top_k)
+        self.embeddings = embeddings if embeddings is not None else EmbeddingsService()
+        self.store = store if store is not None else DocumentStore()
+        self.reranker = CrossEncoderReranker(top_n=top_k, learned=learned_reranker)
         self.rrf_k = rrf_k
         self.top_k = top_k
         self.cache = SemanticQueryCache()
@@ -43,15 +53,14 @@ class HybridRetriever:
     ) -> Document:
         """Ingests, chunks, embeds, and indexes a document."""
         doc = Document(filename=filename, text=text, metadata=metadata or {})
-        await self.store.add_document(doc)
-
-        chunks = self.chunker.chunk_document(doc)
+        chunks = await self.chunker.chunk_document_async(doc, self.embeddings)
         if chunks:
             texts = [c.text for c in chunks]
             vectors = await self.embeddings.embed_documents(texts)
             for chunk, vec in zip(chunks, vectors):
                 chunk.embedding = vec
-            await self.store.add_chunks(chunks)
+        await self.store.add_document(doc)
+        await self.store.add_chunks(chunks)
 
         # Clear cache when new documents are ingested
         self.cache.clear()
@@ -69,7 +78,9 @@ class HybridRetriever:
         Executes cached, parallel dense + sparse retrieval, fuses with RRF,
         reranks, and compresses candidate contexts.
         """
-        k = top_k or self.top_k
+        k = self.top_k if top_k is None else top_k
+        if k < 1:
+            raise ValueError("top_k must be positive")
         cache_key = f"{query}|top_k={k}|compression={use_compression}"
 
         # 1. Check Semantic Query Cache
@@ -79,21 +90,30 @@ class HybridRetriever:
                 return cached_res[:k]
 
         # 2. Get Embedding Vector (Cached or Computed)
-        query_vector = self.cache.get_embedding(query)
-        if query_vector is None:
-            query_vector = await self.embeddings.embed_query(query)
-            self.cache.set_embedding(query, query_vector)
+        dense_results, sparse_results = [], []
+        if self.retrieval_mode != "bm25":
+            query_vector = self.cache.get_embedding(query) if use_cache else None
+            if query_vector is None:
+                query_vector = await self.embeddings.embed_query(query)
+                if use_cache:
+                    self.cache.set_embedding(query, query_vector)
+            if self.retrieval_mode == "dense":
+                dense_results = await self.store.search_dense(query_vector, top_k=k, filters=filters)
+            else:
+                dense_results, sparse_results = await asyncio.gather(
+                    self.store.search_dense(query_vector, top_k=k * 2, filters=filters),
+                    self.store.search_sparse(query, top_k=k * 2, filters=filters),
+                )
+        else:
+            sparse_results = await self.store.search_sparse(query, top_k=k, filters=filters)
 
-        # 3. Parallel Retrieval Execution
-        dense_task = self.store.search_dense(query_vector, top_k=k * 2, filters=filters)
-        sparse_task = self.store.search_sparse(query, top_k=k * 2, filters=filters)
-        dense_results, sparse_results = await asyncio.gather(dense_task, sparse_task)
-
-        # 4. Reciprocal Rank Fusion (k=60)
-        fused = reciprocal_rank_fusion(dense_results, sparse_results, k=self.rrf_k)
-
-        # 5. Cross-Encoder Rerank
-        final_ranked = await self.reranker.rerank(query, fused, top_n=k)
+        if self.retrieval_mode == "dense":
+            final_ranked = dense_results
+        elif self.retrieval_mode == "bm25":
+            final_ranked = sparse_results
+        else:
+            fused = reciprocal_rank_fusion(dense_results, sparse_results, k=self.rrf_k)
+            final_ranked = await self.reranker.rerank(query, fused, top_n=k) if self.retrieval_mode == "hybrid_rerank" else fused[:k]
 
         # 6. Extractive Context Compression
         if use_compression:
