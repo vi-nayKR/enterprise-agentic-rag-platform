@@ -91,7 +91,7 @@ async def test_resume_keeps_answer_after_judge_interruption_and_retains_costs():
 
     def record_call(client):
         client.spent += Decimal('0.001')
-        client.calls.append({'cost_usd': '0.001', 'client_role': client.role})
+        client.calls.append({'cost_usd': '0.001', 'client_role': client.role, 'provider_latency_ms': 100, 'queue_wait_ms': 10})
         client.checkpoint()
 
     async def answer(client, *args):
@@ -128,6 +128,9 @@ async def test_resume_keeps_answer_after_judge_interruption_and_retains_costs():
         assert sum(client.spent for client in clients[-2:]) == Decimal('0.011')
         assert clients[-2].spent == Decimal('0.005')
         assert clients[-1].spent == Decimal('0.006')
+        saved = json.loads(next(Path(folder).glob('smoke_*.json')).read_text(encoding='utf-8'))
+        assert saved['records'][0]['judge_provider_latency_ms'] == 200
+        assert saved['records'][0]['judge_queue_latency_ms'] == 20
         await run(args)
         assert generation.await_count == 5
         args.resume = False

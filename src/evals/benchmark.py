@@ -522,9 +522,9 @@ async def run(args: argparse.Namespace) -> None:
                                 answer = await generate_answer(client, case["question"], row["contexts"])
                             finally:
                                 timings = client.calls[answer_call_start:]
-                                row["answer_provider_latency_ms"] = sum(call.get("provider_latency_ms", 0) for call in timings)
-                                row["answer_queue_latency_ms"] = sum(call.get("queue_wait_ms", 0) for call in timings)
-                                row["answer_wall_latency_ms"] = (time.perf_counter() - started) * 1000
+                                row["answer_provider_latency_ms"] = row.get("answer_provider_latency_ms", 0) + sum(call.get("provider_latency_ms", 0) for call in timings)
+                                row["answer_queue_latency_ms"] = row.get("answer_queue_latency_ms", 0) + sum(call.get("queue_wait_ms", 0) for call in timings)
+                                row["answer_wall_latency_ms"] = row.get("answer_wall_latency_ms", 0) + (time.perf_counter() - started) * 1000
                             row["answer"] = answer.model_dump()
                             checkpoint()
                         else:
@@ -535,8 +535,8 @@ async def run(args: argparse.Namespace) -> None:
                                 judged = await judge_answer(judge_client, case["question"], row["reference_answers"], row["contexts"], answer)
                             finally:
                                 timings = client.calls[judge_call_start:]
-                                row["judge_provider_latency_ms"] = sum(call.get("provider_latency_ms", 0) for call in timings)
-                                row["judge_queue_latency_ms"] = sum(call.get("queue_wait_ms", 0) for call in timings)
+                                row["judge_provider_latency_ms"] = row.get("judge_provider_latency_ms", 0) + sum(call.get("provider_latency_ms", 0) for call in timings)
+                                row["judge_queue_latency_ms"] = row.get("judge_queue_latency_ms", 0) + sum(call.get("queue_wait_ms", 0) for call in timings)
                             row["judgement"] = judged.model_dump()
                             row["metrics"].update(answer_metrics(answer, judged))
                     row["completed"] = True
