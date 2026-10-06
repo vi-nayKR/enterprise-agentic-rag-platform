@@ -2,8 +2,10 @@
 
 Evaluation upgrade in progress. The GitHub repository URL is unchanged.
 The approved [SQuAD corpus and human review instructions](data/squad_v1/README.md)
-and [generated dataset inventory](results/dataset_v1.md) are available. Benchmark
-scores and judge agreement have not been measured yet. The implementation below
+and [generated dataset inventory](results/dataset_v1.md) are available. The
+[20 frozen calibration answers](results/calibration_inputs.md) are measured;
+the full 700-case ablation run is in progress. Judge agreement awaits your labels.
+The implementation below
 describes the existing reference, not the planned production features.
 
 ## Evaluation workflow
@@ -63,6 +65,12 @@ The agent never fills those labels. Missing calibration remains pending and
 does not become an agreement score. Calibration scores use frozen model answers
 and evidence, not regenerated answers. Benchmark JSON and Markdown tables are
 written under `results/`; each records model versions and token costs.
+
+The user authorized held-out scoring with the current AI-assisted test review,
+pending their personal spot-check. Full-run tables report all 40 test cases and
+the same predictions excluding the ambiguous question at zero-based row 23
+(file line 24). The garbled formula on file line 11 is noted; no exact-match
+metric is computed. Select the configuration on dev only.
 
 The ablations vary one factor at a time: fixed/recursive/embedding-boundary
 chunking, dense/BM25/hybrid/reranked hybrid retrieval, and query rewriting on/off.
