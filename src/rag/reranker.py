@@ -6,7 +6,7 @@ from src.rag.models import SearchResult
 
 class CrossEncoderReranker:
     """
-    Reranks candidate search results using cross-attentive contextual scoring.
+    Optional learned cross-encoder, or the legacy keyword scorer by default.
     """
 
     def __init__(self, top_n: int = 5, learned: bool = False):

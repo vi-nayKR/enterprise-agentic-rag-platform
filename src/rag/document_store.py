@@ -6,8 +6,8 @@ from src.rag.models import Document, DocumentChunk, SearchResult
 
 class DocumentStore:
     """
-    Unified storage engine supporting dense vector search and sparse lexical search.
-    Provides an async in-memory & SQLite implementation with pgvector compatibility.
+    In-memory exact dense search and BM25 lexical scoring.
+    No SQLite, PostgreSQL, or approximate-nearest-neighbour index is implemented.
     """
 
     def __init__(self):
@@ -48,7 +48,7 @@ class DocumentStore:
         filters: Optional[Dict[str, Any]] = None,
     ) -> List[SearchResult]:
         """
-        Performs dense vector similarity search (pgvector HNSW equivalent).
+        Scans stored vectors and returns exact cosine-similarity rankings.
         """
         results: List[SearchResult] = []
         for chunk in self.chunks.values():
@@ -80,7 +80,7 @@ class DocumentStore:
         self, query_text: str, top_k: int = 10, filters: Optional[Dict[str, Any]] = None
     ) -> List[SearchResult]:
         """
-        Performs BM25 / lexical term-matching search (PostgreSQL tsvector equivalent).
+        Computes token-level BM25 scores over the in-memory chunk corpus.
         """
         query_terms = set(re.findall(r"\w+", query_text.lower()))
         if not query_terms:

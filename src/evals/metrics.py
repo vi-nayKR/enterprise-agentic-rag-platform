@@ -3,8 +3,9 @@ from typing import List, Dict, Any
 
 class RagasEvaluator:
     """
-    Ragas Triad Evaluation Metric Engine:
-    Computes Faithfulness, Answer Relevance, Context Recall, and Context Precision.
+    Legacy token-overlap heuristics retained for reference tests.
+    These are not Ragas or validated faithfulness/answer-quality measurements.
+    The evaluated benchmark uses ranking_metrics and judging instead.
     """
     @staticmethod
     def compute_faithfulness(answer: str, retrieved_contexts: List[str]) -> float:

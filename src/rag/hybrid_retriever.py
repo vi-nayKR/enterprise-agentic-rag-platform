@@ -13,11 +13,9 @@ from config.settings import settings
 
 class HybridRetriever:
     """
-    End-to-End Orchestrator for High-Efficiency Hybrid RAG:
-    1. Ingestion: Document -> Semantic Chunks -> Dense Embeddings -> Vector & Lexical Store.
-    2. Semantic Cache: Instant sub-10ms lookup for repeated queries.
-    3. Multi-Stage Search: Parallel (Dense HNSW + Sparse BM25) -> RRF (k=60) -> Cross-Encoder Rerank.
-    4. Extractive Compression: Sentence-level relevance filtering to reduce token overhead.
+    Shared source-aware retrieval over an in-memory store.
+    Supports dense, BM25, RRF, optional learned reranking, exact-key caching,
+    and optional extractive compression. Defaults retain the reference model modes.
     """
 
     def __init__(

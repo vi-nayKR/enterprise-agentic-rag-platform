@@ -6,8 +6,7 @@ class ContextCompressor:
     """
     Extractive Context Compressor:
     Filters out redundant and non-relevant sentences from retrieved chunks
-    prior to agent synthesis. Reduces prompt token consumption by ~30-50%
-    and mitigates the 'lost-in-the-middle' effect.
+    prior to agent synthesis. Quality and token savings require measurement.
     """
     def __init__(self, min_sentence_score: float = 0.15, max_sentences_per_chunk: int = 3):
         self.min_sentence_score = min_sentence_score

@@ -5,8 +5,8 @@ from src.rag.models import SearchResult
 
 class SemanticQueryCache:
     """
-    In-memory LRU cache with TTL for query embeddings and hybrid search results.
-    Provides sub-10ms retrieval latency for frequent and repeated queries.
+    In-memory LRU cache with TTL and normalized exact-text keys.
+    This does not perform semantic similarity matching or guarantee latency.
     """
     def __init__(self, max_size: int = 500, default_ttl: int = 3600):
         self.max_size = max_size
@@ -73,4 +73,3 @@ class SemanticQueryCache:
         self.hits = 0
         self.misses = 0
 
-query_cache = SemanticQueryCache()

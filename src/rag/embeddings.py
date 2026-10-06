@@ -51,8 +51,8 @@ class EmbeddingsService:
 
     def _generate_offline_embedding(self, text: str) -> List[float]:
         """
-        Generates a deterministic semantic embedding via token composition.
-        Texts sharing semantic keywords will have high cosine similarity.
+        Generates hash-based bag-of-words vectors for offline reference tests.
+        These are not learned semantic embeddings.
         """
         import re
         tokens = re.findall(r"\w+", text.lower())
