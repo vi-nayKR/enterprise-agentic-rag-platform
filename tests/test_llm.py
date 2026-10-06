@@ -16,6 +16,8 @@ async def test_rate_limit_backoff_keeps_every_attempt_in_shared_budget():
         requests.append(json.loads(request.content))
         if len(requests) == 1:
             return httpx.Response(429, headers={"retry-after": "7"})
+        if len(requests) == 2:
+            return httpx.Response(503)
         return httpx.Response(200, json={"usage": {"prompt_tokens": 10, "completion_tokens": 5},
                                         "choices": [{"finish_reason": "stop", "message": {"content": '{"ok":true}'}}]})
 
@@ -25,9 +27,9 @@ async def test_rate_limit_backoff_keeps_every_attempt_in_shared_budget():
     try:
         with patch("src.llm.asyncio.sleep", new_callable=AsyncMock) as sleep:
             await client.complete([{"role": "user", "content": "hello"}])
-        sleep.assert_awaited_once_with(7)
+        assert [call.args[0] for call in sleep.await_args_list] == [7, 4]
         assert requests[0]["reasoning_effort"] == "none"
-        assert len(client.calls) == 2
+        assert len(client.calls) == 3
         assert client.calls[0]["http_status"] == 429 and client.calls[0]["backoff_seconds"] == 7
         assert client.calls[0]["cost_kind"] == "reserved_upper_bound"
         assert client.spent == sum(Decimal(row["cost_usd"]) for row in client.calls)
@@ -107,7 +109,7 @@ async def test_failed_remote_calls_keep_reservations_and_cannot_retry_past_cap()
 
     client = LLMClient("https://example.invalid/v1", "priced-test", "test-key", local=False,
                        budget_usd="0.002", input_usd_per_million="0.1", output_usd_per_million="0.1",
-                       transport=httpx.MockTransport(fail))
+                       transport=httpx.MockTransport(fail), max_rate_limit_retries=0)
     try:
         for _ in range(2):
             with pytest.raises(httpx.HTTPStatusError):

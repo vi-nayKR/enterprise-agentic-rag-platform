@@ -47,7 +47,8 @@ are outside the provider-cost measurement.
 
 For Gemini, `python -m src.evals.benchmark --smoke` runs five dev cases before
 the full run, including answering, judging, and a rewrite. Remote calls are
-paced at a minimum 12-second interval by default. HTTP 429 retries use exponential
+paced at a minimum 12-second interval by default. HTTP 429 and temporary server
+errors (500/502/503/504) use exponential
 backoff (2, 4, 8, 16, 32, 60 seconds), honoring a longer numeric `Retry-After`.
 Each attempt is in the shared ledger; rejected calls without usage retain a
 conservative cost reservation. Persistent 429, authorization, and model-not-found

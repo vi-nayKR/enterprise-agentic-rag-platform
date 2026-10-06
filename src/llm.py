@@ -3,6 +3,7 @@
 import asyncio
 import json
 import time
+import math
 from decimal import Decimal
 from urllib.parse import urlparse
 
@@ -18,6 +19,7 @@ class LLMClient:
         max_rate_limit_retries: int = 6, request_interval_seconds: float = 0,
     ):
         self.model = model
+        self._api_key = api_key
         self.budget = Decimal(budget_usd)
         self.input_price = Decimal(input_usd_per_million)
         self.output_price = Decimal(output_usd_per_million)
@@ -58,16 +60,18 @@ class LLMClient:
             try:
                 return await self._complete_once(messages, max_tokens=max_tokens, schema=schema)
             except httpx.HTTPStatusError as error:
-                if error.response.status_code != 429 or attempt == self.max_rate_limit_retries:
+                if error.response.status_code not in (429, 500, 502, 503, 504) or attempt == self.max_rate_limit_retries:
                     raise
                 delay = min(60, 2 ** (attempt + 1))
                 retry_after = error.response.headers.get("retry-after", "")
                 try:
-                    delay = max(delay, float(retry_after))
+                    value = float(retry_after)
+                    if math.isfinite(value):
+                        delay = max(delay, value)
                 except ValueError:
                     pass
                 self.calls[-1].update(retry_attempt=attempt + 1, backoff_seconds=delay)
-                print(f"{self.model}: HTTP 429; retry {attempt + 1} after {delay:g}s", flush=True)
+                print(f"{self.model}: HTTP {error.response.status_code}; retry {attempt + 1} after {delay:g}s", flush=True)
                 while delay > 0:
                     await asyncio.sleep(min(delay, 60))
                     delay -= min(delay, 60)
@@ -107,6 +111,17 @@ class LLMClient:
                     body["reasoning_effort"] = "low"
                 response = await self._http.post("chat/completions", json=body)
                 record["http_status"] = response.status_code
+                if not response.is_success:
+                    try:
+                        detail = response.json()
+                        if isinstance(detail, list):
+                            detail = detail[0]
+                        detail = detail.get("error", {})
+                        message = str(detail.get("message", ""))
+                        record["provider_error_message"] = message.replace(self._api_key, "<redacted>") if self._api_key else message
+                        record["provider_error_status"] = detail.get("status")
+                    except (ValueError, IndexError, AttributeError):
+                        pass
                 response.raise_for_status()
                 payload = response.json()
                 usage = payload.get("usage", {})
