@@ -54,6 +54,23 @@ async def test_rate_limit_retries_stop_at_configured_ceiling():
 
 
 @pytest.mark.asyncio
+async def test_daily_quota_stops_without_repeating_requests():
+    response = {"error": {"message": "Daily quota exceeded", "status": "RESOURCE_EXHAUSTED", "details": [
+        {"violations": [{"quotaId": "GenerateRequestsPerDayPerProjectPerModel-FreeTier"}]},
+        {"@type": "type.googleapis.com/google.rpc.RetryInfo", "retryDelay": "59707s"}]}}
+    client = LLMClient("http://localhost/v1", "test",
+                       transport=httpx.MockTransport(lambda request: httpx.Response(429, json=response)))
+    try:
+        with patch("src.llm.asyncio.sleep", new_callable=AsyncMock) as sleep, pytest.raises(RuntimeError, match="Daily Gemini quota"):
+            await client.complete([{"role": "user", "content": "hello"}])
+        sleep.assert_not_awaited()
+        assert len(client.calls) == 1
+        assert client.calls[0]["provider_retry_delay"] == "59707s"
+    finally:
+        await client.close()
+
+
+@pytest.mark.asyncio
 async def test_local_tokens_are_logged_and_paid_budget_blocks_before_dispatch():
     requests = []
 

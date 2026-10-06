@@ -3,8 +3,10 @@
 Evaluation upgrade in progress. The GitHub repository URL is unchanged.
 The approved [SQuAD corpus and human review instructions](data/squad_v1/README.md)
 and [generated dataset inventory](results/dataset_v1.md) are available. The
-[20 frozen calibration answers](results/calibration_inputs.md) are measured;
-the full 700-case ablation run is in progress. Judge agreement awaits your labels.
+[20 frozen calibration answers](results/calibration_inputs.md) are measured.
+The local ablation run was interrupted when the user requested Gemini. The
+[Gemini smoke outcome](results/gemini_smoke_summary.md) is blocked by the key's
+daily free-tier quota; the full Gemini run has not started. Judge agreement awaits your labels.
 The implementation below
 describes the existing reference, not the planned production features.
 
@@ -66,8 +68,15 @@ Google's error directed migration to 3.8 Flash. Gemini 3.8 Flash uses low thinki
 effort; thinking cannot be disabled and remains included in cost accounting.
 The configured rates are $0.75/M input and $3.75/M output tokens, including
 thinking, under [Google's current introductory pricing](https://ai.google.dev/gemini-api/docs/pricing).
-Free-tier daily quotas can still interrupt
-a slow run; retrying cannot create additional daily quota.
+Free-tier daily quotas can still interrupt a slow run; retrying cannot create
+additional daily quota. This key's live error reported 20 requests per model per
+day, exhausted with a roughly 16.6-hour reset delay. Three smoke cases finalized
+with errors; case four was interrupted during backoff and case five was unstarted.
+No valid answers or judgements were obtained. The ledger and conservative allowance
+for unflushed attempts are in the smoke summary; these reservations are not billed
+charges. The remaining combined budget is $2.8606608. Explicit daily-quota errors
+now stop without repeated requests. Completion requires the user's selected
+quota/access option; the full benchmark is approximately 1,500 calls.
 
 ```bash
 make labels       # Actual dev answers; creates blank labels_todo.jsonl.

@@ -60,6 +60,8 @@ class LLMClient:
             try:
                 return await self._complete_once(messages, max_tokens=max_tokens, schema=schema)
             except httpx.HTTPStatusError as error:
+                if error.response.status_code == 429 and self.calls[-1].get("quota_exhausted") == "daily":
+                    raise RuntimeError("Daily Gemini quota exhausted; wait for reset or use a key with paid access") from error
                 if error.response.status_code not in (429, 500, 502, 503, 504) or attempt == self.max_rate_limit_retries:
                     raise
                 delay = min(60, 2 ** (attempt + 1))
@@ -120,6 +122,11 @@ class LLMClient:
                         message = str(detail.get("message", ""))
                         record["provider_error_message"] = message.replace(self._api_key, "<redacted>") if self._api_key else message
                         record["provider_error_status"] = detail.get("status")
+                        for item in detail.get("details", []):
+                            if any("PerDay" in violation.get("quotaId", "") for violation in item.get("violations", [])):
+                                record["quota_exhausted"] = "daily"
+                            if item.get("@type", "").endswith("RetryInfo"):
+                                record["provider_retry_delay"] = item.get("retryDelay")
                     except (ValueError, IndexError, AttributeError):
                         pass
                 response.raise_for_status()

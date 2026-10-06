@@ -367,7 +367,7 @@ async def run(args: argparse.Namespace) -> None:
                             row["metrics"].update(answer_metrics(answer, judged))
                 except Exception as error:
                     row["error"] = f"{type(error).__name__}: {error}"
-                    if isinstance(error, RuntimeError) and "budget exhausted" in str(error):
+                    if isinstance(error, RuntimeError) and any(message in str(error).lower() for message in ("budget exhausted", "daily gemini quota exhausted")):
                         raise
                     if getattr(error, "response", None) is not None and error.response.status_code in (401, 403, 404, 429):
                         raise
