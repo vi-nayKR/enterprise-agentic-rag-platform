@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "same_model_judge": true,
+  "questions": 5,
+  "valid_answers": 5,
+  "valid_judgements": 5,
+  "failed_queries": 0,
+  "calls": 11,
+  "input_tokens": 11035,
+  "output_tokens": 2055,
+  "http_429_count": 0,
+  "retry_count": 0,
+  "paid_rate_estimate_usd": "0.00288825",
+  "billing_note": "Paid-rate equivalent from reported tokens; not billed charges on the user-described free tier.",
+  "quota_limits": {
+    "minute": 8000,
+    "day": 200000
+  },
+  "minimum_request_interval_seconds": 12.0,
+  "observed_waits_note": "Local token-quota waits were observed; no provider 429 occurred. Retry behaviour is regression-tested, not observed in this live smoke.",
+  "resume_check": "Actual --smoke --resume returned already complete and made no additional calls",
+  "remaining_full_run_budget_usd": "2.85777255",
+  "calibration": {
+    "status": "pending_human_labels",
+    "agreement": null
+  },
+  "source": "smoke_groq.json"
+}

@@ -1,0 +1,1091 @@
+{
+  "status": "measured",
+  "dataset": "squad_v1",
+  "split": "dev",
+  "source_commit": "43e48619d974b240948ba4b76b66cbee3d9ddb23",
+  "python": "3.12.10",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "package_versions": {
+    "sentence-transformers": "5.7.0",
+    "torch": "2.14.1+cpu",
+    "langchain-text-splitters": "1.1.3",
+    "pydantic": "2.13.5"
+  },
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "reranker_model": "cross-encoder/ms-marco-MiniLM-L6-v2",
+  "reranker_revision": "233902d25c440f23af6f7d6e94d2946bac0bee0a",
+  "chunk_indexes": {
+    "fixed": {
+      "chunks": 603
+    },
+    "recursive": {
+      "chunks": 603
+    },
+    "semantic": {
+      "chunks": 1292
+    }
+  },
+  "judge_model": "openai/gpt-oss-120b",
+  "same_model_judge": true,
+  "run_identity": {
+    "model": "openai/gpt-oss-120b",
+    "base_url": "https://api.groq.com/openai/v1",
+    "rates": [
+      "0.15",
+      "0.60"
+    ],
+    "cases_sha256": "810d98d50fb980592b57ad931f652acab4823aeac29b66b06d145029ba1accf6",
+    "corpus_sha256": "923f79e45d4f08304b6e9e5f825de1b7c8269154f6a6f555e0129a82c6dacabf",
+    "code_sha256": "8443db92f48c1e77c52427e705ba874a8198202f47122087551148d51422772b"
+  },
+  "provider": "groq",
+  "token_limits": {
+    "minute": 8000,
+    "day": 200000
+  },
+  "request_interval_seconds": 12.0,
+  "rate_limit_retries": 6,
+  "cost_rates_usd_per_million": {
+    "input": "0.15",
+    "output": "0.60"
+  },
+  "test_review_sha256": "b3bdf84105d8a7ae009bd82b760c09a04a0de416eb318afc364e07d19810440c",
+  "test_review_provenance": [],
+  "test_sensitivity_excluded_id": "573786b51c4567190057448e",
+  "garbled_formula_id": "57297a276aef051400154f8a",
+  "exact_match_computed": false,
+  "ranking_depth": 10,
+  "warm_index": true,
+  "result_cache": false,
+  "experiment_design": "one factor at a time; not a complete factorial or global optimum search",
+  "cost_scope": "provider token charges, excluding electricity/hardware",
+  "records": [
+    {
+      "id": "fixed_hybrid:56e1ec83cd28a01900c67c0e",
+      "configuration": "fixed_hybrid",
+      "split": "dev",
+      "question_id": "56e1ec83cd28a01900c67c0e",
+      "question_origin": "human_authored_squad",
+      "reviewer": null,
+      "review_provenance": null,
+      "review_notes": null,
+      "gold_source_chunk_id": "30408117680a406f",
+      "question": "What is the most well-known algorithm associated with the integer factorization problem?",
+      "reference_answers": [
+        "the general number field sieve",
+        "RSA",
+        "general number field sieve"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "The best known classical algorithm for integer factorization is the General Number Field Sieve.",
+            "citation_ids": [
+              "30408117680a406f_fixed_0"
+            ]
+          },
+          {
+            "text": "The best known quantum algorithm for integer factorization is Shor's algorithm, which runs in polynomial time.",
+            "citation_ids": [
+              "30408117680a406f_fixed_1"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": {
+        "answer_relevant": true,
+        "claim_support": [
+          {
+            "claim_index": 0,
+            "supported": true
+          },
+          {
+            "claim_index": 1,
+            "supported": true
+          }
+        ],
+        "citation_support": [
+          {
+            "claim_index": 0,
+            "supported": true,
+            "citation_id": "30408117680a406f_fixed_0"
+          },
+          {
+            "claim_index": 1,
+            "supported": true,
+            "citation_id": "30408117680a406f_fixed_1"
+          }
+        ],
+        "reason": "Chunk 0 explicitly states that the best known algorithm for integer factorization is the general number field sieve, supporting claim 0. Chunk 1 states that the best known quantum algorithm is Shor's algorithm, supporting claim 1."
+      },
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "citation_coverage": 1.0,
+        "abstained": 0.0
+      },
+      "error": null,
+      "cost_usd": "0.00070965",
+      "completed": true,
+      "retrieval_latency_ms": 186.6872999999032,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "gold_chunk_ids": [
+        "30408117680a406f_fixed_0"
+      ],
+      "ranked_chunk_ids": [
+        "30408117680a406f_fixed_0",
+        "30408117680a406f_fixed_1",
+        "d04e1468058f4742_fixed_0",
+        "89cac738d1bb3723_fixed_0",
+        "3fff0e386706d513_fixed_0",
+        "5ad046b0a138db8c_fixed_0",
+        "267094041a9303dc_fixed_0",
+        "d953cfbf0d8ad856_fixed_0",
+        "0c179ab41ed42a56_fixed_0",
+        "6cff8048703b36a0_fixed_0"
+      ],
+      "contexts": [
+        {
+          "chunk_id": "30408117680a406f_fixed_0",
+          "text": "The integer factorization problem is the computational problem of determining the prime factorization of a given integer. Phrased as a decision problem, it is the problem of deciding whether the input has a factor less than k. No efficient integer factorization algorithm is known, and this fact forms the basis of several modern cryptographic systems, such as the RSA algorithm. The integer factorization problem is in NP and in co-NP (and even in UP and co-UP). If the problem is NP-complete, the polynomial time hierarchy will collapse to its first level (i.e., NP will equal co-NP). The best known algorithm for integer factorization is the general number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer. However, the best known quantum algori",
+          "document_id": "30408117680a406f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 800,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "30408117680a406f_fixed_1",
+          "text": "al number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer. However, the best known quantum algorithm for this problem, Shor's algorithm, does run in polynomial time. Unfortunately, this fact doesn't say much about where the problem lies with respect to non-quantum complexity classes.",
+          "document_id": "30408117680a406f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 2,
+            "start_offset": 650,
+            "end_offset": 987,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "d04e1468058f4742_fixed_0",
+          "text": "The most commonly used reduction is a polynomial-time reduction. This means that the reduction process takes polynomial time. For example, the problem of squaring an integer can be reduced to the problem of multiplying two integers. This means an algorithm for multiplying two integers can be used to square an integer. Indeed, this can be done by giving the same input to both inputs of the multiplication algorithm. Thus we see that squaring is not more difficult than multiplication, since squaring can be reduced to multiplication.",
+          "document_id": "d04e1468058f4742",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 535,
+            "chunking": "fixed"
+          }
+        }
+      ],
+      "call_range": [
+        0,
+        2
+      ],
+      "answer_latency_ms": 2105.8960999998817
+    },
+    {
+      "id": "recursive_bm25:5726446a89cfff1900a8404e",
+      "configuration": "recursive_bm25",
+      "split": "dev",
+      "question_id": "5726446a89cfff1900a8404e",
+      "question_origin": "human_authored_squad",
+      "reviewer": null,
+      "review_provenance": null,
+      "review_notes": null,
+      "gold_source_chunk_id": "e937f6a874321ceb",
+      "question": "What did AUSTPAC support ",
+      "reference_answers": [
+        "supporting applications such as on-line betting, financial applications",
+        "applications such as on-line betting, financial applications",
+        "applications such as on-line betting, financial applications"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "AUSTPAC supported applications such as on-line betting, financial applications (including use by the Australian Tax Office), and remote terminal access to academic institutions.",
+            "citation_ids": [
+              "e937f6a874321ceb_recursive_0"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": {
+        "answer_relevant": true,
+        "claim_support": [
+          {
+            "claim_index": 0,
+            "supported": true
+          }
+        ],
+        "citation_support": [
+          {
+            "claim_index": 0,
+            "supported": true,
+            "citation_id": "e937f6a874321ceb_recursive_0"
+          }
+        ],
+        "reason": "The source chunk explicitly states that AUSTPAC supported applications such as on-line betting, financial applications (including use by the Australian Tax Office) and remote terminal access to academic institutions, which directly entails the claim."
+      },
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "citation_coverage": 1.0,
+        "abstained": 0.0
+      },
+      "error": null,
+      "cost_usd": "0.00054690",
+      "completed": true,
+      "retrieval_latency_ms": 20.177599999442464,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "gold_chunk_ids": [
+        "e937f6a874321ceb_recursive_0"
+      ],
+      "ranked_chunk_ids": [
+        "e937f6a874321ceb_recursive_0",
+        "5776592c1d0a84b6_recursive_1",
+        "2c6f708910056aeb_recursive_0",
+        "5dc8c28852635c5c_recursive_0",
+        "5776592c1d0a84b6_recursive_0",
+        "373df465dbaa1eef_recursive_0",
+        "b59efd75f181d968_recursive_0",
+        "8ec6e09d66be5ca3_recursive_1",
+        "d7889870d1a44ce1_recursive_0",
+        "1e82413de93b0a3f_recursive_0"
+      ],
+      "contexts": [
+        {
+          "chunk_id": "e937f6a874321ceb_recursive_0",
+          "text": "AUSTPAC was an Australian public X.25 network operated by Telstra. Started by Telecom Australia in the early 1980s, AUSTPAC was Australia's first public packet-switched data network, supporting applications such as on-line betting, financial applications — the Australian Tax Office made use of AUSTPAC — and remote terminal access to academic institutions, who maintained their connections to AUSTPAC up until the mid-late 1990s in some cases. Access can be via a dial-up terminal to a PAD, or, by linking a permanent X.25 node to the network.[citation needed]",
+          "document_id": "e937f6a874321ceb",
+          "metadata": {
+            "title": "Packet_switching",
+            "filename": "Packet_switching.txt",
+            "section": "Packet_switching",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 561,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "5776592c1d0a84b6_recursive_1",
+          "text": ". ἄζωτον \"lifeless\"), which did not support either. Azote later became nitrogen in English, although it has kept the name in French and several other European languages.",
+          "document_id": "5776592c1d0a84b6",
+          "metadata": {
+            "title": "Oxygen",
+            "filename": "Oxygen.txt",
+            "section": "Oxygen",
+            "total_chunks": 2,
+            "start_offset": 649,
+            "end_offset": 818,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "2c6f708910056aeb_recursive_0",
+          "text": "In an interview with newspaper editor Arthur Brisbane, Tesla said that he did not believe in telepathy, stating, \"Suppose I made up my mind to murder you,\" he said, \"In a second you would know it. Now, isn't that wonderful? By what process does the mind get at all this?\" In the same interview, Tesla said that he believed that all fundamental laws could be reduced to one.",
+          "document_id": "2c6f708910056aeb",
+          "metadata": {
+            "title": "Nikola_Tesla",
+            "filename": "Nikola_Tesla.txt",
+            "section": "Nikola_Tesla",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 373,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "call_range": [
+        2,
+        4
+      ],
+      "answer_latency_ms": 11947.320299999774
+    },
+    {
+      "id": "recursive_hybrid_rerank:5711628a2419e314009555e1",
+      "configuration": "recursive_hybrid_rerank",
+      "split": "dev",
+      "question_id": "5711628a2419e314009555e1",
+      "question_origin": "human_authored_squad",
+      "reviewer": null,
+      "review_provenance": null,
+      "review_notes": null,
+      "gold_source_chunk_id": "0069ac7865818c29",
+      "question": "How much less steam did the Corliss engine use compared to the Watt engine?",
+      "reference_answers": [
+        "30%",
+        "30% less steam",
+        "30%"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "The Corliss steam engine used 30% less steam than the Watt engine.",
+            "citation_ids": [
+              "0069ac7865818c29_recursive_0"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": {
+        "answer_relevant": true,
+        "claim_support": [
+          {
+            "claim_index": 0,
+            "supported": true
+          }
+        ],
+        "citation_support": [
+          {
+            "claim_index": 0,
+            "supported": true,
+            "citation_id": "0069ac7865818c29_recursive_0"
+          }
+        ],
+        "reason": "The cited source explicitly states that the Corliss steam engine used 30% less steam, which directly supports the claim that it used 30% less steam than the Watt engine."
+      },
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "citation_coverage": 1.0,
+        "abstained": 0.0
+      },
+      "error": null,
+      "cost_usd": "0.00054885",
+      "completed": true,
+      "retrieval_latency_ms": 1223.2812000002014,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "gold_chunk_ids": [
+        "0069ac7865818c29_recursive_0"
+      ],
+      "ranked_chunk_ids": [
+        "0069ac7865818c29_recursive_0",
+        "0ae9361b34787dd4_recursive_0",
+        "c569be8582c6ee29_recursive_0",
+        "4c6b933becead54c_recursive_0",
+        "30d233029ce7a1e4_recursive_0",
+        "31d4502959d622c4_recursive_0",
+        "40986f319bc9682c_recursive_0",
+        "980d6673f0a32bcc_recursive_0",
+        "f445f6e8a5e735c9_recursive_0",
+        "52518f894a1f4d76_recursive_0"
+      ],
+      "contexts": [
+        {
+          "chunk_id": "0069ac7865818c29_recursive_0",
+          "text": "The acme of the horizontal engine was the Corliss steam engine, patented in 1849, which was a four-valve counter flow engine with separate steam admission and exhaust valves and automatic variable steam cutoff. When Corliss was given the Rumford medal the committee said that \"no one invention since Watt's time has so enhanced the efficiency of the steam engine\". In addition to using 30% less steam, it provided more uniform speed due to variable steam cut off, making it well suited to manufacturing, especially cotton spinning.",
+          "document_id": "0069ac7865818c29",
+          "metadata": {
+            "title": "Steam_engine",
+            "filename": "Steam_engine.txt",
+            "section": "Steam_engine",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 531,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "0ae9361b34787dd4_recursive_0",
+          "text": "In 1781 James Watt patented a steam engine that produced continuous rotary motion. Watt's ten-horsepower engines enabled a wide range of manufacturing machinery to be powered. The engines could be sited anywhere that water and coal or wood fuel could be obtained. By 1883, engines that could provide 10,000 hp had become feasible. The stationary steam engine was a key component of the Industrial Revolution, allowing factories to locate where water power was unavailable. The atmospheric engines of Newcomen and Watt were large compared to the amount of power they produced, but high pressure steam engines were light enough to be applied to vehicles such as traction engines and the railway locomotives.",
+          "document_id": "0ae9361b34787dd4",
+          "metadata": {
+            "title": "Steam_engine",
+            "filename": "Steam_engine.txt",
+            "section": "Steam_engine",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 705,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "c569be8582c6ee29_recursive_0",
+          "text": "The historical measure of a steam engine's energy efficiency was its \"duty\". The concept of duty was first introduced by Watt in order to illustrate how much more efficient his engines were over the earlier Newcomen designs. Duty is the number of foot-pounds of work delivered by burning one bushel (94 pounds) of coal. The best examples of Newcomen designs had a duty of about 7 million, but most were closer to 5 million. Watt's original low-pressure designs were able to deliver duty as high as 25 million, but averaged about 17. This was a three-fold improvement over the average Newcomen design. Early Watt engines equipped with high-pressure steam improved this to 65 million.",
+          "document_id": "c569be8582c6ee29",
+          "metadata": {
+            "title": "Steam_engine",
+            "filename": "Steam_engine.txt",
+            "section": "Steam_engine",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 682,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "call_range": [
+        4,
+        6
+      ],
+      "answer_latency_ms": 11909.215900001072
+    },
+    {
+      "id": "semantic_hybrid:56e0ef90231d4119001ac46b",
+      "configuration": "semantic_hybrid",
+      "split": "dev",
+      "question_id": "56e0ef90231d4119001ac46b",
+      "question_origin": "human_authored_squad",
+      "reviewer": null,
+      "review_provenance": null,
+      "review_notes": null,
+      "gold_source_chunk_id": "ca0f04fde4a85715",
+      "question": "What sort of power transmission did Tesla show off at his labs?",
+      "reference_answers": [
+        "wireless",
+        "wireless",
+        "wireless"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "Tesla demonstrated wireless power transmission by lighting electric lamps wirelessly at his labs.",
+            "citation_ids": [
+              "ca0f04fde4a85715_semantic_1"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": {
+        "answer_relevant": true,
+        "claim_support": [
+          {
+            "claim_index": 0,
+            "supported": true
+          }
+        ],
+        "citation_support": [
+          {
+            "claim_index": 0,
+            "supported": true,
+            "citation_id": "ca0f04fde4a85715_semantic_1"
+          }
+        ],
+        "reason": "The cited source explicitly states that Tesla lit electric lamps wirelessly, demonstrating wireless power transmission, which directly supports the claim."
+      },
+      "metrics": {
+        "recall@1": 0.5,
+        "recall@5": 0.5,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 0.8175295903539445,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "citation_coverage": 1.0,
+        "abstained": 0.0
+      },
+      "error": null,
+      "cost_usd": "0.00048150",
+      "completed": true,
+      "retrieval_latency_ms": 181.55649999971502,
+      "rewritten_query": null,
+      "gold_chunk_count": 2,
+      "gold_chunk_ids": [
+        "ca0f04fde4a85715_semantic_0",
+        "ca0f04fde4a85715_semantic_1"
+      ],
+      "ranked_chunk_ids": [
+        "ca0f04fde4a85715_semantic_1",
+        "d7889870d1a44ce1_semantic_0",
+        "25a6311f83343dc2_semantic_2",
+        "d614eab4ef27ada2_semantic_1",
+        "b2e3d4474409ba9b_semantic_0",
+        "048934f7c4c2ca17_semantic_0",
+        "ca0f04fde4a85715_semantic_0",
+        "f9660ec548560d53_semantic_0",
+        "51e44d41819e0ebb_semantic_0",
+        "063f3934976633c2_semantic_0"
+      ],
+      "contexts": [
+        {
+          "chunk_id": "ca0f04fde4a85715_semantic_1",
+          "text": "at 46 E. Houston Street, in New York. He lit electric lamps wirelessly at both locations, demonstrating the potential of wireless power transmission. In the same year, he patented the Tesla coil.",
+          "document_id": "ca0f04fde4a85715",
+          "metadata": {
+            "title": "Nikola_Tesla",
+            "filename": "Nikola_Tesla.txt",
+            "section": "Nikola_Tesla",
+            "total_chunks": 2,
+            "start_offset": 161,
+            "end_offset": 356,
+            "chunking": "semantic"
+          }
+        },
+        {
+          "chunk_id": "d7889870d1a44ce1_semantic_0",
+          "text": "While experimenting, Tesla inadvertently faulted a power station generator, causing a power outage. In August 1917, Tesla explained what had happened in The Electrical Experimenter: \"As an example of what has been done with several hundred kilowatts of high frequency energy liberated, it was found that the dynamos in a power house six miles away were repeatedly burned out, due to the powerful high frequency currents set up in them, and which caused heavy sparks to jump through the windings and destroy the insulation!\"",
+          "document_id": "d7889870d1a44ce1",
+          "metadata": {
+            "title": "Nikola_Tesla",
+            "filename": "Nikola_Tesla.txt",
+            "section": "Nikola_Tesla",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 523,
+            "chunking": "semantic"
+          }
+        },
+        {
+          "chunk_id": "25a6311f83343dc2_semantic_2",
+          "text": "adiation). In his research, Tesla devised several experimental setups to produce X-rays. Tesla held that, with his circuits, the \"instrument will ... enable one to generate Roentgen rays of much greater power than obtainable with ordinary apparatus.\"",
+          "document_id": "25a6311f83343dc2",
+          "metadata": {
+            "title": "Nikola_Tesla",
+            "filename": "Nikola_Tesla.txt",
+            "section": "Nikola_Tesla",
+            "total_chunks": 3,
+            "start_offset": 402,
+            "end_offset": 652,
+            "chunking": "semantic"
+          }
+        }
+      ],
+      "call_range": [
+        6,
+        8
+      ],
+      "answer_latency_ms": 11832.91029999964
+    },
+    {
+      "id": "recursive_hybrid_rewrite:571c4132dd7acb1400e4c0b4",
+      "configuration": "recursive_hybrid_rewrite",
+      "split": "dev",
+      "question_id": "571c4132dd7acb1400e4c0b4",
+      "question_origin": "human_authored_squad",
+      "reviewer": null,
+      "review_provenance": null,
+      "review_notes": null,
+      "gold_source_chunk_id": "7bf5fd67a6fb4d25",
+      "question": "What effect did breathing Priestley's discovered gas have on the experiment's mouse?",
+      "reference_answers": [
+        "active",
+        "more active and lived longer",
+        "was more active and lived longer",
+        "more active and lived longer while breathing it",
+        "was more active and lived longer"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "The mouse breathing Priestley's gas was more active and lived longer.",
+            "citation_ids": [
+              "7bf5fd67a6fb4d25_recursive_0"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": {
+        "answer_relevant": true,
+        "claim_support": [
+          {
+            "claim_index": 0,
+            "supported": true
+          }
+        ],
+        "citation_support": [
+          {
+            "claim_index": 0,
+            "supported": true,
+            "citation_id": "7bf5fd67a6fb4d25_recursive_0"
+          }
+        ],
+        "reason": "The cited source explicitly states that the mouse was more active and lived longer while breathing Priestley's gas, directly confirming the claim."
+      },
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "citation_coverage": 1.0,
+        "abstained": 0.0
+      },
+      "error": null,
+      "cost_usd": "0.00060135",
+      "completed": true,
+      "call_range": [
+        8,
+        11
+      ],
+      "retrieval_latency_ms": 11827.208900000187,
+      "rewritten_query": "effect of breathing Priestley's discovered gas on experiment mouse",
+      "gold_chunk_count": 1,
+      "gold_chunk_ids": [
+        "7bf5fd67a6fb4d25_recursive_0"
+      ],
+      "ranked_chunk_ids": [
+        "7bf5fd67a6fb4d25_recursive_0",
+        "0069c542c6dd8c00_recursive_0",
+        "8ec6e09d66be5ca3_recursive_0",
+        "37af730a4a114ba4_recursive_0",
+        "ad35de847b35e5cf_recursive_0",
+        "5776592c1d0a84b6_recursive_0",
+        "31afdd0be5ff7efc_recursive_0",
+        "7bf5fd67a6fb4d25_recursive_1",
+        "55027cd8f4f490d0_recursive_0",
+        "52fb44981bea9f9a_recursive_0"
+      ],
+      "contexts": [
+        {
+          "chunk_id": "7bf5fd67a6fb4d25_recursive_0",
+          "text": "In the meantime, on August 1, 1774, an experiment conducted by the British clergyman Joseph Priestley focused sunlight on mercuric oxide (HgO) inside a glass tube, which liberated a gas he named \"dephlogisticated air\". He noted that candles burned brighter in the gas and that a mouse was more active and lived longer while breathing it. After breathing the gas himself, he wrote: \"The feeling of it to my lungs was not sensibly different from that of common air, but I fancied that my breast felt peculiarly light and easy for some time afterwards.\" Priestley published his findings in 1775 in a paper titled \"An Account of Further Discoveries in Air\" which was included in the second volume of his book titled Experiments and Observations on Different Kinds of Air",
+          "document_id": "7bf5fd67a6fb4d25",
+          "metadata": {
+            "title": "Oxygen",
+            "filename": "Oxygen.txt",
+            "section": "Oxygen",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 766,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "0069c542c6dd8c00_recursive_0",
+          "text": "In the late 17th century, Robert Boyle proved that air is necessary for combustion. English chemist John Mayow (1641–1679) refined this work by showing that fire requires only a part of air that he called spiritus nitroaereus or just nitroaereus. In one experiment he found that placing either a mouse or a lit candle in a closed container over water caused the water to rise and replace one-fourteenth of the air's volume before extinguishing the subjects. From this he surmised that nitroaereus is consumed in both respiration and combustion.",
+          "document_id": "0069c542c6dd8c00",
+          "metadata": {
+            "title": "Oxygen",
+            "filename": "Oxygen.txt",
+            "section": "Oxygen",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 544,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "8ec6e09d66be5ca3_recursive_0",
+          "text": "Oxygen was discovered independently by Carl Wilhelm Scheele, in Uppsala, in 1773 or earlier, and Joseph Priestley in Wiltshire, in 1774, but Priestley is often given priority because his work was published first. The name oxygen was coined in 1777 by Antoine Lavoisier, whose experiments with oxygen helped to discredit the then-popular phlogiston theory of combustion and corrosion. Its name derives from the Greek roots ὀξύς oxys, \"acid\", literally \"sharp\", referring to the sour taste of acids and -γενής -genes, \"producer\", literally \"begetter\", because at the time of naming, it was mistakenly thought that all acids required oxygen in their composition",
+          "document_id": "8ec6e09d66be5ca3",
+          "metadata": {
+            "title": "Oxygen",
+            "filename": "Oxygen.txt",
+            "section": "Oxygen",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 658,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "answer_latency_ms": 35860.872299999755
+    }
+  ],
+  "calibration": {
+    "status": "pending_human_labels",
+    "agreement": null
+  },
+  "calls": [
+    {
+      "model": "openai/gpt-oss-120b",
+      "status": "completed",
+      "prompt_tokens": 1012,
+      "completion_tokens": 205,
+      "cost_usd": "0.0002748",
+      "cost_kind": "measured",
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "999",
+        "x-ratelimit-remaining-tokens": "6665",
+        "x-ratelimit-reset-requests": "1m26.4s",
+        "x-ratelimit-reset-tokens": "10.012s"
+      }
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "status": "completed",
+      "prompt_tokens": 1299,
+      "completion_tokens": 400,
+      "cost_usd": "0.00043485",
+      "cost_kind": "measured",
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "998",
+        "x-ratelimit-remaining-tokens": "6366",
+        "x-ratelimit-reset-requests": "2m52.8s",
+        "x-ratelimit-reset-tokens": "12.254s"
+      }
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "status": "completed",
+      "prompt_tokens": 862,
+      "completion_tokens": 184,
+      "cost_usd": "0.0002397",
+      "cost_kind": "measured",
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "997",
+        "x-ratelimit-remaining-tokens": "6713",
+        "x-ratelimit-reset-requests": "4m19.2s",
+        "x-ratelimit-reset-tokens": "9.652s"
+      }
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "status": "completed",
+      "prompt_tokens": 1140,
+      "completion_tokens": 227,
+      "cost_usd": "0.0003072",
+      "cost_kind": "measured",
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "996",
+        "x-ratelimit-remaining-tokens": "6460",
+        "x-ratelimit-reset-requests": "5m45.6s",
+        "x-ratelimit-reset-tokens": "11.55s"
+      }
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "status": "completed",
+      "prompt_tokens": 1004,
+      "completion_tokens": 142,
+      "cost_usd": "0.0002358",
+      "cost_kind": "measured",
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "995",
+        "x-ratelimit-remaining-tokens": "6612",
+        "x-ratelimit-reset-requests": "7m12s",
+        "x-ratelimit-reset-tokens": "10.41s"
+      }
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "status": "completed",
+      "prompt_tokens": 1247,
+      "completion_tokens": 210,
+      "cost_usd": "0.00031305",
+      "cost_kind": "measured",
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "992",
+        "x-ratelimit-remaining-tokens": "6353",
+        "x-ratelimit-reset-requests": "11m31.2s",
+        "x-ratelimit-reset-tokens": "12.352s"
+      }
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "status": "completed",
+      "prompt_tokens": 834,
+      "completion_tokens": 133,
+      "cost_usd": "0.0002049",
+      "cost_kind": "measured",
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "991",
+        "x-ratelimit-remaining-tokens": "6782",
+        "x-ratelimit-reset-requests": "12m57.599s",
+        "x-ratelimit-reset-tokens": "9.135s"
+      }
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "status": "completed",
+      "prompt_tokens": 1076,
+      "completion_tokens": 192,
+      "cost_usd": "0.0002766",
+      "cost_kind": "measured",
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "990",
+        "x-ratelimit-remaining-tokens": "6569",
+        "x-ratelimit-reset-requests": "14m24s",
+        "x-ratelimit-reset-tokens": "10.732s"
+      }
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "status": "completed",
+      "prompt_tokens": 164,
+      "completion_tokens": 43,
+      "cost_usd": "0.0000504",
+      "cost_kind": "measured",
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "989",
+        "x-ratelimit-remaining-tokens": "7708",
+        "x-ratelimit-reset-requests": "15m50.4s",
+        "x-ratelimit-reset-tokens": "2.19s"
+      }
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "status": "completed",
+      "prompt_tokens": 1066,
+      "completion_tokens": 126,
+      "cost_usd": "0.0002355",
+      "cost_kind": "measured",
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "987",
+        "x-ratelimit-remaining-tokens": "6550",
+        "x-ratelimit-reset-requests": "18m43.2s",
+        "x-ratelimit-reset-tokens": "10.875s"
+      }
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "status": "completed",
+      "prompt_tokens": 1331,
+      "completion_tokens": 193,
+      "cost_usd": "0.00031545",
+      "cost_kind": "measured",
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "986",
+        "x-ratelimit-remaining-tokens": "6485",
+        "x-ratelimit-reset-requests": "20m9.6s",
+        "x-ratelimit-reset-tokens": "11.362s"
+      }
+    }
+  ],
+  "provider_cost_usd": "0.00288825",
+  "waiting_until_unix": null,
+  "summaries": [
+    {
+      "configuration": "fixed_hybrid",
+      "split": "dev",
+      "questions": 1,
+      "valid_answers": 1,
+      "valid_judgements": 1,
+      "failed_queries": 0,
+      "unrepresentable_gold": 0,
+      "recall@1": 1.0,
+      "recall@1_samples": 1,
+      "recall@5": 1.0,
+      "recall@5_samples": 1,
+      "recall@10": 1.0,
+      "recall@10_samples": 1,
+      "mrr": 1.0,
+      "mrr_samples": 1,
+      "ndcg@10": 1.0,
+      "ndcg@10_samples": 1,
+      "faithfulness": 1.0,
+      "faithfulness_samples": 1,
+      "answer_relevance": 1.0,
+      "answer_relevance_samples": 1,
+      "citation_accuracy": 1.0,
+      "citation_accuracy_samples": 1,
+      "citation_coverage": 1.0,
+      "citation_coverage_samples": 1,
+      "abstained": 0.0,
+      "abstained_samples": 1,
+      "retrieval_p50_ms": 186.6872999999032,
+      "retrieval_p95_ms": 186.6872999999032,
+      "answer_p50_ms": 2105.8960999998817,
+      "answer_p95_ms": 2105.8960999998817,
+      "provider_cost_usd_per_query": 0.00070965
+    },
+    {
+      "configuration": "recursive_bm25",
+      "split": "dev",
+      "questions": 1,
+      "valid_answers": 1,
+      "valid_judgements": 1,
+      "failed_queries": 0,
+      "unrepresentable_gold": 0,
+      "recall@1": 1.0,
+      "recall@1_samples": 1,
+      "recall@5": 1.0,
+      "recall@5_samples": 1,
+      "recall@10": 1.0,
+      "recall@10_samples": 1,
+      "mrr": 1.0,
+      "mrr_samples": 1,
+      "ndcg@10": 1.0,
+      "ndcg@10_samples": 1,
+      "faithfulness": 1.0,
+      "faithfulness_samples": 1,
+      "answer_relevance": 1.0,
+      "answer_relevance_samples": 1,
+      "citation_accuracy": 1.0,
+      "citation_accuracy_samples": 1,
+      "citation_coverage": 1.0,
+      "citation_coverage_samples": 1,
+      "abstained": 0.0,
+      "abstained_samples": 1,
+      "retrieval_p50_ms": 20.177599999442464,
+      "retrieval_p95_ms": 20.177599999442464,
+      "answer_p50_ms": 11947.320299999774,
+      "answer_p95_ms": 11947.320299999774,
+      "provider_cost_usd_per_query": 0.0005469
+    },
+    {
+      "configuration": "recursive_hybrid_rerank",
+      "split": "dev",
+      "questions": 1,
+      "valid_answers": 1,
+      "valid_judgements": 1,
+      "failed_queries": 0,
+      "unrepresentable_gold": 0,
+      "recall@1": 1.0,
+      "recall@1_samples": 1,
+      "recall@5": 1.0,
+      "recall@5_samples": 1,
+      "recall@10": 1.0,
+      "recall@10_samples": 1,
+      "mrr": 1.0,
+      "mrr_samples": 1,
+      "ndcg@10": 1.0,
+      "ndcg@10_samples": 1,
+      "faithfulness": 1.0,
+      "faithfulness_samples": 1,
+      "answer_relevance": 1.0,
+      "answer_relevance_samples": 1,
+      "citation_accuracy": 1.0,
+      "citation_accuracy_samples": 1,
+      "citation_coverage": 1.0,
+      "citation_coverage_samples": 1,
+      "abstained": 0.0,
+      "abstained_samples": 1,
+      "retrieval_p50_ms": 1223.2812000002014,
+      "retrieval_p95_ms": 1223.2812000002014,
+      "answer_p50_ms": 11909.215900001072,
+      "answer_p95_ms": 11909.215900001072,
+      "provider_cost_usd_per_query": 0.00054885
+    },
+    {
+      "configuration": "semantic_hybrid",
+      "split": "dev",
+      "questions": 1,
+      "valid_answers": 1,
+      "valid_judgements": 1,
+      "failed_queries": 0,
+      "unrepresentable_gold": 0,
+      "recall@1": 0.5,
+      "recall@1_samples": 1,
+      "recall@5": 0.5,
+      "recall@5_samples": 1,
+      "recall@10": 1.0,
+      "recall@10_samples": 1,
+      "mrr": 1.0,
+      "mrr_samples": 1,
+      "ndcg@10": 0.8175295903539445,
+      "ndcg@10_samples": 1,
+      "faithfulness": 1.0,
+      "faithfulness_samples": 1,
+      "answer_relevance": 1.0,
+      "answer_relevance_samples": 1,
+      "citation_accuracy": 1.0,
+      "citation_accuracy_samples": 1,
+      "citation_coverage": 1.0,
+      "citation_coverage_samples": 1,
+      "abstained": 0.0,
+      "abstained_samples": 1,
+      "retrieval_p50_ms": 181.55649999971502,
+      "retrieval_p95_ms": 181.55649999971502,
+      "answer_p50_ms": 11832.91029999964,
+      "answer_p95_ms": 11832.91029999964,
+      "provider_cost_usd_per_query": 0.0004815
+    },
+    {
+      "configuration": "recursive_hybrid_rewrite",
+      "split": "dev",
+      "questions": 1,
+      "valid_answers": 1,
+      "valid_judgements": 1,
+      "failed_queries": 0,
+      "unrepresentable_gold": 0,
+      "recall@1": 1.0,
+      "recall@1_samples": 1,
+      "recall@5": 1.0,
+      "recall@5_samples": 1,
+      "recall@10": 1.0,
+      "recall@10_samples": 1,
+      "mrr": 1.0,
+      "mrr_samples": 1,
+      "ndcg@10": 1.0,
+      "ndcg@10_samples": 1,
+      "faithfulness": 1.0,
+      "faithfulness_samples": 1,
+      "answer_relevance": 1.0,
+      "answer_relevance_samples": 1,
+      "citation_accuracy": 1.0,
+      "citation_accuracy_samples": 1,
+      "citation_coverage": 1.0,
+      "citation_coverage_samples": 1,
+      "abstained": 0.0,
+      "abstained_samples": 1,
+      "retrieval_p50_ms": 11827.208900000187,
+      "retrieval_p95_ms": 11827.208900000187,
+      "answer_p50_ms": 35860.872299999755,
+      "answer_p95_ms": 35860.872299999755,
+      "provider_cost_usd_per_query": 0.00060135
+    }
+  ],
+  "calibration_cost_usd": "0E-8"
+}

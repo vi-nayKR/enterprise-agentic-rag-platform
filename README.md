@@ -6,7 +6,9 @@ and [generated dataset inventory](results/dataset_v1.md) are available. The
 [20 frozen calibration answers](results/calibration_inputs.md) are measured.
 The local ablation run was interrupted, and the
 [Gemini smoke outcome](results/gemini_smoke_summary.md) remains archived after daily-quota exhaustion.
-The user selected Groq next; its five-question smoke is in progress. Judge agreement awaits your labels.
+The user selected Groq next; its [five-question smoke passed](results/groq_smoke_summary.md)
+with five valid answers/judgements, zero failures and no 429s. The full Groq
+ablation run is starting with persistent quotas and checkpoints. Judge agreement awaits your labels.
 The implementation below
 describes the existing reference, not the planned production features.
 
@@ -86,7 +88,11 @@ independent human labels remain necessary. Low reasoning effort is used, with
 reported completion usage included in costs. Configured paid-rate estimates are
 $0.15/M input and $0.60/M output tokens, following
 [Groq's model pricing](https://console.groq.com/docs/model/openai/gpt-oss-120b).
-They are not proof of billed charges on the free tier.
+They are not proof of billed charges on the free tier. The live smoke used
+11,035 input and 2,055 output tokens across 11 calls, for a $0.00288825 paid-rate
+equivalent. Local quota waits occurred; no 429 retry was needed. An actual completed
+checkpoint resume made no further calls. The full-run cap is $2.85777255 after
+allowing for prior Gemini attempts and this smoke; total allowance stays below $3.
 
 The archived Gemini attempt used `gemini-3.8-flash` for answering and judging:
 **same-model judge**. This may correlate answer and judge errors; independent human
