@@ -10,8 +10,11 @@ import subprocess
 import time
 from collections import defaultdict
 from pathlib import Path
+from urllib.parse import urlparse
+from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, Field
+import httpx
 from config.settings import settings
 
 from src.evals.judging import Answer, answer_metrics, generate_answer, human_label_sheet, judge_answer
@@ -49,6 +52,21 @@ class RewrittenQuery(BaseModel):
 
 def read_jsonl(path: Path) -> list[dict]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+
+
+def restore_checkpoint(path: Path, identity: dict, resume: bool) -> dict | None:
+    if not path.exists():
+        if resume:
+            raise ValueError("No checkpoint exists to resume")
+        return None
+    if not resume:
+        raise ValueError("Results already exist; use --resume or archive them before a new run")
+    report = json.loads(path.read_text(encoding="utf-8"))
+    if report.get("run_identity") != identity:
+        raise ValueError("Checkpoint model, prices, inputs, or code changed; archive it before a new run")
+    if len({row["id"] for row in report["records"]}) != len(report["records"]):
+        raise ValueError("Checkpoint contains duplicate case IDs")
+    return report
 
 
 def reviewed_test_cases(review_path: Path = DATA / "test_review.jsonl") -> list[dict]:
@@ -282,12 +300,26 @@ async def run(args: argparse.Namespace) -> None:
     # Check the expensive held-out run's human gate before loading models/calling an API.
     cases = read_jsonl(DATA / "dev.jsonl")
     smoke = getattr(args, "smoke", False)
+    resume = getattr(args, "resume", False)
+    hostname = urlparse(settings.EVAL_LLM_BASE_URL).hostname
+    provider = "groq" if hostname == "api.groq.com" else "gemini" if hostname == "generativelanguage.googleapis.com" else "local"
     if args.split == "all" and not args.prepare_labels and not smoke:
         cases.extend(reviewed_test_cases())
     if smoke:
         # One dev question per article; exercise generation, judging, and rewriting.
         cases = [next(row for row in cases if row["article"] == article)
                  for article in dict.fromkeys(row["article"] for row in cases)]
+    stem = "smoke_" + provider if smoke else "calibration_inputs" if args.prepare_labels else "retrieval_" + args.split if args.retrieval_only else "ablations_" + provider + "_" + args.split
+    identity = {"model": settings.EVAL_LLM_MODEL, "base_url": settings.EVAL_LLM_BASE_URL,
+                "rates": [str(settings.EVAL_INPUT_USD_PER_MILLION), str(settings.EVAL_OUTPUT_USD_PER_MILLION)],
+                "cases_sha256": hashlib.sha256(json.dumps(cases, sort_keys=True).encode()).hexdigest(),
+                "corpus_sha256": hashlib.sha256((DATA / "corpus.jsonl").read_bytes()).hexdigest(),
+                "code_sha256": hashlib.sha256(b"".join(path.read_bytes() for path in sorted(
+                    list((ROOT / "src" / "rag").glob("*.py")) + list((ROOT / "src" / "evals").glob("*.py")) + [ROOT / "src" / "llm.py"]))).hexdigest()}
+    previous = restore_checkpoint(RESULTS / (stem + ".json"), identity, resume)
+    if previous and previous["status"] == "measured":
+        print("Checkpoint already complete; no calls repeated", flush=True)
+        return
     embeddings = LocalEmbeddings()
     stores = await build_indexes(embeddings)
     client = None if args.retrieval_only else LLMClient(
@@ -297,6 +329,9 @@ async def run(args: argparse.Namespace) -> None:
         output_usd_per_million=str(settings.EVAL_OUTPUT_USD_PER_MILLION),
         request_interval_seconds=0 if settings.EVAL_LLM_LOCAL else settings.EVAL_REQUEST_INTERVAL_SECONDS,
         max_rate_limit_retries=settings.EVAL_RATE_LIMIT_RETRIES,
+        tokens_per_minute=settings.EVAL_TOKENS_PER_MINUTE if provider == "groq" else 0,
+        tokens_per_day=settings.EVAL_TOKENS_PER_DAY if provider == "groq" else 0,
+        quota_path=ROOT / ".cache" / ("groq_quota_" + hashlib.sha256((settings.EVAL_LLM_API_KEY + settings.EVAL_LLM_MODEL).encode()).hexdigest()[:16] + ".json") if provider == "groq" else None,
     )
     configurations = CONFIGS if not args.retrieval_only else [row for row in CONFIGS if not row[3]]
     retrievers = {name: HybridRetriever(top_k=10, retrieval_mode=mode, embeddings=embeddings,
@@ -309,8 +344,7 @@ async def run(args: argparse.Namespace) -> None:
         for row in cases:
             grouped[row["article"]].append(row)
         cases = [rows[index] for rows in grouped.values() for index in (0, 3, 6, 9)]
-    records = []
-    stem = "smoke_gemini" if smoke else "calibration_inputs" if args.prepare_labels else "retrieval_" + args.split if args.retrieval_only else "ablations_" + args.split
+    records = previous["records"] if previous else []
     report = {"status": "running", "dataset": "squad_v1", "split": args.split,
               "source_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
               "python": platform.python_version(), "platform": platform.platform(),
@@ -321,6 +355,8 @@ async def run(args: argparse.Namespace) -> None:
               "chunk_indexes": {mode: {"chunks": len(store.chunks)} for mode, store in stores.items()},
               "judge_model": client.model if client else None,
               "same_model_judge": client is not None,
+              "run_identity": identity, "provider": provider,
+              "token_limits": {"minute": settings.EVAL_TOKENS_PER_MINUTE, "day": settings.EVAL_TOKENS_PER_DAY} if provider == "groq" else None,
               "request_interval_seconds": client.request_interval_seconds if client else 0,
               "rate_limit_retries": client.max_rate_limit_retries if client else 0,
               "cost_rates_usd_per_million": {"input": str(client.input_price), "output": str(client.output_price)} if client else None,
@@ -332,10 +368,30 @@ async def run(args: argparse.Namespace) -> None:
               "experiment_design": "one factor at a time; not a complete factorial or global optimum search",
               "cost_scope": "provider token charges, excluding electricity/hardware", "records": records,
               "calibration": {"status": "pending_human_labels", "agreement": None}}
+    if previous:
+        report = previous
+        report["status"] = "running"
+        if client:
+            client.calls = report.get("calls", [])
+            client.spent = Decimal(report.get("provider_cost_usd", "0"))
+    def checkpoint():
+        if not row.get("completed"):
+            row["cost_usd"] = str(prior_cost + client.spent - spent)
+            row.setdefault("call_range", [call_start, call_start])[1] = len(client.calls)
+        report["calls"] = client.calls
+        report["provider_cost_usd"] = str(client.spent)
+        report["waiting_until_unix"] = client.wait_until
+        report["summaries"] = summarize(records)
+        write_report(report, stem)
+    if client:
+        client.checkpoint = checkpoint
     try:
         for question_index, case in enumerate(cases):
             selected = [configurations[(0, 2, 4, 5, 6)[question_index]]] if smoke else [configurations[question_index % len(configurations)]] if args.prepare_labels else configurations
             for name, chunking, mode, rewrite in selected:
+                existing = next((row for row in records if row["id"] == name + ":" + case["id"]), None)
+                if existing and existing.get("completed"):
+                    continue
                 row = {"id": name + ":" + case["id"], "configuration": name, "split": case["split"],
                        "question_id": case["id"], "question_origin": case["origin"],
                        "reviewer": case.get("reviewer"), "review_provenance": case.get("review_provenance"),
@@ -344,37 +400,52 @@ async def run(args: argparse.Namespace) -> None:
                        "question": case["question"], "reference_answers": [answer["text"] for answer in case["answers"]],
                        "answer_origin": "model_generated", "answer": None, "judgement": None, "metrics": {},
                        "error": None, "cost_usd": "0"}
+                if existing:
+                    row = existing
+                    row["error"] = None
+                else:
+                    records.append(row)
+                row["completed"] = False
+                prior_cost = Decimal(row["cost_usd"])
                 started, spent = time.perf_counter(), client.spent if client else 0
                 call_start = len(client.calls) if client else 0
                 try:
-                    results, rewritten = await retrieve_case(retrievers[name], case, rewrite, client)
-                    row["retrieval_latency_ms"] = (time.perf_counter() - started) * 1000
-                    row["rewritten_query"] = rewritten
-                    gold = relevant_chunks(case, list(stores[chunking].chunks.values()))
-                    row["gold_chunk_count"] = len(gold)
-                    row["gold_chunk_ids"] = sorted(gold)
-                    row["ranked_chunk_ids"] = [result.chunk_id for result in results]
-                    row["metrics"] = ranking_metrics([result.chunk_id for result in results], gold)
-                    row["contexts"] = [{"chunk_id": result.chunk_id, "text": result.text,
-                                        "document_id": result.document_id, "metadata": result.metadata} for result in results[:3]]
+                    if "contexts" not in row:
+                        results, rewritten = await retrieve_case(retrievers[name], case, rewrite, client)
+                        row["retrieval_latency_ms"] = (time.perf_counter() - started) * 1000
+                        row["rewritten_query"] = rewritten
+                        gold = relevant_chunks(case, list(stores[chunking].chunks.values()))
+                        row["gold_chunk_count"] = len(gold)
+                        row["gold_chunk_ids"] = sorted(gold)
+                        row["ranked_chunk_ids"] = [result.chunk_id for result in results]
+                        row["metrics"] = ranking_metrics([result.chunk_id for result in results], gold)
+                        row["contexts"] = [{"chunk_id": result.chunk_id, "text": result.text,
+                                            "document_id": result.document_id, "metadata": result.metadata} for result in results[:3]]
                     if client is not None:
-                        answer = await generate_answer(client, case["question"], row["contexts"])
-                        row["answer"] = answer.model_dump()
-                        row["answer_latency_ms"] = (time.perf_counter() - started) * 1000
+                        if row["answer"] is None:
+                            answer = await generate_answer(client, case["question"], row["contexts"])
+                            row["answer"] = answer.model_dump()
+                            row["answer_latency_ms"] = (time.perf_counter() - started) * 1000
+                            checkpoint()
+                        else:
+                            answer = Answer.model_validate(row["answer"])
                         if not args.prepare_labels:
                             judged = await judge_answer(client, case["question"], row["reference_answers"], row["contexts"], answer)
                             row["judgement"] = judged.model_dump()
                             row["metrics"].update(answer_metrics(answer, judged))
+                    row["completed"] = True
                 except Exception as error:
                     row["error"] = f"{type(error).__name__}: {error}"
                     if isinstance(error, RuntimeError) and any(message in str(error).lower() for message in ("budget exhausted", "daily gemini quota exhausted")):
                         raise
                     if getattr(error, "response", None) is not None and error.response.status_code in (401, 403, 404, 429):
                         raise
+                    if isinstance(error, (httpx.TransportError, httpx.HTTPStatusError)):
+                        raise
+                    row["completed"] = True
                 finally:
-                    row["cost_usd"] = str(client.spent - spent) if client else "0"
-                    row["call_range"] = [call_start, len(client.calls) if client else 0]
-                    records.append(row)
+                    row["cost_usd"] = str(prior_cost + client.spent - spent) if client else "0"
+                    row.setdefault("call_range", [call_start, call_start])[1] = len(client.calls) if client else 0
                     report["summaries"] = summarize(records)
                     report["calls"] = client.calls if client else []
                     report["provider_cost_usd"] = str(client.spent) if client else "0"
@@ -413,6 +484,7 @@ def main() -> None:
     parser.add_argument("--retrieval-only", action="store_true", help="Debug retrieval only; omits rewriting and answer metrics")
     parser.add_argument("--prepare-labels", action="store_true", help="Generate actual dev answers with blank human labels")
     parser.add_argument("--smoke", action="store_true", help="Five dev cases across articles; includes a rewrite call")
+    parser.add_argument("--resume", action="store_true", help="Resume a matching checkpoint without repeating completed cases")
     args = parser.parse_args()
     if args.prepare_labels:
         args.split = "dev"

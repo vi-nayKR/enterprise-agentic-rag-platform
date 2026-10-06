@@ -28,6 +28,8 @@ class Settings(BaseSettings):
     EVAL_OUTPUT_USD_PER_MILLION: Decimal = Field(default=Decimal("0"), ge=0)
     EVAL_REQUEST_INTERVAL_SECONDS: float = Field(default=12, ge=0)
     EVAL_RATE_LIMIT_RETRIES: int = Field(default=6, ge=0)
+    EVAL_TOKENS_PER_MINUTE: int = Field(default=8000, ge=1)
+    EVAL_TOKENS_PER_DAY: int = Field(default=200000, ge=1)
     
     # RAG Settings
     CHUNK_SIZE: int = 800

@@ -5,7 +5,43 @@ from decimal import Decimal
 import httpx
 import pytest
 
-from src.llm import LLMClient
+from src.llm import LLMClient, quota_delay
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+
+def test_token_quota_windows_and_single_request_ceiling():
+    events = [{"time": 100, "tokens": 6000}, {"time": 130, "tokens": 1000}]
+    assert quota_delay(events, 2000, 140, 8000, 200000) == 20
+    assert quota_delay(events, 2000, 160, 8000, 200000) == 0
+    assert quota_delay(events, 2000, 140, 8000, 8000) == 86360
+    with pytest.raises(ValueError, match="upper bound"):
+        quota_delay([], 8001, 140, 8000, 200000)
+
+
+@pytest.mark.asyncio
+async def test_quota_is_saved_before_dispatch_and_reconciled_across_restart():
+    with TemporaryDirectory() as folder:
+        path = Path(folder) / "quota.json"
+
+        def respond(request):
+            pending = json.loads(path.read_text())
+            assert pending[-1]["usage"] == "reserved"
+            return httpx.Response(200, headers={"x-ratelimit-remaining-tokens": "7985"},
+                                  json={"usage": {"prompt_tokens": 10, "completion_tokens": 5},
+                                        "choices": [{"finish_reason": "stop", "message": {"content": '{"ok":true}'}}]})
+
+        client = LLMClient("http://localhost/v1", "test", tokens_per_minute=8000, tokens_per_day=200000,
+                           quota_path=path, transport=httpx.MockTransport(respond))
+        await client.complete([{"role": "user", "content": "hello"}])
+        await client.close()
+        restarted = LLMClient("http://localhost/v1", "test", quota_path=path)
+        try:
+            assert restarted.quota_events[-1]["tokens"] == 15
+            assert restarted.quota_events[-1]["usage"] == "measured"
+            assert client.calls[0]["rate_limit_headers"]["x-ratelimit-remaining-tokens"] == "7985"
+        finally:
+            await restarted.close()
 
 
 @pytest.mark.asyncio

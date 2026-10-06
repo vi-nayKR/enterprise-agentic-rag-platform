@@ -4,10 +4,29 @@ import asyncio
 import json
 import time
 import math
+from pathlib import Path
 from decimal import Decimal
 from urllib.parse import urlparse
 
 import httpx
+
+
+def quota_delay(events: list[dict], tokens: int, now: float, minute_limit: int, day_limit: int) -> float:
+    """Conservative rolling windows; pending/unknown usage keeps its reservation."""
+    delay = 0.0
+    for window, limit in ((60, minute_limit), (86400, day_limit)):
+        if not limit:
+            continue
+        if tokens > limit:
+            raise ValueError("One request's token upper bound exceeds the configured quota")
+        active = sorted((row for row in events if row["time"] + window > now), key=lambda row: row["time"])
+        total = sum(row["tokens"] for row in active)
+        for row in active:
+            if total + tokens <= limit:
+                break
+            total -= row["tokens"]
+            delay = max(delay, row["time"] + window - now)
+    return delay
 
 
 class LLMClient:
@@ -17,6 +36,7 @@ class LLMClient:
         output_usd_per_million: str = "0", input_token_limit: int = 8192,
         transport: httpx.AsyncBaseTransport | None = None,
         max_rate_limit_retries: int = 6, request_interval_seconds: float = 0,
+        tokens_per_minute: int = 0, tokens_per_day: int = 0, quota_path: Path | None = None,
     ):
         self.model = model
         self._api_key = api_key
@@ -42,6 +62,16 @@ class LLMClient:
         self.request_interval_seconds = request_interval_seconds
         self._last_dispatch = 0.0
         self._gemini = urlparse(base_url).hostname == "generativelanguage.googleapis.com"
+        self._groq = urlparse(base_url).hostname == "api.groq.com"
+        if min(tokens_per_minute, tokens_per_day) < 0:
+            raise ValueError("Token quotas must be nonnegative")
+        self.tokens_per_minute = tokens_per_minute
+        self.tokens_per_day = tokens_per_day
+        self.quota_path = quota_path
+        # ponytail: one evaluator owns this ledger; add a file lock for concurrent runs.
+        self.quota_events = json.loads(quota_path.read_text(encoding="utf-8")) if quota_path and quota_path.exists() else []
+        self.checkpoint = None
+        self.wait_until = None
         self.spent = Decimal(0)
         self.calls: list[dict] = []
         self._lock = asyncio.Lock()
@@ -53,6 +83,26 @@ class LLMClient:
 
     async def close(self) -> None:
         await self._http.aclose()
+
+    def _save_quota(self) -> None:
+        if self.quota_path:
+            self.quota_path.parent.mkdir(parents=True, exist_ok=True)
+            temporary = self.quota_path.with_suffix(".part")
+            temporary.write_text(json.dumps(self.quota_events), encoding="utf-8")
+            temporary.replace(self.quota_path)
+        if self.checkpoint:
+            self.checkpoint()
+
+    async def _wait(self, seconds: float, reason: str) -> None:
+        self.wait_until = time.time() + seconds
+        print(f"{self.model}: {reason}; waiting {seconds:.1f}s", flush=True)
+        if self.checkpoint:
+            self.checkpoint()
+        while seconds > 0:
+            part = min(seconds, 60)
+            await asyncio.sleep(part)
+            seconds -= part
+        self.wait_until = None
 
     async def complete(self, messages: list[dict[str, str]], *, max_tokens: int = 256,
                        schema: dict | None = None) -> str:
@@ -74,9 +124,7 @@ class LLMClient:
                     pass
                 self.calls[-1].update(retry_attempt=attempt + 1, backoff_seconds=delay)
                 print(f"{self.model}: HTTP {error.response.status_code}; retry {attempt + 1} after {delay:g}s", flush=True)
-                while delay > 0:
-                    await asyncio.sleep(min(delay, 60))
-                    delay -= min(delay, 60)
+                await self._wait(delay, "provider backoff")
 
     async def _complete_once(self, messages: list[dict[str, str]], *, max_tokens: int,
                              schema: dict | None) -> str:
@@ -90,15 +138,27 @@ class LLMClient:
         async with self._lock:
             if self.spent + reserve > self.budget:
                 raise RuntimeError("Evaluation budget exhausted before dispatch")
+            remaining = self.request_interval_seconds - (time.monotonic() - self._last_dispatch)
+            while remaining > 0:
+                await asyncio.sleep(min(remaining, 60))
+                remaining = self.request_interval_seconds - (time.monotonic() - self._last_dispatch)
+            if self.tokens_per_minute or self.tokens_per_day:
+                token_bound = len(json.dumps(messages, ensure_ascii=False).encode()) + 256 + max_tokens
+                if schema:
+                    token_bound += len(json.dumps(schema, ensure_ascii=False).encode())
+                while delay := quota_delay(self.quota_events, token_bound, time.time(), self.tokens_per_minute, self.tokens_per_day):
+                    await self._wait(delay + 0.01, "token quota")
+                self.quota_events = [row for row in self.quota_events if row["time"] + 86400 > time.time()]
+                event = {"time": time.time(), "tokens": token_bound, "usage": "reserved"}
+                self.quota_events.append(event)
+            else:
+                event = None
             self.spent += reserve
             record = {"model": self.model, "status": "dispatched", "prompt_tokens": None,
                       "completion_tokens": None, "cost_usd": str(reserve), "cost_kind": "reserved_upper_bound"}
             self.calls.append(record)
+            self._save_quota()
             try:
-                remaining = self.request_interval_seconds - (time.monotonic() - self._last_dispatch)
-                while remaining > 0:
-                    await asyncio.sleep(min(remaining, 60))
-                    remaining = self.request_interval_seconds - (time.monotonic() - self._last_dispatch)
                 self._last_dispatch = time.monotonic()
                 body = {
                     "model": self.model, "messages": messages, "temperature": 0,
@@ -111,8 +171,12 @@ class LLMClient:
                     body["reasoning_effort"] = "none"
                 elif self._gemini and self.model.startswith("gemini-3"):
                     body["reasoning_effort"] = "low"
+                elif self._groq and self.model.startswith("openai/gpt-oss"):
+                    body["reasoning_effort"] = "low"
                 response = await self._http.post("chat/completions", json=body)
                 record["http_status"] = response.status_code
+                record["rate_limit_headers"] = {name: value for name, value in response.headers.items()
+                                                if name.startswith("x-ratelimit-") or name == "retry-after"}
                 if not response.is_success:
                     try:
                         detail = response.json()
@@ -141,6 +205,8 @@ class LLMClient:
                 self.spent += actual - reserve
                 record.update(prompt_tokens=prompt, completion_tokens=completion,
                               cost_usd=str(actual), cost_kind="measured", status="completed")
+                if event is not None:
+                    event.update(tokens=prompt + completion, usage="measured")
                 choice = payload["choices"][0]
                 if choice.get("finish_reason") != "stop":
                     raise ValueError("Incomplete model output; do not score a truncated answer")
@@ -152,3 +218,5 @@ class LLMClient:
             except Exception:
                 record["status"] = "failed"
                 raise
+            finally:
+                self._save_quota()

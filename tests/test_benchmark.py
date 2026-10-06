@@ -2,9 +2,14 @@ import pytest
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from unittest.mock import patch
+from unittest.mock import patch, AsyncMock
+from types import SimpleNamespace
+from decimal import Decimal
+import httpx
 
-from src.evals.benchmark import AMBIGUOUS_TEST_ID, DATA, calibration_agreement, relevant_chunks, reviewed_test_cases, summarize, write_report
+from src.evals.benchmark import AMBIGUOUS_TEST_ID, DATA, calibration_agreement, relevant_chunks, reviewed_test_cases, summarize, write_report, run
+from src.evals.judging import Answer, Judgement
+from src.rag.document_store import DocumentStore
 from src.rag.models import DocumentChunk
 
 
@@ -56,3 +61,56 @@ def test_ambiguous_test_sensitivity_uses_same_predictions_without_affecting_dev(
     assert summaries["test_without_ambiguous"]["questions"] == 1
     assert summaries["test_without_ambiguous"]["recall@5"] == 1
     assert len(rows) == 3
+
+
+@pytest.mark.asyncio
+async def test_resume_keeps_answer_after_judge_interruption_and_retains_costs():
+    clients = []
+
+    def factory(*args, **kwargs):
+        client = SimpleNamespace(model="test", input_price=Decimal('0.1'), output_price=Decimal('0.2'),
+                                 request_interval_seconds=0, max_rate_limit_retries=0, wait_until=None,
+                                 spent=Decimal(0), calls=[], close=AsyncMock())
+        clients.append(client)
+        return client
+
+    def record_call(client):
+        client.spent += Decimal('0.001')
+        client.calls.append({'cost_usd': '0.001'})
+        client.checkpoint()
+
+    async def answer(client, *args):
+        record_call(client)
+        return Answer(claims=[], abstained=True)
+
+    interrupted = True
+
+    async def judge(client, *args):
+        nonlocal interrupted
+        record_call(client)
+        if interrupted:
+            interrupted = False
+            raise httpx.ReadTimeout('interrupted')
+        return Judgement(answer_relevant=False, claim_support=[], citation_support=[], reason='abstained')
+
+    with TemporaryDirectory() as folder, patch('src.evals.benchmark.RESULTS', Path(folder)), \
+         patch('src.evals.benchmark.LocalEmbeddings', return_value=SimpleNamespace(model_name='test', revision='test')), \
+         patch('src.evals.benchmark.build_indexes', new=AsyncMock(return_value={mode: DocumentStore() for mode in ('fixed', 'recursive', 'semantic')})), \
+         patch('src.evals.benchmark.HybridRetriever'), patch('src.evals.benchmark.LLMClient', side_effect=factory), \
+         patch('src.evals.benchmark.retrieve_case', new=AsyncMock(return_value=([], None))), \
+         patch('src.evals.benchmark.generate_answer', new=AsyncMock(side_effect=answer)) as generation, \
+         patch('src.evals.benchmark.judge_answer', new=AsyncMock(side_effect=judge)), \
+         patch('src.evals.benchmark.importlib.metadata.version', return_value='test'):
+        args = SimpleNamespace(split='dev', smoke=True, resume=False, prepare_labels=False, retrieval_only=False)
+        with pytest.raises(httpx.ReadTimeout):
+            await run(args)
+        assert generation.await_count == 1
+        args.resume = True
+        await run(args)
+        assert generation.await_count == 5
+        assert clients[-1].spent == Decimal('0.011')
+        await run(args)
+        assert generation.await_count == 5
+        args.resume = False
+        with pytest.raises(ValueError, match='already exist'):
+            await run(args)
