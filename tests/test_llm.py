@@ -53,3 +53,28 @@ def test_zero_cost_cannot_be_claimed_for_remote_endpoint():
         LLMClient("https://example.invalid/v1", "test")
     with pytest.raises(ValueError, match="below"):
         LLMClient("http://localhost:8080/v1", "test", budget_usd="3")
+
+
+@pytest.mark.asyncio
+async def test_failed_remote_calls_keep_reservations_and_cannot_retry_past_cap():
+    requests = []
+
+    def fail(request):
+        requests.append(request)
+        return httpx.Response(500, json={"error": "unknown provider usage"})
+
+    client = LLMClient("https://example.invalid/v1", "priced-test", "test-key", local=False,
+                       budget_usd="0.002", input_usd_per_million="0.1", output_usd_per_million="0.1",
+                       transport=httpx.MockTransport(fail))
+    try:
+        for _ in range(2):
+            with pytest.raises(httpx.HTTPStatusError):
+                await client.complete([{"role": "user", "content": "hello"}])
+        with pytest.raises(RuntimeError, match="before dispatch"):
+            await client.complete([{"role": "user", "content": "hello"}])
+        assert len(requests) == 2
+        assert client.spent > 0
+        assert client.spent < client.budget
+        assert all(row["cost_kind"] == "reserved_upper_bound" for row in client.calls)
+    finally:
+        await client.close()
