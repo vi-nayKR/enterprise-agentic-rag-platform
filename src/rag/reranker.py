@@ -6,6 +6,9 @@ from src.rag.models import SearchResult
 
 class CrossEncoderReranker:
     """
+
+    model_name = "cross-encoder/ms-marco-MiniLM-L6-v2"
+    revision = "233902d25c440f23af6f7d6e94d2946bac0bee0a"
     Optional learned cross-encoder, or the legacy keyword scorer by default.
     """
 
@@ -16,8 +19,7 @@ class CrossEncoderReranker:
             from sentence_transformers import CrossEncoder
 
             self.model = CrossEncoder(
-                "cross-encoder/ms-marco-MiniLM-L6-v2",
-                revision="233902d25c440f23af6f7d6e94d2946bac0bee0a", device="cpu",
+                self.model_name, revision=self.revision, device="cpu",
             )
 
     async def rerank(

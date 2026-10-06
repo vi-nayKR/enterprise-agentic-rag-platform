@@ -23,6 +23,7 @@ from src.rag.embeddings import LocalEmbeddings
 from src.rag.hybrid_retriever import HybridRetriever
 from src.rag.models import Document, DocumentChunk
 from src.rag.rrf import reciprocal_rank_fusion
+from src.rag.reranker import CrossEncoderReranker
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data" / "squad_v1"
@@ -294,6 +295,8 @@ async def run(args: argparse.Namespace) -> None:
               "package_versions": {package: importlib.metadata.version(package)
                                    for package in ("sentence-transformers", "torch", "langchain-text-splitters", "pydantic")},
               "embedding_model": embeddings.model_name, "embedding_revision": embeddings.revision,
+              "reranker_model": CrossEncoderReranker.model_name, "reranker_revision": CrossEncoderReranker.revision,
+              "chunk_indexes": {mode: {"chunks": len(store.chunks)} for mode, store in stores.items()},
               "judge_model": client.model if client else None,
               "test_review_sha256": hashlib.sha256((DATA / "test_review.jsonl").read_bytes()).hexdigest(),
               "ranking_depth": 10, "warm_index": True, "result_cache": False,
