@@ -10,6 +10,78 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 
+@pytest.mark.asyncio
+async def test_provider_latency_excludes_throttle_wait():
+    clock = [100.0]
+
+    async def sleep(seconds):
+        clock[0] += seconds
+
+    def respond(request):
+        clock[0] += 0.25
+        return httpx.Response(200, json={"usage": {"prompt_tokens": 10, "completion_tokens": 5},
+                                       "choices": [{"finish_reason": "stop", "message": {"content": '{}'}}]})
+
+    client = LLMClient('http://localhost/v1', 'test', request_interval_seconds=12,
+                       transport=httpx.MockTransport(respond))
+    client._last_dispatch = 99
+    try:
+        with patch('src.llm.time.monotonic', side_effect=lambda: clock[0]), \
+             patch('src.llm.time.perf_counter', side_effect=lambda: clock[0]), \
+             patch('src.llm.asyncio.sleep', side_effect=sleep):
+            await client.complete([{'role': 'user', 'content': 'hello'}])
+        assert client.calls[0]['provider_latency_ms'] == 250
+        assert client.calls[0]['queue_wait_ms'] == 11000
+        assert client.calls[0]['wall_latency_ms'] == 11250
+    finally:
+        await client.close()
+
+
+@pytest.mark.asyncio
+async def test_groq_token_cap_400_is_logged_redacted_and_remains_a_failure():
+    requests = []
+
+    def respond(request):
+        body = json.loads(request.content)
+        requests.append(body)
+        if body.get('max_completion_tokens', body.get('max_tokens', 0)) < 1024:
+            return httpx.Response(400, json={'error': {
+                'message': 'max completion tokens reached before generating a valid document',
+                'failed_generation': '{"reason":"test-key truncated'}})
+        return httpx.Response(200, json={'usage': {'prompt_tokens': 10, 'completion_tokens': 700},
+                                        'choices': [{'finish_reason': 'stop', 'message': {'content': '{}'}}]})
+
+    client = LLMClient('https://api.groq.com/openai/v1', 'openai/gpt-oss-120b', 'test-key', local=False,
+                       input_usd_per_million='0.15', output_usd_per_million='0.60', transport=httpx.MockTransport(respond))
+    try:
+        with pytest.raises(ValueError, match='Truncated'):
+            await client.complete([{'role': 'user', 'content': 'hello'}], max_tokens=512)
+        assert client.calls[0]['http_status'] == 400 and client.calls[0]['truncated'] is True
+        assert 'test-key' not in client.calls[0]['response_body']
+        assert 'failed_generation' in client.calls[0]['response_body']
+        await client.complete([{'role': 'user', 'content': 'hello'}], max_tokens=1024)
+        assert requests[-1]['max_completion_tokens'] == 1024
+        assert client.calls[-1]['finish_reason'] == 'stop'
+        assert client.calls[-1]['completion_tokens'] == 700
+    finally:
+        await client.close()
+
+
+@pytest.mark.asyncio
+async def test_finish_reason_length_is_counted_and_never_scored():
+    client = LLMClient('http://localhost/v1', 'test', transport=httpx.MockTransport(
+        lambda request: httpx.Response(200, json={'usage': {'prompt_tokens': 10, 'completion_tokens': 5},
+            'choices': [{'finish_reason': 'length', 'message': {'content': '{}'}}]})))
+    try:
+        with pytest.raises(ValueError, match='truncated'):
+            await client.complete([{'role': 'user', 'content': 'hello'}])
+        assert client.calls[0]['finish_reason'] == 'length'
+        assert client.calls[0]['truncated'] is True
+        assert client.calls[0]['cost_kind'] == 'measured'
+    finally:
+        await client.close()
+
+
 def test_token_quota_windows_and_single_request_ceiling():
     events = [{"time": 100, "tokens": 6000}, {"time": 130, "tokens": 1000}]
     assert quota_delay(events, 2000, 140, 8000, 200000) == 20

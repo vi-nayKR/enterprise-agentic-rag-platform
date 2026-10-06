@@ -12,6 +12,7 @@ from collections import defaultdict
 from pathlib import Path
 from urllib.parse import urlparse
 from decimal import Decimal
+from datetime import datetime, timezone
 
 from pydantic import BaseModel, ConfigDict, Field
 import httpx
@@ -161,7 +162,7 @@ async def retrieve_case(retriever: HybridRetriever, case: dict, rewrite: bool, c
     if rewrite:
         prompt = "Rewrite this question as a concise retrieval query preserving all named entities and intent. "
         text = await client.complete([{"role": "user", "content": prompt + case["question"] + '\nReturn JSON {"query":"..."}.'}],
-                                     max_tokens=128, schema=RewrittenQuery.model_json_schema())
+                                     max_tokens=settings.EVAL_REWRITE_MAX_TOKENS, schema=RewrittenQuery.model_json_schema())
         rewritten = RewrittenQuery.model_validate_json(text).query
         additional = await retriever.retrieve(rewritten, top_k=10, use_cache=False, use_compression=False)
         results = reciprocal_rank_fusion(results, additional)[:10]
@@ -259,13 +260,23 @@ def summarize(records: list[dict]) -> list[dict]:
             values = [row["metrics"][metric] for row in rows if row.get("metrics", {}).get(metric) is not None]
             summary[metric] = sum(values) / len(values) if values else None
             summary[metric + "_samples"] = len(values)
-        for stage in ("retrieval", "answer"):
+        for stage in ("retrieval", "answer_provider", "judge_provider", "answer_queue", "judge_queue", "answer_wall"):
             timings = [row[stage + "_latency_ms"] for row in rows if row.get(stage + "_latency_ms") is not None]
             for q in (50, 95):
                 summary[f"{stage}_p{q}_ms"] = percentile(timings, q / 100) if timings else None
         summary["provider_cost_usd_per_query"] = sum(float(row["cost_usd"]) for row in rows) / len(rows)
         summaries.append(summary)
     return summaries
+
+
+def call_diagnostics(calls: list[dict]) -> dict:
+    reasons = [call.get("finish_reason") for call in calls]
+    return {"calls": len(calls),
+            "finish_reason_recorded": sum(reason is not None for reason in reasons),
+            "finish_reason_length": reasons.count("length"),
+            "truncations": sum(bool(call.get("truncated") or call.get("finish_reason") == "length") for call in calls),
+            "http_400s": sum(call.get("http_status") == 400 for call in calls),
+            "http_429s": sum(call.get("http_status") == 429 for call in calls)}
 
 
 def write_report(report: dict, stem: str) -> None:
@@ -278,9 +289,13 @@ def write_report(report: dict, stem: str) -> None:
     temporary.replace(target)
     columns = ["configuration", "split", "questions", "recall@5", "mrr", "ndcg@10", "faithfulness",
                "answer_relevance", "citation_accuracy", "abstained", "retrieval_p50_ms", "retrieval_p95_ms",
-               "answer_p50_ms", "answer_p95_ms", "provider_cost_usd_per_query", "valid_judgements", "failed_queries"]
+               "answer_provider_p50_ms", "answer_provider_p95_ms", "judge_provider_p50_ms", "judge_provider_p95_ms",
+               "answer_queue_p50_ms", "answer_queue_p95_ms", "answer_wall_p50_ms", "answer_wall_p95_ms",
+               "provider_cost_usd_per_query", "valid_judgements", "failed_queries"]
     lines = [f"Status: **{report['status']}**. Judge calibration: **{report['calibration']['status']}**.\n",
              "| " + " | ".join(columns) + " |", "| " + " | ".join("---" for _ in columns) + " |"]
+    if report.get("diagnostics"):
+        lines.insert(1, "Call diagnostics: " + json.dumps(report["diagnostics"]) + "\n")
     if report.get("test_review_provenance"):
         lines.insert(1, "Test review: " + ", ".join(report["test_review_provenance"]) +
                      ". AI-assisted review remains provisional pending the user's spot-check.\n")
@@ -306,12 +321,14 @@ async def run(args: argparse.Namespace) -> None:
     if args.split == "all" and not args.prepare_labels and not smoke:
         cases.extend(reviewed_test_cases())
     if smoke:
-        # One dev question per article; exercise generation, judging, and rewriting.
-        cases = [next(row for row in cases if row["article"] == article)
-                 for article in dict.fromkeys(row["article"] for row in cases)]
+        # First five dev questions include the previously truncating hierarchy case.
+        cases = cases[:5]
+    smoke_configuration = getattr(args, "smoke_configuration", "fixed_hybrid")
     stem = "smoke_" + provider if smoke else "calibration_inputs" if args.prepare_labels else "retrieval_" + args.split if args.retrieval_only else "ablations_" + provider + "_" + args.split
     identity = {"model": settings.EVAL_LLM_MODEL, "base_url": settings.EVAL_LLM_BASE_URL,
                 "rates": [str(settings.EVAL_INPUT_USD_PER_MILLION), str(settings.EVAL_OUTPUT_USD_PER_MILLION)],
+                "output_token_limits": {"answer": settings.EVAL_ANSWER_MAX_TOKENS, "judge": settings.EVAL_JUDGE_MAX_TOKENS, "rewrite": settings.EVAL_REWRITE_MAX_TOKENS},
+                "smoke_configuration": smoke_configuration if smoke else None,
                 "cases_sha256": hashlib.sha256(json.dumps(cases, sort_keys=True).encode()).hexdigest(),
                 "corpus_sha256": hashlib.sha256((DATA / "corpus.jsonl").read_bytes()).hexdigest(),
                 "code_sha256": hashlib.sha256(b"".join(path.read_bytes() for path in sorted(
@@ -346,6 +363,9 @@ async def run(args: argparse.Namespace) -> None:
         cases = [rows[index] for rows in grouped.values() for index in (0, 3, 6, 9)]
     records = previous["records"] if previous else []
     report = {"status": "running", "dataset": "squad_v1", "split": args.split,
+              "started_at_utc": datetime.now(timezone.utc).isoformat(),
+              "output_token_limits": identity["output_token_limits"],
+              "latency_definition": "Provider: sum of HTTP attempt durations per stage, excluding queue/throttle/backoff; answer wall: retrieval + rewrite + generation including waiting, excluding judging.",
               "source_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
               "python": platform.python_version(), "platform": platform.platform(),
               "package_versions": {package: importlib.metadata.version(package)
@@ -382,12 +402,13 @@ async def run(args: argparse.Namespace) -> None:
         report["provider_cost_usd"] = str(client.spent)
         report["waiting_until_unix"] = client.wait_until
         report["summaries"] = summarize(records)
+        report["diagnostics"] = call_diagnostics(client.calls)
         write_report(report, stem)
     if client:
         client.checkpoint = checkpoint
     try:
         for question_index, case in enumerate(cases):
-            selected = [configurations[(0, 2, 4, 5, 6)[question_index]]] if smoke else [configurations[question_index % len(configurations)]] if args.prepare_labels else configurations
+            selected = [next(config for config in configurations if config[0] == smoke_configuration)] if smoke else [configurations[question_index % len(configurations)]] if args.prepare_labels else configurations
             for name, chunking, mode, rewrite in selected:
                 existing = next((row for row in records if row["id"] == name + ":" + case["id"]), None)
                 if existing and existing.get("completed"):
@@ -423,14 +444,26 @@ async def run(args: argparse.Namespace) -> None:
                                             "document_id": result.document_id, "metadata": result.metadata} for result in results[:3]]
                     if client is not None:
                         if row["answer"] is None:
-                            answer = await generate_answer(client, case["question"], row["contexts"])
+                            answer_call_start = len(client.calls)
+                            try:
+                                answer = await generate_answer(client, case["question"], row["contexts"])
+                            finally:
+                                timings = client.calls[answer_call_start:]
+                                row["answer_provider_latency_ms"] = sum(call.get("provider_latency_ms", 0) for call in timings)
+                                row["answer_queue_latency_ms"] = sum(call.get("queue_wait_ms", 0) for call in timings)
+                                row["answer_wall_latency_ms"] = (time.perf_counter() - started) * 1000
                             row["answer"] = answer.model_dump()
-                            row["answer_latency_ms"] = (time.perf_counter() - started) * 1000
                             checkpoint()
                         else:
                             answer = Answer.model_validate(row["answer"])
                         if not args.prepare_labels:
-                            judged = await judge_answer(client, case["question"], row["reference_answers"], row["contexts"], answer)
+                            judge_call_start = len(client.calls)
+                            try:
+                                judged = await judge_answer(client, case["question"], row["reference_answers"], row["contexts"], answer)
+                            finally:
+                                timings = client.calls[judge_call_start:]
+                                row["judge_provider_latency_ms"] = sum(call.get("provider_latency_ms", 0) for call in timings)
+                                row["judge_queue_latency_ms"] = sum(call.get("queue_wait_ms", 0) for call in timings)
                             row["judgement"] = judged.model_dump()
                             row["metrics"].update(answer_metrics(answer, judged))
                     row["completed"] = True
@@ -449,6 +482,7 @@ async def run(args: argparse.Namespace) -> None:
                     report["summaries"] = summarize(records)
                     report["calls"] = client.calls if client else []
                     report["provider_cost_usd"] = str(client.spent) if client else "0"
+                    report["diagnostics"] = call_diagnostics(client.calls if client else [])
                     write_report(report, stem)
                 print(f"{name} {case['id']}: {row['error'] or 'recorded'}", flush=True)
         if args.prepare_labels:
@@ -460,6 +494,7 @@ async def run(args: argparse.Namespace) -> None:
             "status": "pending_human_labels", "agreement": None}
         report["calibration_cost_usd"] = str(client.spent - before_calibration) if client else "0"
         report["provider_cost_usd"] = str(client.spent) if client else "0"
+        report["diagnostics"] = call_diagnostics(client.calls if client else [])
         report["status"] = "partial_failures" if any(row["error"] for row in records) else "measured"
         if not args.prepare_labels and not args.retrieval_only and not smoke:
             dev = [row for row in report["summaries"] if row["split"] == "dev"
@@ -483,7 +518,8 @@ def main() -> None:
     parser.add_argument("--split", choices=("dev", "all"), default="all")
     parser.add_argument("--retrieval-only", action="store_true", help="Debug retrieval only; omits rewriting and answer metrics")
     parser.add_argument("--prepare-labels", action="store_true", help="Generate actual dev answers with blank human labels")
-    parser.add_argument("--smoke", action="store_true", help="Five dev cases across articles; includes a rewrite call")
+    parser.add_argument("--smoke", action="store_true", help="First five dev questions on one configuration")
+    parser.add_argument("--smoke-configuration", choices=[config[0] for config in CONFIGS], default="fixed_hybrid")
     parser.add_argument("--resume", action="store_true", help="Resume a matching checkpoint without repeating completed cases")
     args = parser.parse_args()
     if args.prepare_labels:

@@ -1,8 +1,12 @@
 # Queued post-run task: independent judge
 
 User instruction received 2026-10-06. Do not implement or activate this until
-the current Groq full run finishes. Keep its judge, responses, metrics, and
-cost ledger unchanged. Do not read or commit API-key values in this document.
+the replacement Groq full run finishes. The user subsequently stopped the old
+run to fix output limits, HTTP error logging and latency accounting; its outputs
+are preserved in `results/attempts/groq_before_token_latency_fix/`. First finish
+the five-case fixed-settings smoke, then start fresh with Groq still judging.
+Keep that replacement run's judge and predictions frozen. Do not read or commit
+API-key values in this document.
 
 The user configured SambaNova credentials in the ignored `.env`:
 `EVAL_JUDGE_BASE_URL`, `EVAL_JUDGE_MODEL=DeepSeek-V3.1`,
@@ -37,14 +41,14 @@ After the current run finishes:
 This task does not authorize production features before the existing ablation
 checkpoint is reviewed. Do not rename the repository or change resume claims.
 
-Current-run checkpoint at receipt: `results/ablations_groq_all.json` had
+Historical checkpoint at receipt (superseded by the stop-and-restart instruction): `results/ablations_groq_all.json` had
 28 completed cases and stopped on a Groq HTTP 400 truncated structured judge
 output for `fixed_hybrid:56e1c720e3433e140042316c`. Its generated answer was saved;
 resume must reuse that answer and keep `openai/gpt-oss-120b` as the judge.
 
 An unchanged retry reproduced the truncation. The case is retained as a failed
 query with its error, answer, retrieval metrics and costs intact, and no judge
-score. The full run continues under the original evaluation code and judge
+score. Before the later stop instruction, the full run continued under the original evaluation code and judge
 settings; matching structured-output truncations are explicitly retained as
 failures rather than scored or silently repaired. Results record this continuation
 policy. Do not equate finalized failed cases with valid judge predictions.

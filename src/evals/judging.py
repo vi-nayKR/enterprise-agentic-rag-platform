@@ -7,6 +7,7 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from src.llm import LLMClient
+from config.settings import settings
 
 
 class Claim(BaseModel):
@@ -56,7 +57,7 @@ async def generate_answer(client: LLMClient, question: str, contexts: list[dict]
         "abstention_schema": {"claims": [], "abstained": True},
     }
     text = await client.complete([{"role": "user", "content": json.dumps(prompt, ensure_ascii=False)}],
-                                 max_tokens=384, schema=Answer.model_json_schema())
+                                 max_tokens=settings.EVAL_ANSWER_MAX_TOKENS, schema=Answer.model_json_schema())
     return Answer.model_validate_json(text)
 
 
@@ -77,7 +78,7 @@ async def judge_answer(client: LLMClient, question: str, reference_answers: list
                    "reason": "brief evidence-based explanation"},
     }
     text = await client.complete([{"role": "user", "content": json.dumps(prompt, ensure_ascii=False)}],
-                                 max_tokens=512, schema=Judgement.model_json_schema())
+                                 max_tokens=settings.EVAL_JUDGE_MAX_TOKENS, schema=Judgement.model_json_schema())
     judgement = Judgement.model_validate_json(text)
     expected_claims = set(range(len(answer.claims)))
     actual_claims = [item.claim_index for item in judgement.claim_support]

@@ -30,6 +30,9 @@ class Settings(BaseSettings):
     EVAL_RATE_LIMIT_RETRIES: int = Field(default=6, ge=0)
     EVAL_TOKENS_PER_MINUTE: int = Field(default=8000, ge=1)
     EVAL_TOKENS_PER_DAY: int = Field(default=200000, ge=1)
+    EVAL_ANSWER_MAX_TOKENS: int = Field(default=1024, gt=0, le=65536)
+    EVAL_JUDGE_MAX_TOKENS: int = Field(default=1024, gt=0, le=65536)
+    EVAL_REWRITE_MAX_TOKENS: int = Field(default=256, gt=0, le=65536)
     
     # RAG Settings
     CHUNK_SIZE: int = 800

@@ -7,6 +7,7 @@ import math
 from pathlib import Path
 from decimal import Decimal
 from urllib.parse import urlparse
+from datetime import datetime, timezone
 
 import httpx
 
@@ -128,6 +129,7 @@ class LLMClient:
 
     async def _complete_once(self, messages: list[dict[str, str]], *, max_tokens: int,
                              schema: dict | None) -> str:
+        attempt_started = time.perf_counter()
         if type(max_tokens) is not int or max_tokens < 1:
             raise ValueError("Output token limit must be positive")
         # UTF-8 bytes plus framing allowance bound input length conservatively;
@@ -155,7 +157,8 @@ class LLMClient:
                 event = None
             self.spent += reserve
             record = {"model": self.model, "status": "dispatched", "prompt_tokens": None,
-                      "completion_tokens": None, "cost_usd": str(reserve), "cost_kind": "reserved_upper_bound"}
+                      "completion_tokens": None, "cost_usd": str(reserve), "cost_kind": "reserved_upper_bound",
+                      "max_completion_tokens": max_tokens, "finish_reason": None, "truncated": False}
             self.calls.append(record)
             self._save_quota()
             try:
@@ -173,11 +176,19 @@ class LLMClient:
                     body["reasoning_effort"] = "low"
                 elif self._groq and self.model.startswith("openai/gpt-oss"):
                     body["reasoning_effort"] = "low"
-                response = await self._http.post("chat/completions", json=body)
+                    body["max_completion_tokens"] = body.pop("max_tokens")
+                sent = time.perf_counter()
+                record["queue_wait_ms"] = (sent - attempt_started) * 1000
+                record["request_sent_at_utc"] = datetime.now(timezone.utc).isoformat()
+                try:
+                    response = await self._http.post("chat/completions", json=body)
+                finally:
+                    record["provider_latency_ms"] = (time.perf_counter() - sent) * 1000
                 record["http_status"] = response.status_code
                 record["rate_limit_headers"] = {name: value for name, value in response.headers.items()
                                                 if name.startswith("x-ratelimit-") or name == "retry-after"}
                 if not response.is_success:
+                    record["response_body"] = response.text.replace(self._api_key, "<redacted>") if self._api_key else response.text
                     try:
                         detail = response.json()
                         if isinstance(detail, list):
@@ -193,8 +204,16 @@ class LLMClient:
                                 record["provider_retry_delay"] = item.get("retryDelay")
                     except (ValueError, IndexError, AttributeError):
                         pass
+                    if response.status_code == 400 and "max completion tokens reached before generating a valid document" in record.get("provider_error_message", ""):
+                        record.update(truncated=True, truncation_kind="structured_output_token_limit")
+                        raise ValueError("Truncated structured output: provider completion-token ceiling exhausted")
                 response.raise_for_status()
                 payload = response.json()
+                choices = payload.get("choices", [])
+                choice = choices[0] if choices else {}
+                record["finish_reason"] = choice.get("finish_reason")
+                if record["finish_reason"] == "length":
+                    record.update(truncated=True, truncation_kind="finish_reason_length")
                 usage = payload.get("usage", {})
                 prompt, completion = usage.get("prompt_tokens"), usage.get("completion_tokens")
                 if type(prompt) is not int or type(completion) is not int or min(prompt, completion) < 0:
@@ -207,7 +226,6 @@ class LLMClient:
                               cost_usd=str(actual), cost_kind="measured", status="completed")
                 if event is not None:
                     event.update(tokens=prompt + completion, usage="measured")
-                choice = payload["choices"][0]
                 if choice.get("finish_reason") != "stop":
                     raise ValueError("Incomplete model output; do not score a truncated answer")
                 text = choice["message"]["content"]
@@ -219,4 +237,5 @@ class LLMClient:
                 record["status"] = "failed"
                 raise
             finally:
+                record["wall_latency_ms"] = (time.perf_counter() - attempt_started) * 1000
                 self._save_quota()

@@ -7,7 +7,7 @@ from types import SimpleNamespace
 from decimal import Decimal
 import httpx
 
-from src.evals.benchmark import AMBIGUOUS_TEST_ID, DATA, calibration_agreement, relevant_chunks, reviewed_test_cases, summarize, write_report, run
+from src.evals.benchmark import AMBIGUOUS_TEST_ID, DATA, calibration_agreement, call_diagnostics, relevant_chunks, reviewed_test_cases, summarize, write_report, run
 from src.evals.judging import Answer, Judgement
 from src.rag.document_store import DocumentStore
 from src.rag.models import DocumentChunk
@@ -36,6 +36,20 @@ def test_missing_answer_metrics_stay_missing_in_summary():
     assert result["valid_judgements"] == 0
     assert result["recall@5"] == 1
     assert calibration_agreement([])["agreement"] is None
+
+
+def test_summary_separates_provider_queue_wall_and_counts_truncations():
+    rows = [{"configuration": "test", "split": "dev", "metrics": {}, "cost_usd": "0",
+             "answer_provider_latency_ms": 250, "answer_queue_latency_ms": 11000,
+             "answer_wall_latency_ms": 11250}]
+    summary = summarize(rows)[0]
+    assert summary["answer_provider_p50_ms"] == 250
+    assert summary["answer_queue_p50_ms"] == 11000
+    assert summary["answer_wall_p50_ms"] == 11250
+    diagnostic = call_diagnostics([{"finish_reason": "length", "truncated": True, "http_status": 200},
+                                   {"truncated": True, "http_status": 400}, {"http_status": 429}])
+    assert diagnostic == {"calls": 3, "finish_reason_recorded": 1, "finish_reason_length": 1,
+                          "truncations": 2, "http_400s": 1, "http_429s": 1}
 
 
 def test_generated_table_does_not_round_small_paid_costs_to_zero():

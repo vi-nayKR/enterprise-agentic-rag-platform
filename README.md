@@ -6,9 +6,11 @@ and [generated dataset inventory](results/dataset_v1.md) are available. The
 [20 frozen calibration answers](results/calibration_inputs.md) are measured.
 The local ablation run was interrupted, and the
 [Gemini smoke outcome](results/gemini_smoke_summary.md) remains archived after daily-quota exhaustion.
-The user selected Groq next; its [five-question smoke passed](results/groq_smoke_summary.md)
-with five valid answers/judgements, zero failures and no 429s. The full Groq
-ablation run is starting with persistent quotas and checkpoints. Judge agreement awaits your labels.
+The user selected Groq next; its original smoke passed, but the full run was stopped
+to fix completion-token exhaustion and latency accounting. The
+[stopped-attempt audit and original outputs](results/attempts/groq_before_token_latency_fix/AUDIT.md)
+are preserved. A fresh [five-question smoke](results/smoke_groq.md) gates restarting
+the full ablations with persistent quotas and checkpoints. Judge agreement awaits your labels.
 The implementation below
 describes the existing reference, not the planned production features.
 
@@ -49,8 +51,9 @@ token usage or a failed/unknown-usage status. Failed calls reserve their worst
 case cost rather than becoming free paid retries. Electricity and hardware costs
 are outside the provider-cost measurement.
 
-`python -m src.evals.benchmark --smoke` runs five dev cases before
-the full run, including answering, judging, and a rewrite. Remote calls are
+`python -m src.evals.benchmark --smoke` runs the first five dev cases on one
+configuration (`fixed_hybrid` by default), including answering and judging.
+`--smoke-configuration recursive_hybrid_rewrite` also exercises rewriting. Remote calls are
 paced at a minimum 12-second interval by default. HTTP 429 and temporary server
 errors (500/502/503/504) use exponential
 backoff (2, 4, 8, 16, 32, 60 seconds), honoring a longer numeric `Retry-After`.
@@ -59,6 +62,15 @@ conservative cost reservation. Persistent 429, authorization, and model-not-foun
 errors stop the run rather than silently scoring all remaining cases as failures.
 Token costs use configured paid-tier prices; these estimates are not an account
 billing statement or proof that this API key is on the free tier.
+
+Output limits are configurable with `EVAL_ANSWER_MAX_TOKENS=1024`,
+`EVAL_JUDGE_MAX_TOKENS=1024`, and `EVAL_REWRITE_MAX_TOKENS=256`. GPT-OSS reasoning
+shares the completion-token allowance; the old 384/512 limits caused structured
+output exhaustion. Strict schemas remain enabled. Every new call retains its
+finish reason; `length` and token-exhaustion HTTP 400s remain failures. Error
+response bodies are recorded with the API key redacted. Diagnostics report
+truncations, HTTP 400s and HTTP 429s, including retries. See
+[Groq's reasoning documentation](https://console.groq.com/docs/reasoning).
 
 Groq `openai/gpt-oss-120b` uses conservative rolling quota windows of 8,000
 tokens/minute and 200,000 tokens/day, plus the request interval. Input byte bounds
@@ -88,11 +100,13 @@ independent human labels remain necessary. Low reasoning effort is used, with
 reported completion usage included in costs. Configured paid-rate estimates are
 $0.15/M input and $0.60/M output tokens, following
 [Groq's model pricing](https://console.groq.com/docs/model/openai/gpt-oss-120b).
-They are not proof of billed charges on the free tier. The live smoke used
+They are not proof of billed charges on the free tier. The archived original smoke used
 11,035 input and 2,055 output tokens across 11 calls, for a $0.00288825 paid-rate
 equivalent. Local quota waits occurred; no 429 retry was needed. An actual completed
-checkpoint resume made no further calls. The full-run cap is $2.85777255 after
-allowing for prior Gemini attempts and this smoke; total allowance stays below $3.
+checkpoint resume made no further calls. The stopped full attempt reserved/measured
+$0.02578395 more. Before the replacement smoke, $2.83198860 remained from the
+original $2.99 allowance after all Gemini and Groq attempts. The replacement smoke
+is also deducted before the full run; failed attempts never become free retries.
 
 The archived Gemini attempt used `gemini-3.8-flash` for answering and judging:
 **same-model judge**. This may correlate answer and judge errors; independent human
@@ -157,8 +171,13 @@ the answer answers the question; citation accuracy checks each exact cited chunk
 against its claim. Judge predictions require your calibration before acceptance.
 Abstention has no defined claim-faithfulness score. Tables retain missing values,
 valid-judgement counts, and failures so selective scoring cannot look complete.
-Latency measures warm-index requests, with result/embedding caches disabled;
-answer latency includes rewriting and retrieval, and excludes evaluation judging.
+Latency measures warm-index requests, with result/embedding caches disabled.
+The main table's answer/judge provider latency measures HTTP dispatch to response,
+summing attempts within that stage and excluding queue/throttle/backoff waits.
+Answer queue time is reported separately. Answer wall time includes retrieval,
+rewriting and generation with waiting, excluding evaluation judging. Each call
+also retains its own provider, queue and wall time; old archived latency is not
+comparable to provider latency.
 
 **Checkpoint:** stop after the ablations and their explanation. PostgreSQL,
 corrective RAG, streaming, tracing, and fine-tuning need your next approval.
