@@ -1,0 +1,13 @@
+{
+  "dataset": "SQuAD 1.1",
+  "version": "squad_v1",
+  "source_url": "https://rajpurkar.github.io/SQuAD-explorer/dataset/dev-v1.1.json",
+  "source_sha256": "95aa6a52d5d6a735563366753ca50492a658031da74f301ac5238b03966972c9",
+  "license": "CC-BY-SA-4.0",
+  "sampling_seed": 2026,
+  "articles": 10,
+  "passages": 472,
+  "dev_examples": 60,
+  "test_examples": 40,
+  "human_test_review_complete": false
+}

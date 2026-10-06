@@ -1,4 +1,10 @@
-# Agentic RAG learning reference
+# EvidenceRAG
+
+Evaluation upgrade in progress. The GitHub repository URL is unchanged.
+The approved [SQuAD corpus and human review instructions](data/squad_v1/README.md)
+and [generated dataset inventory](results/dataset_v1.md) are available. Benchmark
+scores and judge agreement have not been measured yet. The implementation below
+describes the existing reference, not the planned production features.
 
 A FastAPI and LangGraph prototype for exploring document retrieval, query routing, citations, and tool calls. This is a **learning reference**, not a deployed enterprise service or a measured high-accuracy RAG system.
 
