@@ -279,6 +279,36 @@ def call_diagnostics(calls: list[dict]) -> dict:
             "http_429s": sum(call.get("http_status") == 429 for call in calls)}
 
 
+def question_tokens(calls: list[dict]) -> dict:
+    result = {}
+    for role in ("answer", "judge"):
+        selected = [call for call in calls if call.get("client_role", "answer") == role]
+        result[role] = {"prompt_tokens": sum(call.get("prompt_tokens") or 0 for call in selected),
+                        "completion_tokens": sum(call.get("completion_tokens") or 0 for call in selected),
+                        "unknown_usage_attempts": sum(call.get("prompt_tokens") is None or call.get("completion_tokens") is None for call in selected)}
+        result[role]["total_tokens"] = result[role]["prompt_tokens"] + result[role]["completion_tokens"]
+    return result
+
+
+def completion_estimate(records: list[dict], calls: list[dict], planned: int, daily_tokens: int, budget: Decimal) -> dict:
+    samples = [row for row in records if row.get("completed") and row.get("answer") is not None
+               and row.get("judgement") is not None and not row.get("error")]
+    remaining = max(0, planned - sum(bool(row.get("completed")) for row in records))
+    allowance = budget - sum((Decimal(call["cost_usd"]) for call in calls), Decimal(0))
+    result = {"sample_questions": len(samples), "remaining_configuration_questions": remaining,
+              "remaining_usd": str(allowance),
+              "limitations": "Projection from completed samples, including observed retry reservations; article/configuration mix, external account use and SambaNova limits can change completion time/cost. Quota-days are a Groq lower bound, not an ETA."}
+    if samples:
+        average = sum(row.get("token_usage", {}).get("answer", {}).get("total_tokens", 0) for row in samples) / len(samples)
+        average_cost = sum((Decimal(row["cost_usd"]) for row in samples), Decimal(0)) / len(samples)
+        result.update(groq_tokens_per_question=average, projected_remaining_groq_tokens=average * remaining,
+                      groq_quota_days=average * remaining / daily_tokens,
+                      projected_remaining_cost_usd=str(average_cost * remaining),
+                      budget_sufficient=average_cost * remaining <= allowance,
+                      affordable_questions=int(allowance / average_cost) if average_cost else remaining)
+    return result
+
+
 def write_report(report: dict, stem: str) -> None:
     # ponytail: rewrite the bounded run snapshot after each case; use JSONL
     # append plus periodic summaries if benchmark size makes this I/O material.
@@ -296,6 +326,8 @@ def write_report(report: dict, stem: str) -> None:
              "| " + " | ".join(columns) + " |", "| " + " | ".join("---" for _ in columns) + " |"]
     if report.get("diagnostics"):
         lines.insert(1, "Call diagnostics: " + json.dumps(report["diagnostics"]) + "\n")
+    if report.get("completion_estimate"):
+        lines.insert(1, "Token/cost projection: " + json.dumps(report["completion_estimate"]) + "\n")
     if report.get("test_review_provenance"):
         lines.insert(1, "Test review: " + ", ".join(report["test_review_provenance"]) +
                      ". AI-assisted review remains provisional pending the user's spot-check.\n")
@@ -318,15 +350,27 @@ async def run(args: argparse.Namespace) -> None:
     resume = getattr(args, "resume", False)
     hostname = urlparse(settings.EVAL_LLM_BASE_URL).hostname
     provider = "groq" if hostname == "api.groq.com" else "gemini" if hostname == "generativelanguage.googleapis.com" else "local"
+    judge_url = settings.EVAL_JUDGE_BASE_URL or settings.EVAL_LLM_BASE_URL
+    judge_model = settings.EVAL_JUDGE_MODEL or settings.EVAL_LLM_MODEL
+    judge_key = settings.EVAL_JUDGE_API_KEY or settings.EVAL_LLM_API_KEY
+    judge_input = settings.EVAL_JUDGE_INPUT_USD_PER_MILLION if settings.EVAL_JUDGE_INPUT_USD_PER_MILLION is not None else settings.EVAL_INPUT_USD_PER_MILLION
+    judge_output = settings.EVAL_JUDGE_OUTPUT_USD_PER_MILLION if settings.EVAL_JUDGE_OUTPUT_USD_PER_MILLION is not None else settings.EVAL_OUTPUT_USD_PER_MILLION
+    separate_judge = any((settings.EVAL_JUDGE_BASE_URL, settings.EVAL_JUDGE_MODEL, settings.EVAL_JUDGE_API_KEY,
+                          settings.EVAL_JUDGE_INPUT_USD_PER_MILLION is not None, settings.EVAL_JUDGE_OUTPUT_USD_PER_MILLION is not None))
+    judge_provider = "sambanova" if urlparse(judge_url).hostname == "api.sambanova.ai" else provider
     if args.split == "all" and not args.prepare_labels and not smoke:
         cases.extend(reviewed_test_cases())
     if smoke:
         # First five dev questions include the previously truncating hierarchy case.
         cases = cases[:5]
     smoke_configuration = getattr(args, "smoke_configuration", "fixed_hybrid")
-    stem = "smoke_" + provider if smoke else "calibration_inputs" if args.prepare_labels else "retrieval_" + args.split if args.retrieval_only else "ablations_" + provider + "_" + args.split
+    run_provider = provider + "_" + judge_provider if separate_judge else provider
+    stem = "smoke_" + run_provider if smoke else "calibration_inputs" if args.prepare_labels else "retrieval_" + args.split if args.retrieval_only else "ablations_" + run_provider + "_" + args.split
     identity = {"model": settings.EVAL_LLM_MODEL, "base_url": settings.EVAL_LLM_BASE_URL,
                 "rates": [str(settings.EVAL_INPUT_USD_PER_MILLION), str(settings.EVAL_OUTPUT_USD_PER_MILLION)],
+                "judge": {"model": judge_model, "base_url": judge_url, "rates": [str(judge_input), str(judge_output)],
+                          "request_interval_seconds": settings.EVAL_JUDGE_REQUEST_INTERVAL_SECONDS if separate_judge else settings.EVAL_REQUEST_INTERVAL_SECONDS},
+                "reasoning_effort": "low", "auto_resume_daily_quota": settings.EVAL_AUTO_RESUME_DAILY_QUOTA,
                 "output_token_limits": {"answer": settings.EVAL_ANSWER_MAX_TOKENS, "judge": settings.EVAL_JUDGE_MAX_TOKENS, "rewrite": settings.EVAL_REWRITE_MAX_TOKENS},
                 "smoke_configuration": smoke_configuration if smoke else None,
                 "cases_sha256": hashlib.sha256(json.dumps(cases, sort_keys=True).encode()).hexdigest(),
@@ -349,7 +393,24 @@ async def run(args: argparse.Namespace) -> None:
         tokens_per_minute=settings.EVAL_TOKENS_PER_MINUTE if provider == "groq" else 0,
         tokens_per_day=settings.EVAL_TOKENS_PER_DAY if provider == "groq" else 0,
         quota_path=ROOT / ".cache" / ("groq_quota_" + hashlib.sha256((settings.EVAL_LLM_API_KEY + settings.EVAL_LLM_MODEL).encode()).hexdigest()[:16] + ".json") if provider == "groq" else None,
+        auto_resume_daily_quota=settings.EVAL_AUTO_RESUME_DAILY_QUOTA,
     )
+    judge_client = client
+    if client and separate_judge:
+        judge_client = LLMClient(judge_url, judge_model, judge_key,
+            local=urlparse(judge_url).hostname in {"localhost", "127.0.0.1", "::1"},
+            budget_usd=str(settings.EVAL_BUDGET_USD), input_usd_per_million=str(judge_input),
+            output_usd_per_million=str(judge_output), role="judge",
+            request_interval_seconds=settings.EVAL_JUDGE_REQUEST_INTERVAL_SECONDS,
+            max_rate_limit_retries=settings.EVAL_RATE_LIMIT_RETRIES,
+            auto_resume_daily_quota=settings.EVAL_AUTO_RESUME_DAILY_QUOTA)
+        # One sequential evaluator, one shared ledger/lock and cap; independent pacing.
+        judge_client.calls = client.calls
+        judge_client._lock = client._lock
+        client.budget_peer, judge_client.budget_peer = judge_client, client
+    clients = [client, judge_client] if separate_judge and client else [client] if client else []
+    def total_spent():
+        return sum((item.spent for item in clients), Decimal(0))
     configurations = CONFIGS if not args.retrieval_only else [row for row in CONFIGS if not row[3]]
     retrievers = {name: HybridRetriever(top_k=10, retrieval_mode=mode, embeddings=embeddings,
                                        store=stores[chunking], learned_reranker=mode == "hybrid_rerank")
@@ -373,8 +434,12 @@ async def run(args: argparse.Namespace) -> None:
               "embedding_model": embeddings.model_name, "embedding_revision": embeddings.revision,
               "reranker_model": CrossEncoderReranker.model_name, "reranker_revision": CrossEncoderReranker.revision,
               "chunk_indexes": {mode: {"chunks": len(store.chunks)} for mode, store in stores.items()},
-              "judge_model": client.model if client else None,
-              "same_model_judge": client is not None,
+              "judge_model": judge_model if client else None, "judge_provider": judge_provider,
+              "judge_base_url": judge_url, "judge_request_interval_seconds": settings.EVAL_JUDGE_REQUEST_INTERVAL_SECONDS if separate_judge else settings.EVAL_REQUEST_INTERVAL_SECONDS,
+              "judge_cost_rates_usd_per_million": {"input": str(judge_input), "output": str(judge_output)},
+              "same_model_judge": client is not None and not separate_judge,
+              "auto_resume_daily_quota": settings.EVAL_AUTO_RESUME_DAILY_QUOTA,
+              "budget_usd": str(settings.EVAL_BUDGET_USD), "planned_configuration_questions": len(cases) * (1 if smoke else len(configurations)),
               "run_identity": identity, "provider": provider,
               "token_limits": {"minute": settings.EVAL_TOKENS_PER_MINUTE, "day": settings.EVAL_TOKENS_PER_DAY} if provider == "groq" else None,
               "request_interval_seconds": client.request_interval_seconds if client else 0,
@@ -393,19 +458,27 @@ async def run(args: argparse.Namespace) -> None:
         report["status"] = "running"
         if client:
             client.calls = report.get("calls", [])
-            client.spent = Decimal(report.get("provider_cost_usd", "0"))
+            if separate_judge:
+                judge_client.calls = client.calls
+            for item in clients:
+                item.spent = sum((Decimal(call["cost_usd"]) for call in client.calls if call.get("client_role", "answer") == item.role), Decimal(0)) if separate_judge else Decimal(report.get("provider_cost_usd", "0"))
+                item.wait_until = report.get("wait_deadlines", {}).get(item.role)
     def checkpoint():
         if not row.get("completed"):
-            row["cost_usd"] = str(prior_cost + client.spent - spent)
+            row["cost_usd"] = str(prior_cost + total_spent() - spent)
             row.setdefault("call_range", [call_start, call_start])[1] = len(client.calls)
         report["calls"] = client.calls
-        report["provider_cost_usd"] = str(client.spent)
-        report["waiting_until_unix"] = client.wait_until
+        report["provider_cost_usd"] = str(total_spent())
+        report["wait_deadlines"] = {item.role: item.wait_until for item in clients}
+        report["waiting_until_unix"] = max((item.wait_until or 0 for item in clients), default=0) or None
+        row["token_usage"] = question_tokens(client.calls[row["call_range"][0]:row["call_range"][1]])
+        report["completion_estimate"] = completion_estimate(records, client.calls, report["planned_configuration_questions"], settings.EVAL_TOKENS_PER_DAY, settings.EVAL_BUDGET_USD)
         report["summaries"] = summarize(records)
         report["diagnostics"] = call_diagnostics(client.calls)
         write_report(report, stem)
     if client:
         client.checkpoint = checkpoint
+        judge_client.checkpoint = checkpoint
     try:
         for question_index, case in enumerate(cases):
             selected = [next(config for config in configurations if config[0] == smoke_configuration)] if smoke else [configurations[question_index % len(configurations)]] if args.prepare_labels else configurations
@@ -428,7 +501,7 @@ async def run(args: argparse.Namespace) -> None:
                     records.append(row)
                 row["completed"] = False
                 prior_cost = Decimal(row["cost_usd"])
-                started, spent = time.perf_counter(), client.spent if client else 0
+                started, spent = time.perf_counter(), total_spent()
                 call_start = len(client.calls) if client else 0
                 try:
                     if "contexts" not in row:
@@ -459,7 +532,7 @@ async def run(args: argparse.Namespace) -> None:
                         if not args.prepare_labels:
                             judge_call_start = len(client.calls)
                             try:
-                                judged = await judge_answer(client, case["question"], row["reference_answers"], row["contexts"], answer)
+                                judged = await judge_answer(judge_client, case["question"], row["reference_answers"], row["contexts"], answer)
                             finally:
                                 timings = client.calls[judge_call_start:]
                                 row["judge_provider_latency_ms"] = sum(call.get("provider_latency_ms", 0) for call in timings)
@@ -477,23 +550,25 @@ async def run(args: argparse.Namespace) -> None:
                         raise
                     row["completed"] = True
                 finally:
-                    row["cost_usd"] = str(prior_cost + client.spent - spent) if client else "0"
+                    row["cost_usd"] = str(prior_cost + total_spent() - spent) if client else "0"
                     row.setdefault("call_range", [call_start, call_start])[1] = len(client.calls) if client else 0
+                    row["token_usage"] = question_tokens(client.calls[row["call_range"][0]:row["call_range"][1]]) if client else {}
                     report["summaries"] = summarize(records)
                     report["calls"] = client.calls if client else []
-                    report["provider_cost_usd"] = str(client.spent) if client else "0"
+                    report["provider_cost_usd"] = str(total_spent())
                     report["diagnostics"] = call_diagnostics(client.calls if client else [])
+                    report["completion_estimate"] = completion_estimate(records, client.calls if client else [], report["planned_configuration_questions"], settings.EVAL_TOKENS_PER_DAY, settings.EVAL_BUDGET_USD)
                     write_report(report, stem)
                 print(f"{name} {case['id']}: {row['error'] or 'recorded'}", flush=True)
         if args.prepare_labels:
             if any(row["answer"] is None for row in records):
                 raise ValueError("Cannot create twenty calibration examples until every model answer succeeds")
             human_label_sheet(records, DATA / "labels_todo.jsonl")
-        before_calibration = client.spent if client else 0
-        report["calibration"] = await calibrate_judge(client) if client and not args.prepare_labels and not smoke else {
+        before_calibration = total_spent()
+        report["calibration"] = await calibrate_judge(judge_client) if client and not args.prepare_labels and not smoke else {
             "status": "pending_human_labels", "agreement": None}
-        report["calibration_cost_usd"] = str(client.spent - before_calibration) if client else "0"
-        report["provider_cost_usd"] = str(client.spent) if client else "0"
+        report["calibration_cost_usd"] = str(total_spent() - before_calibration)
+        report["provider_cost_usd"] = str(total_spent())
         report["diagnostics"] = call_diagnostics(client.calls if client else [])
         report["status"] = "partial_failures" if any(row["error"] for row in records) else "measured"
         if not args.prepare_labels and not args.retrieval_only and not smoke:
@@ -509,8 +584,8 @@ async def run(args: argparse.Namespace) -> None:
         write_report(report, stem)
         raise
     finally:
-        if client:
-            await client.close()
+        for item in clients:
+            await item.close()
 
 
 def main() -> None:

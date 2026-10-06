@@ -1,4 +1,5 @@
 import pytest
+import asyncio
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -7,7 +8,7 @@ from types import SimpleNamespace
 from decimal import Decimal
 import httpx
 
-from src.evals.benchmark import AMBIGUOUS_TEST_ID, DATA, calibration_agreement, call_diagnostics, relevant_chunks, reviewed_test_cases, summarize, write_report, run
+from src.evals.benchmark import AMBIGUOUS_TEST_ID, DATA, calibration_agreement, call_diagnostics, completion_estimate, question_tokens, relevant_chunks, reviewed_test_cases, summarize, write_report, run
 from src.evals.judging import Answer, Judgement
 from src.rag.document_store import DocumentStore
 from src.rag.models import DocumentChunk
@@ -84,13 +85,13 @@ async def test_resume_keeps_answer_after_judge_interruption_and_retains_costs():
     def factory(*args, **kwargs):
         client = SimpleNamespace(model="test", input_price=Decimal('0.1'), output_price=Decimal('0.2'),
                                  request_interval_seconds=0, max_rate_limit_retries=0, wait_until=None,
-                                 spent=Decimal(0), calls=[], close=AsyncMock())
+                                 spent=Decimal(0), calls=[], close=AsyncMock(), _lock=asyncio.Lock(), role=kwargs.get('role', 'answer'))
         clients.append(client)
         return client
 
     def record_call(client):
         client.spent += Decimal('0.001')
-        client.calls.append({'cost_usd': '0.001'})
+        client.calls.append({'cost_usd': '0.001', 'client_role': client.role})
         client.checkpoint()
 
     async def answer(client, *args):
@@ -114,7 +115,9 @@ async def test_resume_keeps_answer_after_judge_interruption_and_retains_costs():
          patch('src.evals.benchmark.retrieve_case', new=AsyncMock(return_value=([], None))), \
          patch('src.evals.benchmark.generate_answer', new=AsyncMock(side_effect=answer)) as generation, \
          patch('src.evals.benchmark.judge_answer', new=AsyncMock(side_effect=judge)), \
-         patch('src.evals.benchmark.importlib.metadata.version', return_value='test'):
+         patch('src.evals.benchmark.importlib.metadata.version', return_value='test'), \
+         patch('src.evals.benchmark.settings.EVAL_JUDGE_BASE_URL', 'https://judge.example/v1'), \
+         patch('src.evals.benchmark.settings.EVAL_JUDGE_MODEL', 'test-judge'):
         args = SimpleNamespace(split='dev', smoke=True, resume=False, prepare_labels=False, retrieval_only=False)
         with pytest.raises(httpx.ReadTimeout):
             await run(args)
@@ -122,9 +125,26 @@ async def test_resume_keeps_answer_after_judge_interruption_and_retains_costs():
         args.resume = True
         await run(args)
         assert generation.await_count == 5
-        assert clients[-1].spent == Decimal('0.011')
+        assert sum(client.spent for client in clients[-2:]) == Decimal('0.011')
+        assert clients[-2].spent == Decimal('0.005')
+        assert clients[-1].spent == Decimal('0.006')
         await run(args)
         assert generation.await_count == 5
         args.resume = False
         with pytest.raises(ValueError, match='already exist'):
             await run(args)
+
+
+def test_per_question_tokens_and_quota_cost_projection_keep_unknown_usage_visible():
+    calls = [{'client_role': 'answer', 'prompt_tokens': 600, 'completion_tokens': 200, 'cost_usd': '0.001'},
+             {'client_role': 'judge', 'prompt_tokens': 1000, 'completion_tokens': 100, 'cost_usd': '0.003'},
+             {'client_role': 'judge', 'prompt_tokens': None, 'completion_tokens': None, 'cost_usd': '0.02'}]
+    usage = question_tokens(calls)
+    assert usage['answer']['total_tokens'] == 800
+    assert usage['judge']['total_tokens'] == 1100 and usage['judge']['unknown_usage_attempts'] == 1
+    estimate = completion_estimate([{'completed': True, 'answer': {}, 'judgement': {}, 'token_usage': usage,
+                                    'cost_usd': '0.024'}], calls, 501, 200000, Decimal('2.00'))
+    assert estimate['remaining_configuration_questions'] == 500
+    assert estimate['groq_quota_days'] == 2
+    assert Decimal(estimate['projected_remaining_cost_usd']) == 12
+    assert estimate['budget_sufficient'] is False

@@ -38,8 +38,12 @@ class LLMClient:
         transport: httpx.AsyncBaseTransport | None = None,
         max_rate_limit_retries: int = 6, request_interval_seconds: float = 0,
         tokens_per_minute: int = 0, tokens_per_day: int = 0, quota_path: Path | None = None,
+        role: str = "answer", auto_resume_daily_quota: bool = False,
     ):
         self.model = model
+        self.role = role
+        self.auto_resume_daily_quota = auto_resume_daily_quota
+        self.budget_peer = None
         self._api_key = api_key
         self.budget = Decimal(budget_usd)
         self.input_price = Decimal(input_usd_per_million)
@@ -107,25 +111,41 @@ class LLMClient:
 
     async def complete(self, messages: list[dict[str, str]], *, max_tokens: int = 256,
                        schema: dict | None = None) -> str:
-        for attempt in range(self.max_rate_limit_retries + 1):
+        if self.wait_until and self.wait_until > time.time():
+            await self._wait(self.wait_until - time.time(), "restored quota deadline")
+        attempt = 0
+        while True:
             try:
                 return await self._complete_once(messages, max_tokens=max_tokens, schema=schema)
             except httpx.HTTPStatusError as error:
-                if error.response.status_code == 429 and self.calls[-1].get("quota_exhausted") == "daily":
+                daily = error.response.status_code == 429 and self.calls[-1].get("quota_exhausted") == "daily"
+                if daily and not self.auto_resume_daily_quota:
                     raise RuntimeError("Daily Gemini quota exhausted; wait for reset or use a key with paid access") from error
-                if error.response.status_code not in (429, 500, 502, 503, 504) or attempt == self.max_rate_limit_retries:
+                if error.response.status_code not in (429, 500, 502, 503, 504) or (not daily and attempt == self.max_rate_limit_retries):
                     raise
                 delay = min(60, 2 ** (attempt + 1))
                 retry_after = error.response.headers.get("retry-after", "")
+                reset_hint = 0.0
                 try:
                     value = float(retry_after)
-                    if math.isfinite(value):
+                    if math.isfinite(value) and value > 0:
                         delay = max(delay, value)
+                        reset_hint = value
                 except ValueError:
                     pass
+                if daily:
+                    # No reset hint means waiting a full daily window, not rotating keys.
+                    try:
+                        value = float(str(self.calls[-1].get("provider_retry_delay", "0s")).removesuffix("s"))
+                        if math.isfinite(value) and value > 0:
+                            reset_hint = max(reset_hint, value)
+                    except ValueError:
+                        pass
+                    delay = max(delay, reset_hint) + 1 if reset_hint else 86400
                 self.calls[-1].update(retry_attempt=attempt + 1, backoff_seconds=delay)
                 print(f"{self.model}: HTTP {error.response.status_code}; retry {attempt + 1} after {delay:g}s", flush=True)
                 await self._wait(delay, "provider backoff")
+                attempt = 0 if daily else attempt + 1
 
     async def _complete_once(self, messages: list[dict[str, str]], *, max_tokens: int,
                              schema: dict | None) -> str:
@@ -138,7 +158,7 @@ class LLMClient:
             raise ValueError("Prompt exceeds the conservative input-token ceiling")
         reserve = (self.input_token_limit * self.input_price + max_tokens * self.output_price) / 1_000_000
         async with self._lock:
-            if self.spent + reserve > self.budget:
+            if self.spent + (self.budget_peer.spent if self.budget_peer else 0) + reserve > self.budget:
                 raise RuntimeError("Evaluation budget exhausted before dispatch")
             remaining = self.request_interval_seconds - (time.monotonic() - self._last_dispatch)
             while remaining > 0:
@@ -156,7 +176,7 @@ class LLMClient:
             else:
                 event = None
             self.spent += reserve
-            record = {"model": self.model, "status": "dispatched", "prompt_tokens": None,
+            record = {"model": self.model, "client_role": self.role, "status": "dispatched", "prompt_tokens": None,
                       "completion_tokens": None, "cost_usd": str(reserve), "cost_kind": "reserved_upper_bound",
                       "max_completion_tokens": max_tokens, "finish_reason": None, "truncated": False}
             self.calls.append(record)
@@ -197,6 +217,9 @@ class LLMClient:
                         message = str(detail.get("message", ""))
                         record["provider_error_message"] = message.replace(self._api_key, "<redacted>") if self._api_key else message
                         record["provider_error_status"] = detail.get("status")
+                        if response.status_code == 429 and any(term in message.lower() for term in
+                                                              ("tokens per day", "requests per day", "daily quota", "daily limit")):
+                            record["quota_exhausted"] = "daily"
                         for item in detail.get("details", []):
                             if any("PerDay" in violation.get("quotaId", "") for violation in item.get("violations", [])):
                                 record["quota_exhausted"] = "daily"
@@ -224,6 +247,9 @@ class LLMClient:
                 self.spent += actual - reserve
                 record.update(prompt_tokens=prompt, completion_tokens=completion,
                               cost_usd=str(actual), cost_kind="measured", status="completed")
+                details = usage.get("completion_tokens_details") or {}
+                if type(details.get("reasoning_tokens")) is int:
+                    record["reasoning_tokens"] = details["reasoning_tokens"]
                 if event is not None:
                     event.update(tokens=prompt + completion, usage="measured")
                 if choice.get("finish_reason") != "stop":

@@ -32,7 +32,14 @@ class Settings(BaseSettings):
     EVAL_TOKENS_PER_DAY: int = Field(default=200000, ge=1)
     EVAL_ANSWER_MAX_TOKENS: int = Field(default=1024, gt=0, le=65536)
     EVAL_JUDGE_MAX_TOKENS: int = Field(default=1024, gt=0, le=65536)
-    EVAL_REWRITE_MAX_TOKENS: int = Field(default=256, gt=0, le=65536)
+    EVAL_REWRITE_MAX_TOKENS: int = Field(default=1024, gt=0, le=65536)
+    EVAL_JUDGE_BASE_URL: Optional[str] = None
+    EVAL_JUDGE_MODEL: Optional[str] = None
+    EVAL_JUDGE_API_KEY: Optional[str] = None
+    EVAL_JUDGE_INPUT_USD_PER_MILLION: Optional[Decimal] = Field(default=None, ge=0)
+    EVAL_JUDGE_OUTPUT_USD_PER_MILLION: Optional[Decimal] = Field(default=None, ge=0)
+    EVAL_JUDGE_REQUEST_INTERVAL_SECONDS: float = Field(default=30, ge=0)
+    EVAL_AUTO_RESUME_DAILY_QUOTA: bool = True
     
     # RAG Settings
     CHUNK_SIZE: int = 800

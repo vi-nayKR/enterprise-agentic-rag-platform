@@ -1,5 +1,10 @@
 # Replacement-run continuation
 
+**Historical:** the user subsequently cancelled this same-model continuation.
+Its processes were stopped before any full-run restart. The fixed same-model smoke
+was moved to `results/attempts/groq_fixed_same_model_smoke/`; the new active smoke
+is `results/smoke_groq_sambanova.json`, with independent SambaNova judging.
+
 The source fixes are committed as `87738fb`; all 57 tests pass. The replacement
 smoke uses the first five dev cases on `fixed_hybrid`, including the previously
 truncating hierarchy question. Groq remains both answerer and judge. SambaNova

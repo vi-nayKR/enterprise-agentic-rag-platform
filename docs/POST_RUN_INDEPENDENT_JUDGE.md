@@ -1,5 +1,13 @@
 # Queued post-run task: independent judge
 
+**Updated user instruction:** activate SambaNova before the replacement full run,
+re-run five dev cases, then freeze Groq answers/rewrites (low reasoning, 1024 tokens)
+and SambaNova DeepSeek-V3.1 judging. The timing instructions below are historical.
+Independent-client configuration/shared accounting is now implemented. Cached-answer
+same-model versus cross-family comparisons remain post-run work, limited to the
+matching archived cohort; the stopped old run is not a complete same-model baseline.
+Both judges still need the same twenty human-labelled frozen examples; do not fill labels.
+
 User instruction received 2026-10-06. Do not implement or activate this until
 the replacement Groq full run finishes. The user subsequently stopped the old
 run to fix output limits, HTTP error logging and latency accounting; its outputs

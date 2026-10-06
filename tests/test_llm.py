@@ -11,6 +11,50 @@ from tempfile import TemporaryDirectory
 
 
 @pytest.mark.asyncio
+async def test_daily_quota_auto_resume_outlasts_retry_limit_and_retains_all_attempts():
+    requests = []
+    def respond(request):
+        requests.append(json.loads(request.content))
+        if len(requests) <= 3:
+            return httpx.Response(429, headers={'retry-after': '2'}, json={'error': {'message': 'tokens per day quota reached'}})
+        return httpx.Response(200, json={'usage': {'prompt_tokens': 10, 'completion_tokens': 5},
+            'choices': [{'finish_reason': 'stop', 'message': {'content': '{}'}}]})
+    client = LLMClient('https://api.groq.com/openai/v1', 'openai/gpt-oss-120b', 'test-key', local=False,
+        input_usd_per_million='0.15', output_usd_per_million='0.60', max_rate_limit_retries=1,
+        auto_resume_daily_quota=True, transport=httpx.MockTransport(respond))
+    try:
+        with patch('src.llm.asyncio.sleep', new=AsyncMock()) as sleep:
+            await client.complete([{'role': 'user', 'content': 'JSON please'}], max_tokens=1024)
+        assert len(client.calls) == 4 and sleep.await_count == 3
+        assert all(call['quota_exhausted'] == 'daily' and call['backoff_seconds'] == 3 for call in client.calls[:3])
+        assert requests[-1]['reasoning_effort'] == 'low' and requests[-1]['max_completion_tokens'] == 1024
+        assert client.spent == sum(Decimal(call['cost_usd']) for call in client.calls)
+    finally:
+        await client.close()
+
+
+@pytest.mark.asyncio
+async def test_two_clients_share_one_spending_cap():
+    def respond(request):
+        return httpx.Response(200, json={'usage': {'prompt_tokens': 8192, 'completion_tokens': 256},
+            'choices': [{'finish_reason': 'stop', 'message': {'content': '{}'}}]})
+    clients = [LLMClient('https://provider.example/v1', 'test', 'test-key', local=False, budget_usd='0.02',
+        input_usd_per_million='1', output_usd_per_million='1', transport=httpx.MockTransport(respond)) for _ in range(2)]
+    clients[0].budget_peer, clients[1].budget_peer = clients[1], clients[0]
+    clients[1]._lock = clients[0]._lock
+    try:
+        for client in clients:
+            await client.complete([{'role': 'user', 'content': 'JSON'}])
+        with pytest.raises(RuntimeError, match='budget exhausted'):
+            await clients[1].complete([{'role': 'user', 'content': 'JSON'}])
+        assert sum(len(client.calls) for client in clients) == 2
+        assert sum(client.spent for client in clients) < Decimal('0.02')
+    finally:
+        for client in clients:
+            await client.close()
+
+
+@pytest.mark.asyncio
 async def test_provider_latency_excludes_throttle_wait():
     clock = [100.0]
 

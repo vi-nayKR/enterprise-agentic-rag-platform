@@ -9,7 +9,10 @@ The local ablation run was interrupted, and the
 The user selected Groq next; its original smoke passed, but the full run was stopped
 to fix completion-token exhaustion and latency accounting. The
 [stopped-attempt audit and original outputs](results/attempts/groq_before_token_latency_fix/AUDIT.md)
-are preserved. A fresh [five-question smoke](results/smoke_groq.md) gates restarting
+are preserved. The fixed-settings same-model smoke is archived under
+`results/attempts/groq_fixed_same_model_smoke/`. The user moved judging to
+SambaNova `DeepSeek-V3.1`, leaving Groq for answering/rewriting. A fresh
+[five-question cross-family smoke](results/smoke_groq_sambanova.md) gates restarting
 the full ablations with persistent quotas and checkpoints. Judge agreement awaits your labels.
 The implementation below
 describes the existing reference, not the planned production features.
@@ -44,7 +47,10 @@ inference binary and model checksums are pinned in the setup script. Model terms
 are those published by Qwen; dataset licensing does not license model weights.
 
 Copy `.env.example` to `.env` to configure the evaluator. Answering, rewriting,
-and judging share one client and one total-run spending cap below $3. The local
+and judging share one total-run spending cap below $3. Optional `EVAL_JUDGE_*`
+settings select an independent client; unset fields fall back to `EVAL_LLM_*`
+and its prices. Separate clients have independent pacing/retries and role-tagged
+calls, with a shared spending lock and combined cap. The local
 default has no provider token charges. Remote endpoints require explicit token
 prices and credentials; no secrets are committed. Every request records actual
 token usage or a failed/unknown-usage status. Failed calls reserve their worst
@@ -58,13 +64,17 @@ paced at a minimum 12-second interval by default. HTTP 429 and temporary server
 errors (500/502/503/504) use exponential
 backoff (2, 4, 8, 16, 32, 60 seconds), honoring a longer numeric `Retry-After`.
 Each attempt is in the shared ledger; rejected calls without usage retain a
-conservative cost reservation. Persistent 429, authorization, and model-not-found
-errors stop the run rather than silently scoring all remaining cases as failures.
+conservative cost reservation. Authorization/model errors stop the run. With
+`EVAL_AUTO_RESUME_DAILY_QUOTA=true`, daily-quota 429s retain saved answers and wait
+automatically beyond the normal retry limit, honoring the provider reset delay.
+Without a reset hint, the wait is a full 24-hour window. Wait deadlines and
+separate client costs survive `--resume`; the same configured keys are used.
+Persistent transient errors still stop after the normal retry limit.
 Token costs use configured paid-tier prices; these estimates are not an account
 billing statement or proof that this API key is on the free tier.
 
 Output limits are configurable with `EVAL_ANSWER_MAX_TOKENS=1024`,
-`EVAL_JUDGE_MAX_TOKENS=1024`, and `EVAL_REWRITE_MAX_TOKENS=256`. GPT-OSS reasoning
+`EVAL_JUDGE_MAX_TOKENS=1024`, and `EVAL_REWRITE_MAX_TOKENS=1024`. GPT-OSS reasoning
 shares the completion-token allowance; the old 384/512 limits caused structured
 output exhaustion. Strict schemas remain enabled. Every new call retains its
 finish reason; `length` and token-exhaustion HTTP 400s remain failures. Error
@@ -94,8 +104,8 @@ mixing results. Only one evaluator may own a quota ledger at a time. Keep
 
 ### Evaluation limitations
 
-The configured Groq run uses `openai/gpt-oss-120b` for both answers and judges:
-**same-model judge**. Correlated errors may inflate answer-quality estimates;
+The archived Groq attempts used `openai/gpt-oss-120b` for both answers and judges:
+**same-model judge**. Correlated errors may inflate those answer-quality estimates;
 independent human labels remain necessary. Low reasoning effort is used, with
 reported completion usage included in costs. Configured paid-rate estimates are
 $0.15/M input and $0.60/M output tokens, following
@@ -107,6 +117,27 @@ checkpoint resume made no further calls. The stopped full attempt reserved/measu
 $0.02578395 more. Before the replacement smoke, $2.83198860 remained from the
 original $2.99 allowance after all Gemini and Groq attempts. The replacement smoke
 is also deducted before the full run; failed attempts never become free retries.
+The interrupted fixed-settings same-model smoke added $0.0182334; $2.81375520
+remains before the new cross-family smoke.
+
+The new configuration is Groq `openai/gpt-oss-120b` for answers and rewrites
+(low reasoning effort, 1024 completion tokens), and SambaNova `DeepSeek-V3.1` at
+`https://api.sambanova.ai/v1` for judging (1024 tokens, 30-second pacing).
+This is a **cross-family judge**; independent 20-case human validation remains
+pending, and different families may still share biases or benchmark exposure.
+Configured judge estimates use $3/M input and $4.50/M output, following
+[SambaNova pricing](https://cloud.sambanova.ai/plans/pricing); these are not free-tier
+billing claims. SambaNova quota limits remain unverified; its own 429s use backoff.
+Source text, titles and citation IDs stay in model prompts; offset/index
+bookkeeping stays in cached results, and redundant schema examples are omitted.
+Stored evidence and human labels remain intact.
+
+Each configuration/question row records prompt/completion tokens separately for
+the answer/rewrite client and judge, with unknown-usage attempt counts.
+Completion projections use observed tokens per completed question, Groq's 200K
+daily allowance, the remaining dollar allowance and observed per-question costs.
+Quota-days are a lower bound, not a promised ETA: article/configuration mix,
+retries, external account usage and SambaNova limits can change the estimate.
 
 The archived Gemini attempt used `gemini-3.8-flash` for answering and judging:
 **same-model judge**. This may correlate answer and judge errors; independent human
@@ -122,8 +153,8 @@ day, exhausted with a roughly 16.6-hour reset delay. Three smoke cases finalized
 with errors; case four was interrupted during backoff and case five was unstarted.
 No valid answers or judgements were obtained. The ledger and conservative allowance
 for unflushed attempts are in the smoke summary; these reservations are not billed
-charges. The remaining combined budget before Groq smoke is $2.8606608. Explicit Gemini daily-quota errors
-stop without repeated requests. The full benchmark is approximately 1,500 calls;
+charges. The remaining combined budget before Groq smoke was $2.8606608. That archived attempt
+stopped on explicit daily-quota errors. The full benchmark is approximately 1,500 calls;
 Groq runs may wait and resume across token-quota windows instead.
 
 ```bash

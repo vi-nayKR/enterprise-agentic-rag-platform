@@ -5,7 +5,7 @@ from tempfile import TemporaryDirectory
 import pytest
 from pydantic import ValidationError
 
-from src.evals.judging import Answer, Judgement, answer_metrics, human_label_sheet, judge_answer
+from src.evals.judging import Answer, Judgement, answer_metrics, human_label_sheet, judge_answer, prompt_evidence
 
 
 def test_abstention_is_not_a_perfect_faithfulness_score():
@@ -15,6 +15,14 @@ def test_abstention_is_not_a_perfect_faithfulness_score():
     assert answer_metrics(answer, judgement)["answer_relevance"] == 0
     with pytest.raises(ValidationError):
         Answer(claims=[], abstained=False)
+
+
+def test_compact_prompt_preserves_citation_evidence_title_and_original_metadata():
+    chunks = [{'chunk_id': 'source:1', 'text': 'Exact evidence.',
+               'metadata': {'title': 'Article', 'start_offset': 50, 'end_offset': 65}}]
+    original = json.dumps(chunks)
+    assert prompt_evidence(chunks) == [{'chunk_id': 'source:1', 'text': 'Exact evidence.', 'title': 'Article'}]
+    assert json.dumps(chunks) == original
 
 
 @pytest.mark.asyncio
