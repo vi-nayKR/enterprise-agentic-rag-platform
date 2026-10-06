@@ -242,6 +242,8 @@ def summarize(records: list[dict]) -> list[dict]:
 
 
 def write_report(report: dict, stem: str) -> None:
+    # ponytail: rewrite the bounded run snapshot after each case; use JSONL
+    # append plus periodic summaries if benchmark size makes this I/O material.
     RESULTS.mkdir(exist_ok=True)
     target = RESULTS / f"{stem}.json"
     temporary = target.with_suffix(".json.part")
@@ -254,7 +256,8 @@ def write_report(report: dict, stem: str) -> None:
              "| " + " | ".join(columns) + " |", "| " + " | ".join("---" for _ in columns) + " |"]
     for summary in report["summaries"]:
         lines.append("| " + " | ".join("pending" if summary[column] is None else
-                                      f"{summary[column]:.4f}" if isinstance(summary[column], float) else str(summary[column])
+                                      format(summary[column], ".8f" if "cost" in column else ".4f")
+                                      if isinstance(summary[column], float) else str(summary[column])
                                       for column in columns) + " |")
     (RESULTS / f"{stem}.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 

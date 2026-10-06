@@ -2,8 +2,9 @@ import pytest
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
-from src.evals.benchmark import DATA, calibration_agreement, relevant_chunks, reviewed_test_cases, summarize
+from src.evals.benchmark import DATA, calibration_agreement, relevant_chunks, reviewed_test_cases, summarize, write_report
 from src.rag.models import DocumentChunk
 
 
@@ -30,3 +31,15 @@ def test_missing_answer_metrics_stay_missing_in_summary():
     assert result["valid_judgements"] == 0
     assert result["recall@5"] == 1
     assert calibration_agreement([])["agreement"] is None
+
+
+def test_generated_table_does_not_round_small_paid_costs_to_zero():
+    rows = [{"configuration": "test", "split": "dev", "metrics": {"recall@5": 1},
+             "answer": None, "judgement": None, "error": None, "cost_usd": "0.000003",
+             "retrieval_latency_ms": 12}]
+    report = {"status": "measured", "calibration": {"status": "pending_human_labels"}, "summaries": summarize(rows)}
+    with TemporaryDirectory() as folder, patch("src.evals.benchmark.RESULTS", Path(folder)):
+        write_report(report, "test")
+        assert "0.00000300" in (Path(folder) / "test.md").read_text(encoding="utf-8")
+        saved = json.loads((Path(folder) / "test.json").read_text(encoding="utf-8"))
+        assert saved["summaries"][0]["provider_cost_usd_per_query"] == 0.000003
