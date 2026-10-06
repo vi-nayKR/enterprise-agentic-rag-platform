@@ -5,12 +5,10 @@ from src.rag.models import SearchResult
 
 
 class CrossEncoderReranker:
-    """
+    """Optional learned cross-encoder, or the legacy keyword scorer by default."""
 
     model_name = "cross-encoder/ms-marco-MiniLM-L6-v2"
     revision = "233902d25c440f23af6f7d6e94d2946bac0bee0a"
-    Optional learned cross-encoder, or the legacy keyword scorer by default.
-    """
 
     def __init__(self, top_n: int = 5, learned: bool = False):
         self.top_n = top_n

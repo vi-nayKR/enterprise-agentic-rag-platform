@@ -20,6 +20,11 @@ truncation, substring-based BM25 frequency, silent embedding fallback, or unboun
 chunks for unbroken text. Added checks reproduced these failures before shared
 fixes. This is why a passing demo suite did not establish measured RAG quality.
 
+The first full-run startup also exposed model pin declarations accidentally placed
+inside the reranker docstring. A constructor regression reproduced the missing
+attribute before moving the declarations into executable class attributes.
+No full-run predictions were produced by that failed startup.
+
 The benchmark is public single-hop Wikipedia data and may have been present in
 model pretraining. It does not establish unseen-corpus generalisation or enterprise
 readiness. The semantic boundary heuristic is deliberately simple and must earn

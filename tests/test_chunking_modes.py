@@ -1,4 +1,6 @@
 import pytest
+from types import SimpleNamespace
+from unittest.mock import Mock, patch
 
 from src.rag.chunking import SemanticChunker
 from src.rag.models import Document
@@ -6,6 +8,15 @@ from src.rag.embeddings import LocalEmbeddings
 from src.rag.hybrid_retriever import HybridRetriever
 from src.rag.reranker import CrossEncoderReranker
 from src.rag.models import SearchResult
+
+
+def test_learned_reranker_constructor_uses_pinned_model():
+    factory = Mock()
+    with patch.dict("sys.modules", {"sentence_transformers": SimpleNamespace(CrossEncoder=factory)}):
+        reranker = CrossEncoderReranker(learned=True)
+    factory.assert_called_once_with("cross-encoder/ms-marco-MiniLM-L6-v2",
+                                    revision="233902d25c440f23af6f7d6e94d2946bac0bee0a", device="cpu")
+    assert reranker.model is factory.return_value
 
 
 @pytest.mark.asyncio
