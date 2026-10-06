@@ -1,0 +1,924 @@
+{
+  "status": "interrupted",
+  "dataset": "squad_v1",
+  "split": "all",
+  "source_commit": "4c5b8b8588af00c484adfc0c5f25a04e756732bc",
+  "python": "3.12.10",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "package_versions": {
+    "sentence-transformers": "5.7.0",
+    "torch": "2.14.1+cpu",
+    "langchain-text-splitters": "1.1.3",
+    "pydantic": "2.13.5"
+  },
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "reranker_model": "cross-encoder/ms-marco-MiniLM-L6-v2",
+  "reranker_revision": "233902d25c440f23af6f7d6e94d2946bac0bee0a",
+  "chunk_indexes": {
+    "fixed": {
+      "chunks": 603
+    },
+    "recursive": {
+      "chunks": 603
+    },
+    "semantic": {
+      "chunks": 1292
+    }
+  },
+  "judge_model": "evidencerag-local",
+  "test_review_sha256": "b3bdf84105d8a7ae009bd82b760c09a04a0de416eb318afc364e07d19810440c",
+  "test_review_provenance": [
+    "ai_assisted"
+  ],
+  "test_sensitivity_excluded_id": "573786b51c4567190057448e",
+  "garbled_formula_id": "57297a276aef051400154f8a",
+  "exact_match_computed": false,
+  "ranking_depth": 10,
+  "warm_index": true,
+  "result_cache": false,
+  "experiment_design": "one factor at a time; not a complete factorial or global optimum search",
+  "cost_scope": "provider token charges, excluding electricity/hardware",
+  "records": [
+    {
+      "id": "fixed_hybrid:56e1ec83cd28a01900c67c0e",
+      "configuration": "fixed_hybrid",
+      "split": "dev",
+      "question_id": "56e1ec83cd28a01900c67c0e",
+      "question_origin": "human_authored_squad",
+      "reviewer": null,
+      "review_provenance": null,
+      "review_notes": null,
+      "gold_source_chunk_id": "30408117680a406f",
+      "question": "What is the most well-known algorithm associated with the integer factorization problem?",
+      "reference_answers": [
+        "the general number field sieve",
+        "RSA",
+        "general number field sieve"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "The most well-known algorithm associated with the integer factorization problem is the general number field sieve.",
+            "citation_ids": [
+              "30408117680a406f_fixed_0"
+            ]
+          },
+          {
+            "text": "Shor's algorithm, a quantum algorithm, runs in polynomial time for integer factorization.",
+            "citation_ids": [
+              "30408117680a406f_fixed_1"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": "ValueError: Judge omitted, duplicated, or invented claim labels",
+      "cost_usd": "0",
+      "retrieval_latency_ms": 241.16110000068147,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "gold_chunk_ids": [
+        "30408117680a406f_fixed_0"
+      ],
+      "ranked_chunk_ids": [
+        "30408117680a406f_fixed_0",
+        "30408117680a406f_fixed_1",
+        "d04e1468058f4742_fixed_0",
+        "89cac738d1bb3723_fixed_0",
+        "3fff0e386706d513_fixed_0",
+        "5ad046b0a138db8c_fixed_0",
+        "267094041a9303dc_fixed_0",
+        "d953cfbf0d8ad856_fixed_0",
+        "0c179ab41ed42a56_fixed_0",
+        "6cff8048703b36a0_fixed_0"
+      ],
+      "contexts": [
+        {
+          "chunk_id": "30408117680a406f_fixed_0",
+          "text": "The integer factorization problem is the computational problem of determining the prime factorization of a given integer. Phrased as a decision problem, it is the problem of deciding whether the input has a factor less than k. No efficient integer factorization algorithm is known, and this fact forms the basis of several modern cryptographic systems, such as the RSA algorithm. The integer factorization problem is in NP and in co-NP (and even in UP and co-UP). If the problem is NP-complete, the polynomial time hierarchy will collapse to its first level (i.e., NP will equal co-NP). The best known algorithm for integer factorization is the general number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer. However, the best known quantum algori",
+          "document_id": "30408117680a406f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 800,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "30408117680a406f_fixed_1",
+          "text": "al number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer. However, the best known quantum algorithm for this problem, Shor's algorithm, does run in polynomial time. Unfortunately, this fact doesn't say much about where the problem lies with respect to non-quantum complexity classes.",
+          "document_id": "30408117680a406f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 2,
+            "start_offset": 650,
+            "end_offset": 987,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "d04e1468058f4742_fixed_0",
+          "text": "The most commonly used reduction is a polynomial-time reduction. This means that the reduction process takes polynomial time. For example, the problem of squaring an integer can be reduced to the problem of multiplying two integers. This means an algorithm for multiplying two integers can be used to square an integer. Indeed, this can be done by giving the same input to both inputs of the multiplication algorithm. Thus we see that squaring is not more difficult than multiplication, since squaring can be reduced to multiplication.",
+          "document_id": "d04e1468058f4742",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 535,
+            "chunking": "fixed"
+          }
+        }
+      ],
+      "answer_latency_ms": 35230.83790000055,
+      "call_range": [
+        0,
+        2
+      ]
+    },
+    {
+      "id": "recursive_dense:56e1ec83cd28a01900c67c0e",
+      "configuration": "recursive_dense",
+      "split": "dev",
+      "question_id": "56e1ec83cd28a01900c67c0e",
+      "question_origin": "human_authored_squad",
+      "reviewer": null,
+      "review_provenance": null,
+      "review_notes": null,
+      "gold_source_chunk_id": "30408117680a406f",
+      "question": "What is the most well-known algorithm associated with the integer factorization problem?",
+      "reference_answers": [
+        "the general number field sieve",
+        "RSA",
+        "general number field sieve"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "The most well-known algorithm associated with the integer factorization problem is the general number field sieve.",
+            "citation_ids": [
+              "30408117680a406f"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": {
+        "answer_relevant": true,
+        "claim_support": [
+          {
+            "claim_index": 0,
+            "supported": true
+          }
+        ],
+        "citation_support": [
+          {
+            "claim_index": 0,
+            "supported": false,
+            "citation_id": "30408117680a406f"
+          }
+        ],
+        "reason": "The provided source chunk explicitly states, 'The best known algorithm for integer factorization is the general number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer.' This directly supports the claim that the general number field sieve is the most well-known algorithm associated with the integer factorization problem."
+      },
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "citation_accuracy": 0.0,
+        "citation_coverage": 1.0,
+        "abstained": 0.0
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 664.4753000000492,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "gold_chunk_ids": [
+        "30408117680a406f_recursive_0"
+      ],
+      "ranked_chunk_ids": [
+        "30408117680a406f_recursive_0",
+        "89cac738d1bb3723_recursive_0",
+        "267094041a9303dc_recursive_0",
+        "0c179ab41ed42a56_recursive_0",
+        "d04e1468058f4742_recursive_0",
+        "4f40c3f538d7f6cd_recursive_0",
+        "06af5ffae879903f_recursive_0",
+        "0b2174dece0ccd43_recursive_0",
+        "b8f5196afa3acdf4_recursive_0",
+        "30408117680a406f_recursive_1"
+      ],
+      "contexts": [
+        {
+          "chunk_id": "30408117680a406f_recursive_0",
+          "text": "The integer factorization problem is the computational problem of determining the prime factorization of a given integer. Phrased as a decision problem, it is the problem of deciding whether the input has a factor less than k. No efficient integer factorization algorithm is known, and this fact forms the basis of several modern cryptographic systems, such as the RSA algorithm. The integer factorization problem is in NP and in co-NP (and even in UP and co-UP). If the problem is NP-complete, the polynomial time hierarchy will collapse to its first level (i.e., NP will equal co-NP). The best known algorithm for integer factorization is the general number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer",
+          "document_id": "30408117680a406f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 760,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "89cac738d1bb3723_recursive_0",
+          "text": "The most basic method of checking the primality of a given integer n is called trial division. This routine consists of dividing n by each integer m that is greater than 1 and less than or equal to the square root of n. If the result of any of these divisions is an integer, then n is not a prime, otherwise it is a prime. Indeed, if  is composite (with a and b â‰  1) then one of the factors a or b is necessarily at most . For example, for , the trial divisions are by m = 2, 3, 4, 5, and 6. None of these numbers divides 37, so 37 is prime. This routine can be implemented more efficiently if a complete list of primes up to  is knownâ€”then trial divisions need to be checked only for those m that are prime",
+          "document_id": "89cac738d1bb3723",
+          "metadata": {
+            "title": "Prime_number",
+            "filename": "Prime_number.txt",
+            "section": "Prime_number",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 707,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "267094041a9303dc_recursive_0",
+          "text": "Many questions regarding prime numbers remain open, such as Goldbach's conjecture (that every even integer greater than 2 can be expressed as the sum of two primes), and the twin prime conjecture (that there are infinitely many pairs of primes whose difference is 2). Such questions spurred the development of various branches of number theory, focusing on analytic or algebraic aspects of numbers. Primes are used in several routines in information technology, such as public-key cryptography, which makes use of properties such as the difficulty of factoring large numbers into their prime factors. Prime numbers give rise to various generalizations in other mathematical domains, mainly algebra, such as prime elements and prime ideals.",
+          "document_id": "267094041a9303dc",
+          "metadata": {
+            "title": "Prime_number",
+            "filename": "Prime_number.txt",
+            "section": "Prime_number",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 739,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "answer_latency_ms": 69340.45829999923,
+      "call_range": [
+        2,
+        4
+      ]
+    },
+    {
+      "id": "recursive_bm25:56e1ec83cd28a01900c67c0e",
+      "configuration": "recursive_bm25",
+      "split": "dev",
+      "question_id": "56e1ec83cd28a01900c67c0e",
+      "question_origin": "human_authored_squad",
+      "reviewer": null,
+      "review_provenance": null,
+      "review_notes": null,
+      "gold_source_chunk_id": "30408117680a406f",
+      "question": "What is the most well-known algorithm associated with the integer factorization problem?",
+      "reference_answers": [
+        "the general number field sieve",
+        "RSA",
+        "general number field sieve"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "The most well-known algorithm associated with the integer factorization problem is the general number field sieve.",
+            "citation_ids": [
+              "30408117680a406f_recursive_0"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": {
+        "answer_relevant": true,
+        "claim_support": [
+          {
+            "claim_index": 0,
+            "supported": true
+          }
+        ],
+        "citation_support": [
+          {
+            "claim_index": 0,
+            "supported": true,
+            "citation_id": "30408117680a406f_recursive_0"
+          }
+        ],
+        "reason": "The provided source chunk states, 'The best known algorithm for integer factorization is the general number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer.' This directly supports the claim that the general number field sieve is the most well-known algorithm associated with the integer factorization problem."
+      },
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "citation_coverage": 1.0,
+        "abstained": 0.0
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 101.1292000002868,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "gold_chunk_ids": [
+        "30408117680a406f_recursive_0"
+      ],
+      "ranked_chunk_ids": [
+        "30408117680a406f_recursive_0",
+        "d04e1468058f4742_recursive_0",
+        "d953cfbf0d8ad856_recursive_0",
+        "3fff0e386706d513_recursive_0",
+        "30408117680a406f_recursive_1",
+        "6cff8048703b36a0_recursive_0",
+        "52d2e20e1f64fd5f_recursive_0",
+        "024f915ba795f37a_recursive_0",
+        "6cff8048703b36a0_recursive_1",
+        "a05e4993d32da980_recursive_0"
+      ],
+      "contexts": [
+        {
+          "chunk_id": "30408117680a406f_recursive_0",
+          "text": "The integer factorization problem is the computational problem of determining the prime factorization of a given integer. Phrased as a decision problem, it is the problem of deciding whether the input has a factor less than k. No efficient integer factorization algorithm is known, and this fact forms the basis of several modern cryptographic systems, such as the RSA algorithm. The integer factorization problem is in NP and in co-NP (and even in UP and co-UP). If the problem is NP-complete, the polynomial time hierarchy will collapse to its first level (i.e., NP will equal co-NP). The best known algorithm for integer factorization is the general number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer",
+          "document_id": "30408117680a406f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 760,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "d04e1468058f4742_recursive_0",
+          "text": "The most commonly used reduction is a polynomial-time reduction. This means that the reduction process takes polynomial time. For example, the problem of squaring an integer can be reduced to the problem of multiplying two integers. This means an algorithm for multiplying two integers can be used to square an integer. Indeed, this can be done by giving the same input to both inputs of the multiplication algorithm. Thus we see that squaring is not more difficult than multiplication, since squaring can be reduced to multiplication.",
+          "document_id": "d04e1468058f4742",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 535,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "d953cfbf0d8ad856_recursive_0",
+          "text": "A function problem is a computational problem where a single output (of a total function) is expected for every input, but the output is more complex than that of a decision problem, that is, it isn't just yes or no. Notable examples include the traveling salesman problem and the integer factorization problem.",
+          "document_id": "d953cfbf0d8ad856",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 311,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "answer_latency_ms": 33827.35010000033,
+      "call_range": [
+        4,
+        6
+      ]
+    },
+    {
+      "id": "recursive_hybrid:56e1ec83cd28a01900c67c0e",
+      "configuration": "recursive_hybrid",
+      "split": "dev",
+      "question_id": "56e1ec83cd28a01900c67c0e",
+      "question_origin": "human_authored_squad",
+      "reviewer": null,
+      "review_provenance": null,
+      "review_notes": null,
+      "gold_source_chunk_id": "30408117680a406f",
+      "question": "What is the most well-known algorithm associated with the integer factorization problem?",
+      "reference_answers": [
+        "the general number field sieve",
+        "RSA",
+        "general number field sieve"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "The most well-known algorithm associated with the integer factorization problem is the general number field sieve.",
+            "citation_ids": [
+              "30408117680a406f_recursive_0"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": {
+        "answer_relevant": true,
+        "claim_support": [
+          {
+            "claim_index": 0,
+            "supported": true
+          }
+        ],
+        "citation_support": [
+          {
+            "claim_index": 0,
+            "supported": true,
+            "citation_id": "30408117680a406f_recursive_0"
+          }
+        ],
+        "reason": "The provided source chunk states, 'The best known algorithm for integer factorization is the general number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer.' This directly supports the claim that the general number field sieve is the most well-known algorithm associated with the integer factorization problem."
+      },
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "citation_coverage": 1.0,
+        "abstained": 0.0
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 553.6029000013514,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "gold_chunk_ids": [
+        "30408117680a406f_recursive_0"
+      ],
+      "ranked_chunk_ids": [
+        "30408117680a406f_recursive_0",
+        "d04e1468058f4742_recursive_0",
+        "89cac738d1bb3723_recursive_0",
+        "30408117680a406f_recursive_1",
+        "3fff0e386706d513_recursive_0",
+        "5ad046b0a138db8c_recursive_0",
+        "267094041a9303dc_recursive_0",
+        "d953cfbf0d8ad856_recursive_0",
+        "0c179ab41ed42a56_recursive_0",
+        "4f40c3f538d7f6cd_recursive_0"
+      ],
+      "contexts": [
+        {
+          "chunk_id": "30408117680a406f_recursive_0",
+          "text": "The integer factorization problem is the computational problem of determining the prime factorization of a given integer. Phrased as a decision problem, it is the problem of deciding whether the input has a factor less than k. No efficient integer factorization algorithm is known, and this fact forms the basis of several modern cryptographic systems, such as the RSA algorithm. The integer factorization problem is in NP and in co-NP (and even in UP and co-UP). If the problem is NP-complete, the polynomial time hierarchy will collapse to its first level (i.e., NP will equal co-NP). The best known algorithm for integer factorization is the general number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer",
+          "document_id": "30408117680a406f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 760,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "d04e1468058f4742_recursive_0",
+          "text": "The most commonly used reduction is a polynomial-time reduction. This means that the reduction process takes polynomial time. For example, the problem of squaring an integer can be reduced to the problem of multiplying two integers. This means an algorithm for multiplying two integers can be used to square an integer. Indeed, this can be done by giving the same input to both inputs of the multiplication algorithm. Thus we see that squaring is not more difficult than multiplication, since squaring can be reduced to multiplication.",
+          "document_id": "d04e1468058f4742",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 535,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "89cac738d1bb3723_recursive_0",
+          "text": "The most basic method of checking the primality of a given integer n is called trial division. This routine consists of dividing n by each integer m that is greater than 1 and less than or equal to the square root of n. If the result of any of these divisions is an integer, then n is not a prime, otherwise it is a prime. Indeed, if  is composite (with a and b â‰  1) then one of the factors a or b is necessarily at most . For example, for , the trial divisions are by m = 2, 3, 4, 5, and 6. None of these numbers divides 37, so 37 is prime. This routine can be implemented more efficiently if a complete list of primes up to  is knownâ€”then trial divisions need to be checked only for those m that are prime",
+          "document_id": "89cac738d1bb3723",
+          "metadata": {
+            "title": "Prime_number",
+            "filename": "Prime_number.txt",
+            "section": "Prime_number",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 707,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "answer_latency_ms": 30531.858100001045,
+      "call_range": [
+        6,
+        8
+      ]
+    },
+    {
+      "id": "recursive_hybrid_rerank:56e1ec83cd28a01900c67c0e",
+      "configuration": "recursive_hybrid_rerank",
+      "split": "dev",
+      "question_id": "56e1ec83cd28a01900c67c0e",
+      "question_origin": "human_authored_squad",
+      "reviewer": null,
+      "review_provenance": null,
+      "review_notes": null,
+      "gold_source_chunk_id": "30408117680a406f",
+      "question": "What is the most well-known algorithm associated with the integer factorization problem?",
+      "reference_answers": [
+        "the general number field sieve",
+        "RSA",
+        "general number field sieve"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "The most well-known algorithm associated with the integer factorization problem is the general number field sieve.",
+            "citation_ids": [
+              "30408117680a406f_recursive_0"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": {
+        "answer_relevant": true,
+        "claim_support": [
+          {
+            "claim_index": 0,
+            "supported": true
+          }
+        ],
+        "citation_support": [
+          {
+            "claim_index": 0,
+            "supported": true,
+            "citation_id": "30408117680a406f_recursive_0"
+          }
+        ],
+        "reason": "The provided source chunk states, 'The best known algorithm for integer factorization is the general number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer.' This directly supports the claim that the most well-known algorithm associated with the integer factorization problem is the general number field sieve."
+      },
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "citation_coverage": 1.0,
+        "abstained": 0.0
+      },
+      "error": null,
+      "cost_usd": "0",
+      "retrieval_latency_ms": 4321.929800000362,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "gold_chunk_ids": [
+        "30408117680a406f_recursive_0"
+      ],
+      "ranked_chunk_ids": [
+        "30408117680a406f_recursive_0",
+        "30408117680a406f_recursive_1",
+        "3fff0e386706d513_recursive_0",
+        "d953cfbf0d8ad856_recursive_0",
+        "d04e1468058f4742_recursive_0",
+        "acdc81e154a46352_recursive_0",
+        "4f40c3f538d7f6cd_recursive_0",
+        "d80b4274696501d7_recursive_0",
+        "b77f1f3250db42fa_recursive_0",
+        "52d2e20e1f64fd5f_recursive_0"
+      ],
+      "contexts": [
+        {
+          "chunk_id": "30408117680a406f_recursive_0",
+          "text": "The integer factorization problem is the computational problem of determining the prime factorization of a given integer. Phrased as a decision problem, it is the problem of deciding whether the input has a factor less than k. No efficient integer factorization algorithm is known, and this fact forms the basis of several modern cryptographic systems, such as the RSA algorithm. The integer factorization problem is in NP and in co-NP (and even in UP and co-UP). If the problem is NP-complete, the polynomial time hierarchy will collapse to its first level (i.e., NP will equal co-NP). The best known algorithm for integer factorization is the general number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer",
+          "document_id": "30408117680a406f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 760,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "30408117680a406f_recursive_1",
+          "text": ". However, the best known quantum algorithm for this problem, Shor's algorithm, does run in polynomial time. Unfortunately, this fact doesn't say much about where the problem lies with respect to non-quantum complexity classes.",
+          "document_id": "30408117680a406f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 2,
+            "start_offset": 760,
+            "end_offset": 987,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "3fff0e386706d513_recursive_0",
+          "text": "It was shown by Ladner that if P â‰  NP then there exist problems in NP that are neither in P nor NP-complete. Such problems are called NP-intermediate problems. The graph isomorphism problem, the discrete logarithm problem and the integer factorization problem are examples of problems believed to be NP-intermediate. They are some of the very few NP problems not known to be in P or to be NP-complete.",
+          "document_id": "3fff0e386706d513",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 401,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "answer_latency_ms": 57906.133299999055,
+      "call_range": [
+        8,
+        10
+      ]
+    }
+  ],
+  "calibration": {
+    "status": "pending_human_labels",
+    "agreement": null
+  },
+  "summaries": [
+    {
+      "configuration": "fixed_hybrid",
+      "split": "dev",
+      "questions": 1,
+      "valid_answers": 1,
+      "valid_judgements": 0,
+      "failed_queries": 1,
+      "unrepresentable_gold": 0,
+      "recall@1": 1.0,
+      "recall@1_samples": 1,
+      "recall@5": 1.0,
+      "recall@5_samples": 1,
+      "recall@10": 1.0,
+      "recall@10_samples": 1,
+      "mrr": 1.0,
+      "mrr_samples": 1,
+      "ndcg@10": 1.0,
+      "ndcg@10_samples": 1,
+      "faithfulness": null,
+      "faithfulness_samples": 0,
+      "answer_relevance": null,
+      "answer_relevance_samples": 0,
+      "citation_accuracy": null,
+      "citation_accuracy_samples": 0,
+      "citation_coverage": null,
+      "citation_coverage_samples": 0,
+      "abstained": null,
+      "abstained_samples": 0,
+      "retrieval_p50_ms": 241.16110000068147,
+      "retrieval_p95_ms": 241.16110000068147,
+      "answer_p50_ms": 35230.83790000055,
+      "answer_p95_ms": 35230.83790000055,
+      "provider_cost_usd_per_query": 0.0
+    },
+    {
+      "configuration": "recursive_dense",
+      "split": "dev",
+      "questions": 1,
+      "valid_answers": 1,
+      "valid_judgements": 1,
+      "failed_queries": 0,
+      "unrepresentable_gold": 0,
+      "recall@1": 1.0,
+      "recall@1_samples": 1,
+      "recall@5": 1.0,
+      "recall@5_samples": 1,
+      "recall@10": 1.0,
+      "recall@10_samples": 1,
+      "mrr": 1.0,
+      "mrr_samples": 1,
+      "ndcg@10": 1.0,
+      "ndcg@10_samples": 1,
+      "faithfulness": 1.0,
+      "faithfulness_samples": 1,
+      "answer_relevance": 1.0,
+      "answer_relevance_samples": 1,
+      "citation_accuracy": 0.0,
+      "citation_accuracy_samples": 1,
+      "citation_coverage": 1.0,
+      "citation_coverage_samples": 1,
+      "abstained": 0.0,
+      "abstained_samples": 1,
+      "retrieval_p50_ms": 664.4753000000492,
+      "retrieval_p95_ms": 664.4753000000492,
+      "answer_p50_ms": 69340.45829999923,
+      "answer_p95_ms": 69340.45829999923,
+      "provider_cost_usd_per_query": 0.0
+    },
+    {
+      "configuration": "recursive_bm25",
+      "split": "dev",
+      "questions": 1,
+      "valid_answers": 1,
+      "valid_judgements": 1,
+      "failed_queries": 0,
+      "unrepresentable_gold": 0,
+      "recall@1": 1.0,
+      "recall@1_samples": 1,
+      "recall@5": 1.0,
+      "recall@5_samples": 1,
+      "recall@10": 1.0,
+      "recall@10_samples": 1,
+      "mrr": 1.0,
+      "mrr_samples": 1,
+      "ndcg@10": 1.0,
+      "ndcg@10_samples": 1,
+      "faithfulness": 1.0,
+      "faithfulness_samples": 1,
+      "answer_relevance": 1.0,
+      "answer_relevance_samples": 1,
+      "citation_accuracy": 1.0,
+      "citation_accuracy_samples": 1,
+      "citation_coverage": 1.0,
+      "citation_coverage_samples": 1,
+      "abstained": 0.0,
+      "abstained_samples": 1,
+      "retrieval_p50_ms": 101.1292000002868,
+      "retrieval_p95_ms": 101.1292000002868,
+      "answer_p50_ms": 33827.35010000033,
+      "answer_p95_ms": 33827.35010000033,
+      "provider_cost_usd_per_query": 0.0
+    },
+    {
+      "configuration": "recursive_hybrid",
+      "split": "dev",
+      "questions": 1,
+      "valid_answers": 1,
+      "valid_judgements": 1,
+      "failed_queries": 0,
+      "unrepresentable_gold": 0,
+      "recall@1": 1.0,
+      "recall@1_samples": 1,
+      "recall@5": 1.0,
+      "recall@5_samples": 1,
+      "recall@10": 1.0,
+      "recall@10_samples": 1,
+      "mrr": 1.0,
+      "mrr_samples": 1,
+      "ndcg@10": 1.0,
+      "ndcg@10_samples": 1,
+      "faithfulness": 1.0,
+      "faithfulness_samples": 1,
+      "answer_relevance": 1.0,
+      "answer_relevance_samples": 1,
+      "citation_accuracy": 1.0,
+      "citation_accuracy_samples": 1,
+      "citation_coverage": 1.0,
+      "citation_coverage_samples": 1,
+      "abstained": 0.0,
+      "abstained_samples": 1,
+      "retrieval_p50_ms": 553.6029000013514,
+      "retrieval_p95_ms": 553.6029000013514,
+      "answer_p50_ms": 30531.858100001045,
+      "answer_p95_ms": 30531.858100001045,
+      "provider_cost_usd_per_query": 0.0
+    },
+    {
+      "configuration": "recursive_hybrid_rerank",
+      "split": "dev",
+      "questions": 1,
+      "valid_answers": 1,
+      "valid_judgements": 1,
+      "failed_queries": 0,
+      "unrepresentable_gold": 0,
+      "recall@1": 1.0,
+      "recall@1_samples": 1,
+      "recall@5": 1.0,
+      "recall@5_samples": 1,
+      "recall@10": 1.0,
+      "recall@10_samples": 1,
+      "mrr": 1.0,
+      "mrr_samples": 1,
+      "ndcg@10": 1.0,
+      "ndcg@10_samples": 1,
+      "faithfulness": 1.0,
+      "faithfulness_samples": 1,
+      "answer_relevance": 1.0,
+      "answer_relevance_samples": 1,
+      "citation_accuracy": 1.0,
+      "citation_accuracy_samples": 1,
+      "citation_coverage": 1.0,
+      "citation_coverage_samples": 1,
+      "abstained": 0.0,
+      "abstained_samples": 1,
+      "retrieval_p50_ms": 4321.929800000362,
+      "retrieval_p95_ms": 4321.929800000362,
+      "answer_p50_ms": 57906.133299999055,
+      "answer_p95_ms": 57906.133299999055,
+      "provider_cost_usd_per_query": 0.0
+    }
+  ],
+  "calls": [
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 885,
+      "completion_tokens": 125,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 1084,
+      "completion_tokens": 185,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 967,
+      "completion_tokens": 69,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 1115,
+      "completion_tokens": 179,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 839,
+      "completion_tokens": 72,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 990,
+      "completion_tokens": 181,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 943,
+      "completion_tokens": 72,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 1094,
+      "completion_tokens": 181,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 812,
+      "completion_tokens": 72,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    },
+    {
+      "model": "evidencerag-local",
+      "status": "completed",
+      "prompt_tokens": 963,
+      "completion_tokens": 181,
+      "cost_usd": "0",
+      "cost_kind": "measured"
+    }
+  ],
+  "provider_cost_usd": "0",
+  "interruption_reason": "User switched to Gemini and requested a five-case smoke test before restarting the full run"
+}

@@ -1,0 +1,11 @@
+[
+  {
+    "model": "gemini-2.5-flash",
+    "status": "failed",
+    "prompt_tokens": null,
+    "completion_tokens": null,
+    "cost_usd": "0.0025376",
+    "cost_kind": "reserved_upper_bound",
+    "http_status": 404
+  }
+]

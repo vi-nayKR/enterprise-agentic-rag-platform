@@ -1,0 +1,532 @@
+{
+  "status": "interrupted_daily_quota",
+  "dataset": "squad_v1",
+  "split": "dev",
+  "source_commit": "a455005dbc37ff658e7f0875191824fd3dcb63f3",
+  "python": "3.12.10",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "package_versions": {
+    "sentence-transformers": "5.7.0",
+    "torch": "2.14.1+cpu",
+    "langchain-text-splitters": "1.1.3",
+    "pydantic": "2.13.5"
+  },
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "reranker_model": "cross-encoder/ms-marco-MiniLM-L6-v2",
+  "reranker_revision": "233902d25c440f23af6f7d6e94d2946bac0bee0a",
+  "chunk_indexes": {
+    "fixed": {
+      "chunks": 603
+    },
+    "recursive": {
+      "chunks": 603
+    },
+    "semantic": {
+      "chunks": 1292
+    }
+  },
+  "judge_model": "gemini-3.8-flash",
+  "same_model_judge": true,
+  "request_interval_seconds": 12.0,
+  "rate_limit_retries": 6,
+  "cost_rates_usd_per_million": {
+    "input": "0.75",
+    "output": "3.75"
+  },
+  "test_review_sha256": "b3bdf84105d8a7ae009bd82b760c09a04a0de416eb318afc364e07d19810440c",
+  "test_review_provenance": [],
+  "test_sensitivity_excluded_id": "573786b51c4567190057448e",
+  "garbled_formula_id": "57297a276aef051400154f8a",
+  "exact_match_computed": false,
+  "ranking_depth": 10,
+  "warm_index": true,
+  "result_cache": false,
+  "experiment_design": "one factor at a time; not a complete factorial or global optimum search",
+  "cost_scope": "provider token charges, excluding electricity/hardware",
+  "records": [
+    {
+      "id": "fixed_hybrid:56e1ec83cd28a01900c67c0e",
+      "configuration": "fixed_hybrid",
+      "split": "dev",
+      "question_id": "56e1ec83cd28a01900c67c0e",
+      "question_origin": "human_authored_squad",
+      "reviewer": null,
+      "review_provenance": null,
+      "review_notes": null,
+      "gold_source_chunk_id": "30408117680a406f",
+      "question": "What is the most well-known algorithm associated with the integer factorization problem?",
+      "reference_answers": [
+        "the general number field sieve",
+        "RSA",
+        "general number field sieve"
+      ],
+      "answer_origin": "model_generated",
+      "answer": null,
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+      "cost_usd": "0.007584",
+      "retrieval_latency_ms": 229.3545999982598,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "gold_chunk_ids": [
+        "30408117680a406f_fixed_0"
+      ],
+      "ranked_chunk_ids": [
+        "30408117680a406f_fixed_0",
+        "30408117680a406f_fixed_1",
+        "d04e1468058f4742_fixed_0",
+        "89cac738d1bb3723_fixed_0",
+        "3fff0e386706d513_fixed_0",
+        "5ad046b0a138db8c_fixed_0",
+        "267094041a9303dc_fixed_0",
+        "d953cfbf0d8ad856_fixed_0",
+        "0c179ab41ed42a56_fixed_0",
+        "6cff8048703b36a0_fixed_0"
+      ],
+      "contexts": [
+        {
+          "chunk_id": "30408117680a406f_fixed_0",
+          "text": "The integer factorization problem is the computational problem of determining the prime factorization of a given integer. Phrased as a decision problem, it is the problem of deciding whether the input has a factor less than k. No efficient integer factorization algorithm is known, and this fact forms the basis of several modern cryptographic systems, such as the RSA algorithm. The integer factorization problem is in NP and in co-NP (and even in UP and co-UP). If the problem is NP-complete, the polynomial time hierarchy will collapse to its first level (i.e., NP will equal co-NP). The best known algorithm for integer factorization is the general number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer. However, the best known quantum algori",
+          "document_id": "30408117680a406f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 800,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "30408117680a406f_fixed_1",
+          "text": "al number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer. However, the best known quantum algorithm for this problem, Shor's algorithm, does run in polynomial time. Unfortunately, this fact doesn't say much about where the problem lies with respect to non-quantum complexity classes.",
+          "document_id": "30408117680a406f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 2,
+            "start_offset": 650,
+            "end_offset": 987,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "d04e1468058f4742_fixed_0",
+          "text": "The most commonly used reduction is a polynomial-time reduction. This means that the reduction process takes polynomial time. For example, the problem of squaring an integer can be reduced to the problem of multiplying two integers. This means an algorithm for multiplying two integers can be used to square an integer. Indeed, this can be done by giving the same input to both inputs of the multiplication algorithm. Thus we see that squaring is not more difficult than multiplication, since squaring can be reduced to multiplication.",
+          "document_id": "d04e1468058f4742",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 535,
+            "chunking": "fixed"
+          }
+        }
+      ],
+      "call_range": [
+        0,
+        1
+      ]
+    },
+    {
+      "id": "recursive_bm25:5726446a89cfff1900a8404e",
+      "configuration": "recursive_bm25",
+      "split": "dev",
+      "question_id": "5726446a89cfff1900a8404e",
+      "question_origin": "human_authored_squad",
+      "reviewer": null,
+      "review_provenance": null,
+      "review_notes": null,
+      "gold_source_chunk_id": "e937f6a874321ceb",
+      "question": "What did AUSTPAC support ",
+      "reference_answers": [
+        "supporting applications such as on-line betting, financial applications",
+        "applications such as on-line betting, financial applications",
+        "applications such as on-line betting, financial applications"
+      ],
+      "answer_origin": "model_generated",
+      "answer": null,
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+      "cost_usd": "0.007584",
+      "retrieval_latency_ms": 28.04660000037984,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "gold_chunk_ids": [
+        "e937f6a874321ceb_recursive_0"
+      ],
+      "ranked_chunk_ids": [
+        "e937f6a874321ceb_recursive_0",
+        "5776592c1d0a84b6_recursive_1",
+        "2c6f708910056aeb_recursive_0",
+        "5dc8c28852635c5c_recursive_0",
+        "5776592c1d0a84b6_recursive_0",
+        "373df465dbaa1eef_recursive_0",
+        "b59efd75f181d968_recursive_0",
+        "8ec6e09d66be5ca3_recursive_1",
+        "d7889870d1a44ce1_recursive_0",
+        "1e82413de93b0a3f_recursive_0"
+      ],
+      "contexts": [
+        {
+          "chunk_id": "e937f6a874321ceb_recursive_0",
+          "text": "AUSTPAC was an Australian public X.25 network operated by Telstra. Started by Telecom Australia in the early 1980s, AUSTPAC was Australia's first public packet-switched data network, supporting applications such as on-line betting, financial applications â€” the Australian Tax Office made use of AUSTPAC â€” and remote terminal access to academic institutions, who maintained their connections to AUSTPAC up until the mid-late 1990s in some cases. Access can be via a dial-up terminal to a PAD, or, by linking a permanent X.25 node to the network.[citation needed]",
+          "document_id": "e937f6a874321ceb",
+          "metadata": {
+            "title": "Packet_switching",
+            "filename": "Packet_switching.txt",
+            "section": "Packet_switching",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 561,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "5776592c1d0a84b6_recursive_1",
+          "text": ". á¼„Î¶Ï‰Ï„Î¿Î½ \"lifeless\"), which did not support either. Azote later became nitrogen in English, although it has kept the name in French and several other European languages.",
+          "document_id": "5776592c1d0a84b6",
+          "metadata": {
+            "title": "Oxygen",
+            "filename": "Oxygen.txt",
+            "section": "Oxygen",
+            "total_chunks": 2,
+            "start_offset": 649,
+            "end_offset": 818,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "2c6f708910056aeb_recursive_0",
+          "text": "In an interview with newspaper editor Arthur Brisbane, Tesla said that he did not believe in telepathy, stating, \"Suppose I made up my mind to murder you,\" he said, \"In a second you would know it. Now, isn't that wonderful? By what process does the mind get at all this?\" In the same interview, Tesla said that he believed that all fundamental laws could be reduced to one.",
+          "document_id": "2c6f708910056aeb",
+          "metadata": {
+            "title": "Nikola_Tesla",
+            "filename": "Nikola_Tesla.txt",
+            "section": "Nikola_Tesla",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 373,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "call_range": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "recursive_hybrid_rerank:5711628a2419e314009555e1",
+      "configuration": "recursive_hybrid_rerank",
+      "split": "dev",
+      "question_id": "5711628a2419e314009555e1",
+      "question_origin": "human_authored_squad",
+      "reviewer": null,
+      "review_provenance": null,
+      "review_notes": null,
+      "gold_source_chunk_id": "0069ac7865818c29",
+      "question": "How much less steam did the Corliss engine use compared to the Watt engine?",
+      "reference_answers": [
+        "30%",
+        "30% less steam",
+        "30%"
+      ],
+      "answer_origin": "model_generated",
+      "answer": null,
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+      "cost_usd": "0.045504",
+      "retrieval_latency_ms": 1207.1309999992081,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "gold_chunk_ids": [
+        "0069ac7865818c29_recursive_0"
+      ],
+      "ranked_chunk_ids": [
+        "0069ac7865818c29_recursive_0",
+        "0ae9361b34787dd4_recursive_0",
+        "c569be8582c6ee29_recursive_0",
+        "4c6b933becead54c_recursive_0",
+        "30d233029ce7a1e4_recursive_0",
+        "31d4502959d622c4_recursive_0",
+        "40986f319bc9682c_recursive_0",
+        "980d6673f0a32bcc_recursive_0",
+        "f445f6e8a5e735c9_recursive_0",
+        "52518f894a1f4d76_recursive_0"
+      ],
+      "contexts": [
+        {
+          "chunk_id": "0069ac7865818c29_recursive_0",
+          "text": "The acme of the horizontal engine was the Corliss steam engine, patented in 1849, which was a four-valve counter flow engine with separate steam admission and exhaust valves and automatic variable steam cutoff. When Corliss was given the Rumford medal the committee said that \"no one invention since Watt's time has so enhanced the efficiency of the steam engine\". In addition to using 30% less steam, it provided more uniform speed due to variable steam cut off, making it well suited to manufacturing, especially cotton spinning.",
+          "document_id": "0069ac7865818c29",
+          "metadata": {
+            "title": "Steam_engine",
+            "filename": "Steam_engine.txt",
+            "section": "Steam_engine",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 531,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "0ae9361b34787dd4_recursive_0",
+          "text": "In 1781 James Watt patented a steam engine that produced continuous rotary motion. Watt's ten-horsepower engines enabled a wide range of manufacturing machinery to be powered. The engines could be sited anywhere that water and coal or wood fuel could be obtained. By 1883, engines that could provide 10,000 hp had become feasible. The stationary steam engine was a key component of the Industrial Revolution, allowing factories to locate where water power was unavailable. The atmospheric engines of Newcomen and Watt were large compared to the amount of power they produced, but high pressure steam engines were light enough to be applied to vehicles such as traction engines and the railway locomotives.",
+          "document_id": "0ae9361b34787dd4",
+          "metadata": {
+            "title": "Steam_engine",
+            "filename": "Steam_engine.txt",
+            "section": "Steam_engine",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 705,
+            "chunking": "recursive"
+          }
+        },
+        {
+          "chunk_id": "c569be8582c6ee29_recursive_0",
+          "text": "The historical measure of a steam engine's energy efficiency was its \"duty\". The concept of duty was first introduced by Watt in order to illustrate how much more efficient his engines were over the earlier Newcomen designs. Duty is the number of foot-pounds of work delivered by burning one bushel (94 pounds) of coal. The best examples of Newcomen designs had a duty of about 7 million, but most were closer to 5 million. Watt's original low-pressure designs were able to deliver duty as high as 25 million, but averaged about 17. This was a three-fold improvement over the average Newcomen design. Early Watt engines equipped with high-pressure steam improved this to 65 million.",
+          "document_id": "c569be8582c6ee29",
+          "metadata": {
+            "title": "Steam_engine",
+            "filename": "Steam_engine.txt",
+            "section": "Steam_engine",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 682,
+            "chunking": "recursive"
+          }
+        }
+      ],
+      "call_range": [
+        2,
+        8
+      ]
+    }
+  ],
+  "calibration": {
+    "status": "pending_human_labels",
+    "agreement": null
+  },
+  "summaries": [
+    {
+      "configuration": "fixed_hybrid",
+      "split": "dev",
+      "questions": 1,
+      "valid_answers": 0,
+      "valid_judgements": 0,
+      "failed_queries": 1,
+      "unrepresentable_gold": 0,
+      "recall@1": 1.0,
+      "recall@1_samples": 1,
+      "recall@5": 1.0,
+      "recall@5_samples": 1,
+      "recall@10": 1.0,
+      "recall@10_samples": 1,
+      "mrr": 1.0,
+      "mrr_samples": 1,
+      "ndcg@10": 1.0,
+      "ndcg@10_samples": 1,
+      "faithfulness": null,
+      "faithfulness_samples": 0,
+      "answer_relevance": null,
+      "answer_relevance_samples": 0,
+      "citation_accuracy": null,
+      "citation_accuracy_samples": 0,
+      "citation_coverage": null,
+      "citation_coverage_samples": 0,
+      "abstained": null,
+      "abstained_samples": 0,
+      "retrieval_p50_ms": 229.3545999982598,
+      "retrieval_p95_ms": 229.3545999982598,
+      "answer_p50_ms": null,
+      "answer_p95_ms": null,
+      "provider_cost_usd_per_query": 0.007584
+    },
+    {
+      "configuration": "recursive_bm25",
+      "split": "dev",
+      "questions": 1,
+      "valid_answers": 0,
+      "valid_judgements": 0,
+      "failed_queries": 1,
+      "unrepresentable_gold": 0,
+      "recall@1": 1.0,
+      "recall@1_samples": 1,
+      "recall@5": 1.0,
+      "recall@5_samples": 1,
+      "recall@10": 1.0,
+      "recall@10_samples": 1,
+      "mrr": 1.0,
+      "mrr_samples": 1,
+      "ndcg@10": 1.0,
+      "ndcg@10_samples": 1,
+      "faithfulness": null,
+      "faithfulness_samples": 0,
+      "answer_relevance": null,
+      "answer_relevance_samples": 0,
+      "citation_accuracy": null,
+      "citation_accuracy_samples": 0,
+      "citation_coverage": null,
+      "citation_coverage_samples": 0,
+      "abstained": null,
+      "abstained_samples": 0,
+      "retrieval_p50_ms": 28.04660000037984,
+      "retrieval_p95_ms": 28.04660000037984,
+      "answer_p50_ms": null,
+      "answer_p95_ms": null,
+      "provider_cost_usd_per_query": 0.007584
+    },
+    {
+      "configuration": "recursive_hybrid_rerank",
+      "split": "dev",
+      "questions": 1,
+      "valid_answers": 0,
+      "valid_judgements": 0,
+      "failed_queries": 1,
+      "unrepresentable_gold": 0,
+      "recall@1": 1.0,
+      "recall@1_samples": 1,
+      "recall@5": 1.0,
+      "recall@5_samples": 1,
+      "recall@10": 1.0,
+      "recall@10_samples": 1,
+      "mrr": 1.0,
+      "mrr_samples": 1,
+      "ndcg@10": 1.0,
+      "ndcg@10_samples": 1,
+      "faithfulness": null,
+      "faithfulness_samples": 0,
+      "answer_relevance": null,
+      "answer_relevance_samples": 0,
+      "citation_accuracy": null,
+      "citation_accuracy_samples": 0,
+      "citation_coverage": null,
+      "citation_coverage_samples": 0,
+      "abstained": null,
+      "abstained_samples": 0,
+      "retrieval_p50_ms": 1207.1309999992081,
+      "retrieval_p95_ms": 1207.1309999992081,
+      "answer_p50_ms": null,
+      "answer_p95_ms": null,
+      "provider_cost_usd_per_query": 0.045504
+    }
+  ],
+  "calls": [
+    {
+      "model": "gemini-3.8-flash",
+      "status": "failed",
+      "prompt_tokens": null,
+      "completion_tokens": null,
+      "cost_usd": "0.007584",
+      "cost_kind": "reserved_upper_bound",
+      "http_status": 503
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "status": "failed",
+      "prompt_tokens": null,
+      "completion_tokens": null,
+      "cost_usd": "0.007584",
+      "cost_kind": "reserved_upper_bound",
+      "http_status": 503
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "status": "failed",
+      "prompt_tokens": null,
+      "completion_tokens": null,
+      "cost_usd": "0.007584",
+      "cost_kind": "reserved_upper_bound",
+      "http_status": 429,
+      "retry_attempt": 1,
+      "backoff_seconds": 2
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "status": "failed",
+      "prompt_tokens": null,
+      "completion_tokens": null,
+      "cost_usd": "0.007584",
+      "cost_kind": "reserved_upper_bound",
+      "http_status": 429,
+      "retry_attempt": 2,
+      "backoff_seconds": 4
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "status": "failed",
+      "prompt_tokens": null,
+      "completion_tokens": null,
+      "cost_usd": "0.007584",
+      "cost_kind": "reserved_upper_bound",
+      "http_status": 429,
+      "retry_attempt": 3,
+      "backoff_seconds": 8
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "status": "failed",
+      "prompt_tokens": null,
+      "completion_tokens": null,
+      "cost_usd": "0.007584",
+      "cost_kind": "reserved_upper_bound",
+      "http_status": 429,
+      "retry_attempt": 4,
+      "backoff_seconds": 16
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "status": "failed",
+      "prompt_tokens": null,
+      "completion_tokens": null,
+      "cost_usd": "0.007584",
+      "cost_kind": "reserved_upper_bound",
+      "http_status": 429,
+      "retry_attempt": 5,
+      "backoff_seconds": 32
+    },
+    {
+      "model": "gemini-3.8-flash",
+      "status": "failed",
+      "prompt_tokens": null,
+      "completion_tokens": null,
+      "cost_usd": "0.007584",
+      "cost_kind": "reserved_upper_bound",
+      "http_status": 503
+    }
+  ],
+  "provider_cost_usd": "0.060672",
+  "interruption_reason": "Live diagnostic confirmed free-tier daily quota 20 exhausted; no full Gemini run started",
+  "requested_cases": 5,
+  "unflushed_attempts_upper_bound": 7,
+  "unflushed_cost_reservation_upper_bound_usd": "0.056448",
+  "unflushed_attempts_note": "Stopped during case 4 backoff; its in-memory attempt ledger was not flushed. Seven attempts is the configured ceiling, not a measured count."
+}

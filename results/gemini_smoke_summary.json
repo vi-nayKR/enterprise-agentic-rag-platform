@@ -1,0 +1,41 @@
+{
+  "status": "blocked_daily_quota",
+  "model": "gemini-3.8-flash",
+  "requested_cases": 5,
+  "finalized_cases": 3,
+  "valid_answers": 0,
+  "valid_judgements": 0,
+  "recorded_attempts_including_diagnostics": 11,
+  "recorded_http_statuses": {
+    "404": 2,
+    "503": 3,
+    "429": 6
+  },
+  "reported_prompt_tokens": 0,
+  "reported_completion_tokens": 0,
+  "calls_without_token_usage": 11,
+  "token_totals_note": "Only reported usage; missing tokens are unknown, not measured zero.",
+  "recorded_reservations_usd": "0.0728912",
+  "unflushed_reservation_upper_bound_usd": "0.056448",
+  "total_conservative_reservation_upper_bound_usd": "0.1293392",
+  "remaining_combined_budget_usd": "2.8606608",
+  "billing_note": "Conservative reservations, not actual billed charges. Live 429 confirms free-tier daily quota.",
+  "daily_request_limit": 20,
+  "observed_reset_delay_seconds": 59707,
+  "minimum_request_interval_seconds": 12,
+  "backoff_seconds": [
+    2,
+    4,
+    8,
+    16,
+    32,
+    60
+  ],
+  "full_run_started": false,
+  "evidence_files": [
+    "smoke_gemini_25_refused.json",
+    "smoke_gemini.json",
+    "gemini_probe_calls.json",
+    "gemini_probe_38_calls.json"
+  ]
+}
