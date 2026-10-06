@@ -4,9 +4,9 @@ Evaluation upgrade in progress. The GitHub repository URL is unchanged.
 The approved [SQuAD corpus and human review instructions](data/squad_v1/README.md)
 and [generated dataset inventory](results/dataset_v1.md) are available. The
 [20 frozen calibration answers](results/calibration_inputs.md) are measured.
-The local ablation run was interrupted when the user requested Gemini. The
-[Gemini smoke outcome](results/gemini_smoke_summary.md) is blocked by the key's
-daily free-tier quota; the full Gemini run has not started. Judge agreement awaits your labels.
+The local ablation run was interrupted, and the
+[Gemini smoke outcome](results/gemini_smoke_summary.md) remains archived after daily-quota exhaustion.
+The user selected Groq next; its five-question smoke is in progress. Judge agreement awaits your labels.
 The implementation below
 describes the existing reference, not the planned production features.
 
@@ -47,7 +47,7 @@ token usage or a failed/unknown-usage status. Failed calls reserve their worst
 case cost rather than becoming free paid retries. Electricity and hardware costs
 are outside the provider-cost measurement.
 
-For Gemini, `python -m src.evals.benchmark --smoke` runs five dev cases before
+`python -m src.evals.benchmark --smoke` runs five dev cases before
 the full run, including answering, judging, and a rewrite. Remote calls are
 paced at a minimum 12-second interval by default. HTTP 429 and temporary server
 errors (500/502/503/504) use exponential
@@ -58,9 +58,37 @@ errors stop the run rather than silently scoring all remaining cases as failures
 Token costs use configured paid-tier prices; these estimates are not an account
 billing statement or proof that this API key is on the free tier.
 
+Groq `openai/gpt-oss-120b` uses conservative rolling quota windows of 8,000
+tokens/minute and 200,000 tokens/day, plus the request interval. Input byte bounds
+and maximum output tokens are reserved before dispatch, then reconciled with
+reported usage. Unknown usage retains its reservation. Quota events are saved
+under `.cache/` before dispatch and survive restarts; other organization activity
+can still cause a 429. A long quota wait sleeps in short intervals and records
+its deadline. The full run can span days without changing the model or examples.
+
+```bash
+python -m src.evals.benchmark --smoke --resume
+python -m src.evals.benchmark --split all --resume
+```
+
+Use `--resume` only after the corresponding run has started. It restores saved
+costs, keeps completed cases, and reuses a saved answer if judging was interrupted.
+Checkpoints save before dispatch and after each response. Changed models, prices,
+corpus, reviewed cases, or evaluation code require a new version rather than
+mixing results. Only one evaluator may own a quota ledger at a time. Keep
+`.cache/` when resuming; laptop shutdown requires restarting the command.
+
 ### Evaluation limitations
 
-The configured Gemini run uses `gemini-3.8-flash` for answering and judging:
+The configured Groq run uses `openai/gpt-oss-120b` for both answers and judges:
+**same-model judge**. Correlated errors may inflate answer-quality estimates;
+independent human labels remain necessary. Low reasoning effort is used, with
+reported completion usage included in costs. Configured paid-rate estimates are
+$0.15/M input and $0.60/M output tokens, following
+[Groq's model pricing](https://console.groq.com/docs/model/openai/gpt-oss-120b).
+They are not proof of billed charges on the free tier.
+
+The archived Gemini attempt used `gemini-3.8-flash` for answering and judging:
 **same-model judge**. This may correlate answer and judge errors; independent human
 labels remain necessary. No separate Pro judge is configured. The API refused
 Gemini 2.5 Flash for this key as unavailable to new users, despite listing the ID;
@@ -74,9 +102,9 @@ day, exhausted with a roughly 16.6-hour reset delay. Three smoke cases finalized
 with errors; case four was interrupted during backoff and case five was unstarted.
 No valid answers or judgements were obtained. The ledger and conservative allowance
 for unflushed attempts are in the smoke summary; these reservations are not billed
-charges. The remaining combined budget is $2.8606608. Explicit daily-quota errors
-now stop without repeated requests. Completion requires the user's selected
-quota/access option; the full benchmark is approximately 1,500 calls.
+charges. The remaining combined budget before Groq smoke is $2.8606608. Explicit Gemini daily-quota errors
+stop without repeated requests. The full benchmark is approximately 1,500 calls;
+Groq runs may wait and resume across token-quota windows instead.
 
 ```bash
 make labels       # Actual dev answers; creates blank labels_todo.jsonl.
