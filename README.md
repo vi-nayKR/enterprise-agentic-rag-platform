@@ -45,6 +45,25 @@ token usage or a failed/unknown-usage status. Failed calls reserve their worst
 case cost rather than becoming free paid retries. Electricity and hardware costs
 are outside the provider-cost measurement.
 
+For Gemini, `python -m src.evals.benchmark --smoke` runs five dev cases before
+the full run, including answering, judging, and a rewrite. Remote calls are
+paced at a minimum 12-second interval by default. HTTP 429 retries use exponential
+backoff (2, 4, 8, 16, 32, 60 seconds), honoring a longer numeric `Retry-After`.
+Each attempt is in the shared ledger; rejected calls without usage retain a
+conservative cost reservation. Persistent 429, authorization, and model-not-found
+errors stop the run rather than silently scoring all remaining cases as failures.
+Token costs use configured paid-tier prices; these estimates are not an account
+billing statement or proof that this API key is on the free tier.
+
+### Evaluation limitations
+
+The configured Gemini run uses `gemini-2.5-flash` for answering and judging:
+**same-model judge**. This may correlate answer and judge errors; independent human
+labels remain necessary. No separate Pro judge is configured. Gemini 2.5 Flash
+thinking is disabled for these short structured responses so thinking does not
+consume the bounded output allowance. Free-tier daily quotas can still interrupt
+a slow run; retrying cannot create additional daily quota.
+
 ```bash
 make labels       # Actual dev answers; creates blank labels_todo.jsonl.
 make eval-dev     # Development ablations while manual review is pending.

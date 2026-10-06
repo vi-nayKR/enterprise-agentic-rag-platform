@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+import time
 from decimal import Decimal
 from urllib.parse import urlparse
 
@@ -14,6 +15,7 @@ class LLMClient:
         budget_usd: str = "2.99", input_usd_per_million: str = "0",
         output_usd_per_million: str = "0", input_token_limit: int = 8192,
         transport: httpx.AsyncBaseTransport | None = None,
+        max_rate_limit_retries: int = 6, request_interval_seconds: float = 0,
     ):
         self.model = model
         self.budget = Decimal(budget_usd)
@@ -32,6 +34,12 @@ class LLMClient:
         elif not api_key or not self.input_price or not self.output_price:
             raise ValueError("Remote calls require credentials and explicit positive token prices")
         self.input_token_limit = input_token_limit
+        if max_rate_limit_retries < 0 or request_interval_seconds < 0:
+            raise ValueError("Retry count and request interval must be nonnegative")
+        self.max_rate_limit_retries = max_rate_limit_retries
+        self.request_interval_seconds = request_interval_seconds
+        self._last_dispatch = 0.0
+        self._gemini = urlparse(base_url).hostname == "generativelanguage.googleapis.com"
         self.spent = Decimal(0)
         self.calls: list[dict] = []
         self._lock = asyncio.Lock()
@@ -46,6 +54,26 @@ class LLMClient:
 
     async def complete(self, messages: list[dict[str, str]], *, max_tokens: int = 256,
                        schema: dict | None = None) -> str:
+        for attempt in range(self.max_rate_limit_retries + 1):
+            try:
+                return await self._complete_once(messages, max_tokens=max_tokens, schema=schema)
+            except httpx.HTTPStatusError as error:
+                if error.response.status_code != 429 or attempt == self.max_rate_limit_retries:
+                    raise
+                delay = min(60, 2 ** (attempt + 1))
+                retry_after = error.response.headers.get("retry-after", "")
+                try:
+                    delay = max(delay, float(retry_after))
+                except ValueError:
+                    pass
+                self.calls[-1].update(retry_attempt=attempt + 1, backoff_seconds=delay)
+                print(f"{self.model}: HTTP 429; retry {attempt + 1} after {delay:g}s", flush=True)
+                while delay > 0:
+                    await asyncio.sleep(min(delay, 60))
+                    delay -= min(delay, 60)
+
+    async def _complete_once(self, messages: list[dict[str, str]], *, max_tokens: int,
+                             schema: dict | None) -> str:
         if type(max_tokens) is not int or max_tokens < 1:
             raise ValueError("Output token limit must be positive")
         # UTF-8 bytes plus framing allowance bound input length conservatively;
@@ -61,12 +89,22 @@ class LLMClient:
                       "completion_tokens": None, "cost_usd": str(reserve), "cost_kind": "reserved_upper_bound"}
             self.calls.append(record)
             try:
-                response = await self._http.post("chat/completions", json={
+                remaining = self.request_interval_seconds - (time.monotonic() - self._last_dispatch)
+                while remaining > 0:
+                    await asyncio.sleep(min(remaining, 60))
+                    remaining = self.request_interval_seconds - (time.monotonic() - self._last_dispatch)
+                self._last_dispatch = time.monotonic()
+                body = {
                     "model": self.model, "messages": messages, "temperature": 0,
                     "max_tokens": max_tokens, "response_format": (
                         {"type": "json_schema", "json_schema": {"name": "evidencerag", "strict": True, "schema": schema}}
                         if schema is not None else {"type": "json_object"}),
-                })
+                }
+                # Flash's default thinking can consume the bounded output allowance.
+                if self._gemini and "flash" in self.model and self.model.startswith("gemini-2.5"):
+                    body["reasoning_effort"] = "none"
+                response = await self._http.post("chat/completions", json=body)
+                record["http_status"] = response.status_code
                 response.raise_for_status()
                 payload = response.json()
                 usage = payload.get("usage", {})

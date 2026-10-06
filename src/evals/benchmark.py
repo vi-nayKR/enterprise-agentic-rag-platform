@@ -281,8 +281,13 @@ def write_report(report: dict, stem: str) -> None:
 async def run(args: argparse.Namespace) -> None:
     # Check the expensive held-out run's human gate before loading models/calling an API.
     cases = read_jsonl(DATA / "dev.jsonl")
-    if args.split == "all" and not args.prepare_labels:
+    smoke = getattr(args, "smoke", False)
+    if args.split == "all" and not args.prepare_labels and not smoke:
         cases.extend(reviewed_test_cases())
+    if smoke:
+        # One dev question per article; exercise generation, judging, and rewriting.
+        cases = [next(row for row in cases if row["article"] == article)
+                 for article in dict.fromkeys(row["article"] for row in cases)]
     embeddings = LocalEmbeddings()
     stores = await build_indexes(embeddings)
     client = None if args.retrieval_only else LLMClient(
@@ -290,6 +295,8 @@ async def run(args: argparse.Namespace) -> None:
         local=settings.EVAL_LLM_LOCAL, budget_usd=str(settings.EVAL_BUDGET_USD),
         input_usd_per_million=str(settings.EVAL_INPUT_USD_PER_MILLION),
         output_usd_per_million=str(settings.EVAL_OUTPUT_USD_PER_MILLION),
+        request_interval_seconds=0 if settings.EVAL_LLM_LOCAL else settings.EVAL_REQUEST_INTERVAL_SECONDS,
+        max_rate_limit_retries=settings.EVAL_RATE_LIMIT_RETRIES,
     )
     configurations = CONFIGS if not args.retrieval_only else [row for row in CONFIGS if not row[3]]
     retrievers = {name: HybridRetriever(top_k=10, retrieval_mode=mode, embeddings=embeddings,
@@ -303,7 +310,7 @@ async def run(args: argparse.Namespace) -> None:
             grouped[row["article"]].append(row)
         cases = [rows[index] for rows in grouped.values() for index in (0, 3, 6, 9)]
     records = []
-    stem = "calibration_inputs" if args.prepare_labels else "retrieval_" + args.split if args.retrieval_only else "ablations_" + args.split
+    stem = "smoke_gemini" if smoke else "calibration_inputs" if args.prepare_labels else "retrieval_" + args.split if args.retrieval_only else "ablations_" + args.split
     report = {"status": "running", "dataset": "squad_v1", "split": args.split,
               "source_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
               "python": platform.python_version(), "platform": platform.platform(),
@@ -313,6 +320,10 @@ async def run(args: argparse.Namespace) -> None:
               "reranker_model": CrossEncoderReranker.model_name, "reranker_revision": CrossEncoderReranker.revision,
               "chunk_indexes": {mode: {"chunks": len(store.chunks)} for mode, store in stores.items()},
               "judge_model": client.model if client else None,
+              "same_model_judge": client is not None,
+              "request_interval_seconds": client.request_interval_seconds if client else 0,
+              "rate_limit_retries": client.max_rate_limit_retries if client else 0,
+              "cost_rates_usd_per_million": {"input": str(client.input_price), "output": str(client.output_price)} if client else None,
               "test_review_sha256": hashlib.sha256((DATA / "test_review.jsonl").read_bytes()).hexdigest(),
               "test_review_provenance": sorted({case["review_provenance"] for case in cases if case["split"] == "test"}),
               "test_sensitivity_excluded_id": AMBIGUOUS_TEST_ID,
@@ -323,7 +334,7 @@ async def run(args: argparse.Namespace) -> None:
               "calibration": {"status": "pending_human_labels", "agreement": None}}
     try:
         for question_index, case in enumerate(cases):
-            selected = [configurations[question_index % len(configurations)]] if args.prepare_labels else configurations
+            selected = [configurations[(0, 2, 4, 5, 6)[question_index]]] if smoke else [configurations[question_index % len(configurations)]] if args.prepare_labels else configurations
             for name, chunking, mode, rewrite in selected:
                 row = {"id": name + ":" + case["id"], "configuration": name, "split": case["split"],
                        "question_id": case["id"], "question_origin": case["origin"],
@@ -358,6 +369,8 @@ async def run(args: argparse.Namespace) -> None:
                     row["error"] = f"{type(error).__name__}: {error}"
                     if isinstance(error, RuntimeError) and "budget exhausted" in str(error):
                         raise
+                    if getattr(error, "response", None) is not None and error.response.status_code in (401, 403, 404, 429):
+                        raise
                 finally:
                     row["cost_usd"] = str(client.spent - spent) if client else "0"
                     row["call_range"] = [call_start, len(client.calls) if client else 0]
@@ -372,12 +385,12 @@ async def run(args: argparse.Namespace) -> None:
                 raise ValueError("Cannot create twenty calibration examples until every model answer succeeds")
             human_label_sheet(records, DATA / "labels_todo.jsonl")
         before_calibration = client.spent if client else 0
-        report["calibration"] = await calibrate_judge(client) if client and not args.prepare_labels else {
+        report["calibration"] = await calibrate_judge(client) if client and not args.prepare_labels and not smoke else {
             "status": "pending_human_labels", "agreement": None}
         report["calibration_cost_usd"] = str(client.spent - before_calibration) if client else "0"
         report["provider_cost_usd"] = str(client.spent) if client else "0"
         report["status"] = "partial_failures" if any(row["error"] for row in records) else "measured"
-        if not args.prepare_labels and not args.retrieval_only:
+        if not args.prepare_labels and not args.retrieval_only and not smoke:
             dev = [row for row in report["summaries"] if row["split"] == "dev"
                    and row["recall@5_samples"] == row["questions"]]
             report["selected_configuration"] = max(dev, key=lambda row: (row["recall@5"], row["ndcg@10"],
@@ -399,9 +412,14 @@ def main() -> None:
     parser.add_argument("--split", choices=("dev", "all"), default="all")
     parser.add_argument("--retrieval-only", action="store_true", help="Debug retrieval only; omits rewriting and answer metrics")
     parser.add_argument("--prepare-labels", action="store_true", help="Generate actual dev answers with blank human labels")
+    parser.add_argument("--smoke", action="store_true", help="Five dev cases across articles; includes a rewrite call")
     args = parser.parse_args()
     if args.prepare_labels:
         args.split = "dev"
+    if args.smoke:
+        args.split = "dev"
+        if args.prepare_labels or args.retrieval_only:
+            parser.error("Smoke mode requires answering and judging, without label preparation")
     if args.prepare_labels and args.retrieval_only:
         parser.error("Label preparation requires actual LLM answers")
     asyncio.run(run(args))

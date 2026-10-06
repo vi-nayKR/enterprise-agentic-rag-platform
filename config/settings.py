@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     EVAL_BUDGET_USD: Decimal = Field(default=Decimal("2.99"), gt=0, lt=3)
     EVAL_INPUT_USD_PER_MILLION: Decimal = Field(default=Decimal("0"), ge=0)
     EVAL_OUTPUT_USD_PER_MILLION: Decimal = Field(default=Decimal("0"), ge=0)
+    EVAL_REQUEST_INTERVAL_SECONDS: float = Field(default=12, ge=0)
+    EVAL_RATE_LIMIT_RETRIES: int = Field(default=6, ge=0)
     
     # RAG Settings
     CHUNK_SIZE: int = 800
