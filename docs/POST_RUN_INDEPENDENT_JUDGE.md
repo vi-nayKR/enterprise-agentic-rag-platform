@@ -41,3 +41,10 @@ Current-run checkpoint at receipt: `results/ablations_groq_all.json` had
 28 completed cases and stopped on a Groq HTTP 400 truncated structured judge
 output for `fixed_hybrid:56e1c720e3433e140042316c`. Its generated answer was saved;
 resume must reuse that answer and keep `openai/gpt-oss-120b` as the judge.
+
+An unchanged retry reproduced the truncation. The case is retained as a failed
+query with its error, answer, retrieval metrics and costs intact, and no judge
+score. The full run continues under the original evaluation code and judge
+settings; matching structured-output truncations are explicitly retained as
+failures rather than scored or silently repaired. Results record this continuation
+policy. Do not equate finalized failed cases with valid judge predictions.
