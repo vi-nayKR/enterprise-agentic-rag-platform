@@ -14,6 +14,12 @@ are preserved. The fixed-settings same-model smoke is archived under
 SambaNova `DeepSeek-V3.1`, leaving Groq for answering/rewriting. A fresh
 [five-question cross-family smoke](results/smoke_groq_sambanova.md) gates restarting
 the full ablations with persistent quotas and checkpoints. Judge agreement awaits your labels.
+The first SambaNova judge request timed out; retrying the cached answer returned
+HTTP 402 `PAYMENT_METHOD_REQUIRED`. The cross-family smoke and full run are stopped
+pending the user's existing-account billing access. No successful judge usage or
+complete five-case result is claimed. One Groq answer used 807 input + 193 completion
+tokens; extrapolating that single sample to 700 answers gives 3.5 Groq quota-days,
+before rewrites and provider waiting. This is provisional, not a completion ETA.
 The implementation below
 describes the existing reference, not the planned production features.
 

@@ -11,6 +11,23 @@ from tempfile import TemporaryDirectory
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize('status', [401, 402, 403, 404])
+async def test_auth_billing_and_model_errors_stop_without_retries(status):
+    client = LLMClient('https://provider.example/v1', 'test', 'test-key', local=False,
+        input_usd_per_million='1', output_usd_per_million='1', max_rate_limit_retries=6,
+        auto_resume_daily_quota=True,
+        transport=httpx.MockTransport(lambda request: httpx.Response(status, json={'error': {'message': 'request refused'}})))
+    try:
+        with pytest.raises(httpx.HTTPStatusError):
+            await client.complete([{'role': 'user', 'content': 'JSON'}])
+        assert len(client.calls) == 1
+        assert client.calls[0]['http_status'] == status
+        assert 'retry_attempt' not in client.calls[0]
+    finally:
+        await client.close()
+
+
+@pytest.mark.asyncio
 async def test_daily_quota_auto_resume_outlasts_retry_limit_and_retains_all_attempts():
     requests = []
     def respond(request):
