@@ -1,0 +1,371 @@
+{
+  "status": "aborted",
+  "dataset": "squad_v1",
+  "split": "dev",
+  "started_at_utc": "2026-10-06T09:28:43.418998+00:00",
+  "output_token_limits": {
+    "answer": 1024,
+    "judge": 1024,
+    "rewrite": 1024
+  },
+  "latency_definition": "Provider: sum of HTTP attempt durations per stage, excluding queue/throttle/backoff; answer wall: retrieval + rewrite + generation including waiting, excluding judging.",
+  "source_commit": "3f2f95eb1becdad3baf4cde052e3d85c69947804",
+  "python": "3.12.10",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "package_versions": {
+    "sentence-transformers": "5.7.0",
+    "torch": "2.14.1+cpu",
+    "langchain-text-splitters": "1.1.3",
+    "pydantic": "2.13.5"
+  },
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "reranker_model": "cross-encoder/ms-marco-MiniLM-L6-v2",
+  "reranker_revision": "233902d25c440f23af6f7d6e94d2946bac0bee0a",
+  "chunk_indexes": {
+    "fixed": {
+      "chunks": 603
+    },
+    "recursive": {
+      "chunks": 603
+    },
+    "semantic": {
+      "chunks": 1292
+    }
+  },
+  "judge_model": "DeepSeek-V3.1",
+  "judge_provider": "sambanova",
+  "judge_base_url": "https://api.sambanova.ai/v1",
+  "judge_request_interval_seconds": 30.0,
+  "judge_cost_rates_usd_per_million": {
+    "input": "3.00",
+    "output": "4.50"
+  },
+  "same_model_judge": false,
+  "auto_resume_daily_quota": true,
+  "budget_usd": "2.81375520",
+  "planned_configuration_questions": 5,
+  "run_identity": {
+    "model": "openai/gpt-oss-120b",
+    "base_url": "https://api.groq.com/openai/v1",
+    "rates": [
+      "0.15",
+      "0.60"
+    ],
+    "judge": {
+      "model": "DeepSeek-V3.1",
+      "base_url": "https://api.sambanova.ai/v1",
+      "rates": [
+        "3.00",
+        "4.50"
+      ],
+      "request_interval_seconds": 30.0
+    },
+    "reasoning_effort": "low",
+    "auto_resume_daily_quota": true,
+    "output_token_limits": {
+      "answer": 1024,
+      "judge": 1024,
+      "rewrite": 1024
+    },
+    "smoke_configuration": "fixed_hybrid",
+    "cases_sha256": "f40b4d095488ea20e365f81889f8848f19aab7551686f9e21cb445f604214bbd",
+    "corpus_sha256": "923f79e45d4f08304b6e9e5f825de1b7c8269154f6a6f555e0129a82c6dacabf",
+    "code_sha256": "b686fb819122b17c44c8f317cc001de459a5d25c1e85c01633df056351fdf3fc"
+  },
+  "provider": "groq",
+  "token_limits": {
+    "minute": 8000,
+    "day": 200000
+  },
+  "request_interval_seconds": 12.0,
+  "rate_limit_retries": 6,
+  "cost_rates_usd_per_million": {
+    "input": "0.15",
+    "output": "0.60"
+  },
+  "test_review_sha256": "b3bdf84105d8a7ae009bd82b760c09a04a0de416eb318afc364e07d19810440c",
+  "test_review_provenance": [],
+  "test_sensitivity_excluded_id": "573786b51c4567190057448e",
+  "garbled_formula_id": "57297a276aef051400154f8a",
+  "exact_match_computed": false,
+  "ranking_depth": 10,
+  "warm_index": true,
+  "result_cache": false,
+  "experiment_design": "one factor at a time; not a complete factorial or global optimum search",
+  "cost_scope": "provider token charges, excluding electricity/hardware",
+  "records": [
+    {
+      "id": "fixed_hybrid:56e1ec83cd28a01900c67c0e",
+      "configuration": "fixed_hybrid",
+      "split": "dev",
+      "question_id": "56e1ec83cd28a01900c67c0e",
+      "question_origin": "human_authored_squad",
+      "reviewer": null,
+      "review_provenance": null,
+      "review_notes": null,
+      "gold_source_chunk_id": "30408117680a406f",
+      "question": "What is the most well-known algorithm associated with the integer factorization problem?",
+      "reference_answers": [
+        "the general number field sieve",
+        "RSA",
+        "general number field sieve"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "The best known classical algorithm for integer factorization is the general number field sieve.",
+            "citation_ids": [
+              "30408117680a406f_fixed_0"
+            ]
+          },
+          {
+            "text": "The best known quantum algorithm for integer factorization is Shor's algorithm, which runs in polynomial time.",
+            "citation_ids": [
+              "30408117680a406f_fixed_1"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": null,
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0
+      },
+      "error": "HTTPStatusError: Client error '402 PAYMENT REQUIRED' for url 'https://api.sambanova.ai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/402",
+      "cost_usd": "0.05860485",
+      "completed": false,
+      "retrieval_latency_ms": 249.5874999985972,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "gold_chunk_ids": [
+        "30408117680a406f_fixed_0"
+      ],
+      "ranked_chunk_ids": [
+        "30408117680a406f_fixed_0",
+        "30408117680a406f_fixed_1",
+        "d04e1468058f4742_fixed_0",
+        "89cac738d1bb3723_fixed_0",
+        "3fff0e386706d513_fixed_0",
+        "5ad046b0a138db8c_fixed_0",
+        "267094041a9303dc_fixed_0",
+        "d953cfbf0d8ad856_fixed_0",
+        "0c179ab41ed42a56_fixed_0",
+        "6cff8048703b36a0_fixed_0"
+      ],
+      "contexts": [
+        {
+          "chunk_id": "30408117680a406f_fixed_0",
+          "text": "The integer factorization problem is the computational problem of determining the prime factorization of a given integer. Phrased as a decision problem, it is the problem of deciding whether the input has a factor less than k. No efficient integer factorization algorithm is known, and this fact forms the basis of several modern cryptographic systems, such as the RSA algorithm. The integer factorization problem is in NP and in co-NP (and even in UP and co-UP). If the problem is NP-complete, the polynomial time hierarchy will collapse to its first level (i.e., NP will equal co-NP). The best known algorithm for integer factorization is the general number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer. However, the best known quantum algori",
+          "document_id": "30408117680a406f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 800,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "30408117680a406f_fixed_1",
+          "text": "al number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer. However, the best known quantum algorithm for this problem, Shor's algorithm, does run in polynomial time. Unfortunately, this fact doesn't say much about where the problem lies with respect to non-quantum complexity classes.",
+          "document_id": "30408117680a406f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 2,
+            "start_offset": 650,
+            "end_offset": 987,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "d04e1468058f4742_fixed_0",
+          "text": "The most commonly used reduction is a polynomial-time reduction. This means that the reduction process takes polynomial time. For example, the problem of squaring an integer can be reduced to the problem of multiplying two integers. This means an algorithm for multiplying two integers can be used to square an integer. Indeed, this can be done by giving the same input to both inputs of the multiplication algorithm. Thus we see that squaring is not more difficult than multiplication, since squaring can be reduced to multiplication.",
+          "document_id": "d04e1468058f4742",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 535,
+            "chunking": "fixed"
+          }
+        }
+      ],
+      "call_range": [
+        0,
+        3
+      ],
+      "token_usage": {
+        "answer": {
+          "prompt_tokens": 807,
+          "completion_tokens": 193,
+          "unknown_usage_attempts": 0,
+          "total_tokens": 1000
+        },
+        "judge": {
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "unknown_usage_attempts": 2,
+          "total_tokens": 0
+        }
+      },
+      "answer_provider_latency_ms": 1027.593999999226,
+      "answer_queue_latency_ms": 5.65189999906579,
+      "answer_wall_latency_ms": 1295.812799999112,
+      "judge_provider_latency_ms": 181165.11100000207,
+      "judge_queue_latency_ms": 13.971500000479864
+    }
+  ],
+  "calibration": {
+    "status": "pending_human_labels",
+    "agreement": null
+  },
+  "calls": [
+    {
+      "model": "openai/gpt-oss-120b",
+      "client_role": "answer",
+      "status": "completed",
+      "prompt_tokens": 807,
+      "completion_tokens": 193,
+      "cost_usd": "0.00023685",
+      "cost_kind": "measured",
+      "max_completion_tokens": 1024,
+      "finish_reason": "stop",
+      "truncated": false,
+      "queue_wait_ms": 5.65189999906579,
+      "request_sent_at_utc": "2026-10-06T09:28:43.828287+00:00",
+      "provider_latency_ms": 1027.593999999226,
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "878",
+        "x-ratelimit-remaining-tokens": "6828",
+        "x-ratelimit-reset-requests": "2h55m40.8s",
+        "x-ratelimit-reset-tokens": "8.79s"
+      },
+      "reasoning_tokens": 72,
+      "wall_latency_ms": 1033.3534999990661
+    },
+    {
+      "model": "DeepSeek-V3.1",
+      "client_role": "judge",
+      "status": "failed",
+      "prompt_tokens": null,
+      "completion_tokens": null,
+      "cost_usd": "0.029184",
+      "cost_kind": "reserved_upper_bound",
+      "max_completion_tokens": 1024,
+      "finish_reason": null,
+      "truncated": false,
+      "queue_wait_ms": 3.4392999987176154,
+      "request_sent_at_utc": "2026-10-06T09:28:44.878611+00:00",
+      "provider_latency_ms": 180278.763600003,
+      "wall_latency_ms": 180282.20929999952
+    },
+    {
+      "model": "DeepSeek-V3.1",
+      "client_role": "judge",
+      "status": "failed",
+      "prompt_tokens": null,
+      "completion_tokens": null,
+      "cost_usd": "0.029184",
+      "cost_kind": "reserved_upper_bound",
+      "max_completion_tokens": 1024,
+      "finish_reason": null,
+      "truncated": false,
+      "queue_wait_ms": 10.532200001762249,
+      "request_sent_at_utc": "2026-10-06T09:35:25.329170+00:00",
+      "provider_latency_ms": 886.3473999990674,
+      "http_status": 402,
+      "rate_limit_headers": {},
+      "response_body": "{\"error\":{\"balance_units\":0,\"billing_portal_url\":\"https://cloud.sambanova.ai/plans/billing\",\"code\":\"PAYMENT_METHOD_REQUIRED\",\"message\":\"A payment method is required. Add one at https://cloud.sambanova.ai/plans/billing to continue.\"}}\n",
+      "provider_error_message": "A payment method is required. Add one at https://cloud.sambanova.ai/plans/billing to continue.",
+      "provider_error_status": null,
+      "wall_latency_ms": 897.0727999985684
+    }
+  ],
+  "provider_cost_usd": "0.05860485",
+  "wait_deadlines": {
+    "answer": null,
+    "judge": null
+  },
+  "waiting_until_unix": null,
+  "completion_estimate": {
+    "sample_questions": 0,
+    "remaining_configuration_questions": 5,
+    "remaining_usd": "2.75515035",
+    "limitations": "Projection from completed samples, including observed retry reservations; article/configuration mix, external account use and SambaNova limits can change completion time/cost. Quota-days are a Groq lower bound, not an ETA."
+  },
+  "summaries": [
+    {
+      "configuration": "fixed_hybrid",
+      "split": "dev",
+      "questions": 1,
+      "valid_answers": 1,
+      "valid_judgements": 0,
+      "failed_queries": 1,
+      "unrepresentable_gold": 0,
+      "recall@1": 1.0,
+      "recall@1_samples": 1,
+      "recall@5": 1.0,
+      "recall@5_samples": 1,
+      "recall@10": 1.0,
+      "recall@10_samples": 1,
+      "mrr": 1.0,
+      "mrr_samples": 1,
+      "ndcg@10": 1.0,
+      "ndcg@10_samples": 1,
+      "faithfulness": null,
+      "faithfulness_samples": 0,
+      "answer_relevance": null,
+      "answer_relevance_samples": 0,
+      "citation_accuracy": null,
+      "citation_accuracy_samples": 0,
+      "citation_coverage": null,
+      "citation_coverage_samples": 0,
+      "abstained": null,
+      "abstained_samples": 0,
+      "retrieval_p50_ms": 249.5874999985972,
+      "retrieval_p95_ms": 249.5874999985972,
+      "answer_provider_p50_ms": 1027.593999999226,
+      "answer_provider_p95_ms": 1027.593999999226,
+      "judge_provider_p50_ms": 181165.11100000207,
+      "judge_provider_p95_ms": 181165.11100000207,
+      "answer_queue_p50_ms": 5.65189999906579,
+      "answer_queue_p95_ms": 5.65189999906579,
+      "judge_queue_p50_ms": 13.971500000479864,
+      "judge_queue_p95_ms": 13.971500000479864,
+      "answer_wall_p50_ms": 1295.812799999112,
+      "answer_wall_p95_ms": 1295.812799999112,
+      "provider_cost_usd_per_query": 0.05860485
+    }
+  ],
+  "diagnostics": {
+    "calls": 3,
+    "finish_reason_recorded": 1,
+    "finish_reason_length": 0,
+    "truncations": 0,
+    "http_400s": 0,
+    "http_429s": 0
+  },
+  "error": "HTTPStatusError: Client error '402 PAYMENT REQUIRED' for url 'https://api.sambanova.ai/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/402",
+  "checkpoint_migration": {
+    "from_code_sha256": "7696e90818d71edb7f8c399ddca91b156b8cd84b3ac0c04d4ed7d165452727b1",
+    "to_code_sha256": "b686fb819122b17c44c8f317cc001de459a5d25c1e85c01633df056351fdf3fc",
+    "reason": "Latency accumulation across resume only; prompts, schemas, provider/model IDs, limits, evidence, answer and costs unchanged; raw prior report archived.",
+    "regenerated_answers": 0
+  },
+  "execution_commit": "08e239a7c18f1d09201243ae90a58f4708bf4794"
+}
