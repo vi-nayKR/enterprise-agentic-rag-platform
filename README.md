@@ -11,15 +11,20 @@ to fix completion-token exhaustion and latency accounting. The
 [stopped-attempt audit and original outputs](results/attempts/groq_before_token_latency_fix/AUDIT.md)
 are preserved. The fixed-settings same-model smoke is archived under
 `results/attempts/groq_fixed_same_model_smoke/`. The user moved judging to
-SambaNova `DeepSeek-V3.1`, leaving Groq for answering/rewriting. A fresh
-[five-question cross-family smoke](results/smoke_groq_sambanova.md) gates restarting
-the full ablations with persistent quotas and checkpoints. Judge agreement awaits your labels.
+SambaNova `DeepSeek-V3.1`, leaving Groq for answering/rewriting. A
+[five-question cross-family smoke](results/smoke_groq_sambanova.md) was meant to gate
+restarting the full ablations with persistent quotas and checkpoints.
 The first SambaNova judge request timed out; retrying the cached answer returned
-HTTP 402 `PAYMENT_METHOD_REQUIRED`. The cross-family smoke and full run are stopped
-pending the user's existing-account billing access. No successful judge usage or
-complete five-case result is claimed. One Groq answer used 807 input + 193 completion
-tokens; extrapolating that single sample to 700 answers gives 3.5 Groq quota-days,
-before rewrites and provider waiting. This is provisional, not a completion ETA.
+HTTP 402 `PAYMENT_METHOD_REQUIRED`, so that smoke stays archived as a failed attempt.
+On 2026-10-09 the user moved the judge to Groq `qwen/qwen3.8-27b`. It is free, from a
+different model family than the `openai/gpt-oss-120b` answerer, and the same judge
+Traceward uses. The new [five-question cross-family smoke](results/smoke_groq_groq.md)
+passed: 10 calls, 5/5 valid judgements, 0 failures, 0 HTTP 400/429s, 0 truncations.
+Its scores are a five-case gate on one configuration, not results. Measured usage is
+~977 Groq tokens per question, so the full 700-answer run needs about 3.4 Groq
+quota-days, before rewrites and waiting. That is a lower bound, not an ETA. The full run
+(`python -m src.evals.benchmark --split all --resume` after starting it with
+`--split all`) has not started; judge agreement still awaits the 20 human labels.
 The implementation below
 describes the existing reference, not the planned production features.
 

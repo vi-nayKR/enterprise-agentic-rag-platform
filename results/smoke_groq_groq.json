@@ -1,0 +1,1221 @@
+{
+  "status": "measured",
+  "dataset": "squad_v1",
+  "split": "dev",
+  "started_at_utc": "2026-10-09T17:17:32.459001+00:00",
+  "output_token_limits": {
+    "answer": 1024,
+    "judge": 1024,
+    "rewrite": 1024
+  },
+  "latency_definition": "Provider: sum of HTTP attempt durations per stage, excluding queue/throttle/backoff; answer wall: retrieval + rewrite + generation including waiting, excluding judging.",
+  "source_commit": "386f5b7bd3c171f078febde488cc6647f85a4905",
+  "python": "3.12.10",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "package_versions": {
+    "sentence-transformers": "5.7.0",
+    "torch": "2.14.1+cpu",
+    "langchain-text-splitters": "1.1.3",
+    "pydantic": "2.14.0"
+  },
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "embedding_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "reranker_model": "cross-encoder/ms-marco-MiniLM-L6-v2",
+  "reranker_revision": "233902d25c440f23af6f7d6e94d2946bac0bee0a",
+  "chunk_indexes": {
+    "fixed": {
+      "chunks": 603
+    },
+    "recursive": {
+      "chunks": 603
+    },
+    "semantic": {
+      "chunks": 1292
+    }
+  },
+  "judge_model": "qwen/qwen3.8-27b",
+  "judge_provider": "groq",
+  "judge_base_url": "https://api.groq.com/openai/v1",
+  "judge_request_interval_seconds": 30.0,
+  "judge_cost_rates_usd_per_million": {
+    "input": "0.8",
+    "output": "4.0"
+  },
+  "same_model_judge": false,
+  "auto_resume_daily_quota": true,
+  "budget_usd": "2.81375520",
+  "planned_configuration_questions": 5,
+  "run_identity": {
+    "model": "openai/gpt-oss-120b",
+    "base_url": "https://api.groq.com/openai/v1",
+    "rates": [
+      "0.15",
+      "0.60"
+    ],
+    "judge": {
+      "model": "qwen/qwen3.8-27b",
+      "base_url": "https://api.groq.com/openai/v1",
+      "rates": [
+        "0.8",
+        "4.0"
+      ],
+      "request_interval_seconds": 30.0
+    },
+    "reasoning_effort": "low",
+    "auto_resume_daily_quota": true,
+    "output_token_limits": {
+      "answer": 1024,
+      "judge": 1024,
+      "rewrite": 1024
+    },
+    "smoke_configuration": "fixed_hybrid",
+    "cases_sha256": "f40b4d095488ea20e365f81889f8848f19aab7551686f9e21cb445f604214bbd",
+    "corpus_sha256": "923f79e45d4f08304b6e9e5f825de1b7c8269154f6a6f555e0129a82c6dacabf",
+    "code_sha256": "b686fb819122b17c44c8f317cc001de459a5d25c1e85c01633df056351fdf3fc"
+  },
+  "provider": "groq",
+  "token_limits": {
+    "minute": 8000,
+    "day": 200000
+  },
+  "request_interval_seconds": 12.0,
+  "rate_limit_retries": 6,
+  "cost_rates_usd_per_million": {
+    "input": "0.15",
+    "output": "0.60"
+  },
+  "test_review_sha256": "b3bdf84105d8a7ae009bd82b760c09a04a0de416eb318afc364e07d19810440c",
+  "test_review_provenance": [],
+  "test_sensitivity_excluded_id": "573786b51c4567190057448e",
+  "garbled_formula_id": "57297a276aef051400154f8a",
+  "exact_match_computed": false,
+  "ranking_depth": 10,
+  "warm_index": true,
+  "result_cache": false,
+  "experiment_design": "one factor at a time; not a complete factorial or global optimum search",
+  "cost_scope": "provider token charges, excluding electricity/hardware",
+  "records": [
+    {
+      "id": "fixed_hybrid:56e1ec83cd28a01900c67c0e",
+      "configuration": "fixed_hybrid",
+      "split": "dev",
+      "question_id": "56e1ec83cd28a01900c67c0e",
+      "question_origin": "human_authored_squad",
+      "reviewer": null,
+      "review_provenance": null,
+      "review_notes": null,
+      "gold_source_chunk_id": "30408117680a406f",
+      "question": "What is the most well-known algorithm associated with the integer factorization problem?",
+      "reference_answers": [
+        "the general number field sieve",
+        "RSA",
+        "general number field sieve"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "The best known classical algorithm for integer factorization is the general number field sieve.",
+            "citation_ids": [
+              "30408117680a406f_fixed_0"
+            ]
+          },
+          {
+            "text": "The best known quantum algorithm for integer factorization is Shor's algorithm, which runs in polynomial time.",
+            "citation_ids": [
+              "30408117680a406f_fixed_1"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": {
+        "answer_relevant": true,
+        "claim_support": [
+          {
+            "claim_index": 0,
+            "supported": true
+          },
+          {
+            "claim_index": 1,
+            "supported": true
+          }
+        ],
+        "citation_support": [
+          {
+            "claim_index": 0,
+            "supported": true,
+            "citation_id": "30408117680a406f_fixed_0"
+          },
+          {
+            "claim_index": 1,
+            "supported": true,
+            "citation_id": "30408117680a406f_fixed_1"
+          }
+        ],
+        "reason": "Claims are directly supported by the provided source chunks."
+      },
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "citation_coverage": 1.0,
+        "abstained": 0.0
+      },
+      "error": null,
+      "cost_usd": "0.00138485",
+      "completed": true,
+      "retrieval_latency_ms": 171.38169999816455,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "gold_chunk_ids": [
+        "30408117680a406f_fixed_0"
+      ],
+      "ranked_chunk_ids": [
+        "30408117680a406f_fixed_0",
+        "30408117680a406f_fixed_1",
+        "d04e1468058f4742_fixed_0",
+        "89cac738d1bb3723_fixed_0",
+        "3fff0e386706d513_fixed_0",
+        "5ad046b0a138db8c_fixed_0",
+        "267094041a9303dc_fixed_0",
+        "d953cfbf0d8ad856_fixed_0",
+        "0c179ab41ed42a56_fixed_0",
+        "6cff8048703b36a0_fixed_0"
+      ],
+      "contexts": [
+        {
+          "chunk_id": "30408117680a406f_fixed_0",
+          "text": "The integer factorization problem is the computational problem of determining the prime factorization of a given integer. Phrased as a decision problem, it is the problem of deciding whether the input has a factor less than k. No efficient integer factorization algorithm is known, and this fact forms the basis of several modern cryptographic systems, such as the RSA algorithm. The integer factorization problem is in NP and in co-NP (and even in UP and co-UP). If the problem is NP-complete, the polynomial time hierarchy will collapse to its first level (i.e., NP will equal co-NP). The best known algorithm for integer factorization is the general number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer. However, the best known quantum algori",
+          "document_id": "30408117680a406f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 800,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "30408117680a406f_fixed_1",
+          "text": "al number field sieve, which takes time O(e(64/9)1/3(n.log 2)1/3(log (n.log 2))2/3) to factor an n-bit integer. However, the best known quantum algorithm for this problem, Shor's algorithm, does run in polynomial time. Unfortunately, this fact doesn't say much about where the problem lies with respect to non-quantum complexity classes.",
+          "document_id": "30408117680a406f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 2,
+            "start_offset": 650,
+            "end_offset": 987,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "d04e1468058f4742_fixed_0",
+          "text": "The most commonly used reduction is a polynomial-time reduction. This means that the reduction process takes polynomial time. For example, the problem of squaring an integer can be reduced to the problem of multiplying two integers. This means an algorithm for multiplying two integers can be used to square an integer. Indeed, this can be done by giving the same input to both inputs of the multiplication algorithm. Thus we see that squaring is not more difficult than multiplication, since squaring can be reduced to multiplication.",
+          "document_id": "d04e1468058f4742",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 535,
+            "chunking": "fixed"
+          }
+        }
+      ],
+      "call_range": [
+        0,
+        2
+      ],
+      "token_usage": {
+        "answer": {
+          "prompt_tokens": 807,
+          "completion_tokens": 193,
+          "unknown_usage_attempts": 0,
+          "total_tokens": 1000
+        },
+        "judge": {
+          "prompt_tokens": 780,
+          "completion_tokens": 131,
+          "unknown_usage_attempts": 0,
+          "total_tokens": 911
+        }
+      },
+      "answer_provider_latency_ms": 869.8153000004822,
+      "answer_queue_latency_ms": 3.619399998569861,
+      "answer_wall_latency_ms": 1050.3381000016816,
+      "judge_provider_latency_ms": 526.5479000008781,
+      "judge_queue_latency_ms": 2.47020000097109
+    },
+    {
+      "id": "fixed_hybrid:56e1ded7cd28a01900c67bd5",
+      "configuration": "fixed_hybrid",
+      "split": "dev",
+      "question_id": "56e1ded7cd28a01900c67bd5",
+      "question_origin": "human_authored_squad",
+      "reviewer": null,
+      "review_provenance": null,
+      "review_notes": null,
+      "gold_source_chunk_id": "3fff0e386706d513",
+      "question": "What is the name for a problem that meets Ladner's assertion?",
+      "reference_answers": [
+        "NP-intermediate problems",
+        "NP-intermediate problems",
+        "NP-intermediate"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "A problem that meets Ladner's assertion is called an NP-intermediate problem.",
+            "citation_ids": [
+              "3fff0e386706d513_fixed_0"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": {
+        "answer_relevant": true,
+        "claim_support": [
+          {
+            "claim_index": 0,
+            "supported": true
+          }
+        ],
+        "citation_support": [
+          {
+            "claim_index": 0,
+            "supported": true,
+            "citation_id": "3fff0e386706d513_fixed_0"
+          }
+        ],
+        "reason": "Chunk explicitly states Ladner's theorem defines NP-intermediate problems."
+      },
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "citation_coverage": 1.0,
+        "abstained": 0.0
+      },
+      "error": null,
+      "cost_usd": "0.00103440",
+      "completed": true,
+      "retrieval_latency_ms": 93.22450000036042,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "gold_chunk_ids": [
+        "3fff0e386706d513_fixed_0"
+      ],
+      "ranked_chunk_ids": [
+        "3fff0e386706d513_fixed_0",
+        "a05e4993d32da980_fixed_0",
+        "0a6dbdcf189a68a8_fixed_0",
+        "6de4b2c5e00ccde7_fixed_0",
+        "d953cfbf0d8ad856_fixed_0",
+        "4c718881fda6c439_fixed_0",
+        "83dbfc8bfdfb91f4_fixed_0",
+        "024f915ba795f37a_fixed_0",
+        "adf8f409f94c1b1b_fixed_0",
+        "83dbfc8bfdfb91f4_fixed_1"
+      ],
+      "contexts": [
+        {
+          "chunk_id": "3fff0e386706d513_fixed_0",
+          "text": "It was shown by Ladner that if P ≠ NP then there exist problems in NP that are neither in P nor NP-complete. Such problems are called NP-intermediate problems. The graph isomorphism problem, the discrete logarithm problem and the integer factorization problem are examples of problems believed to be NP-intermediate. They are some of the very few NP problems not known to be in P or to be NP-complete.",
+          "document_id": "3fff0e386706d513",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 401,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "a05e4993d32da980_fixed_0",
+          "text": "What intractability means in practice is open to debate. Saying that a problem is not in P does not imply that all large cases of the problem are hard or even that most of them are. For example, the decision problem in Presburger arithmetic has been shown not to be in P, yet algorithms have been written that solve the problem in reasonable times in most cases. Similarly, algorithms can solve the NP-complete knapsack problem over a wide range of sizes in less than quadratic time and SAT solvers routinely handle large instances of the NP-complete Boolean satisfiability problem.",
+          "document_id": "a05e4993d32da980",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 582,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "0a6dbdcf189a68a8_fixed_0",
+          "text": "To further highlight the difference between a problem and an instance, consider the following instance of the decision version of the traveling salesman problem: Is there a route of at most 2000 kilometres passing through all of Germany's 15 largest cities? The quantitative answer to this particular problem instance is of little use for solving other instances of the problem, such as asking for a round trip through all sites in Milan whose total length is at most 10 km. For this reason, complexity theory addresses computational problems and not particular problem instances.",
+          "document_id": "0a6dbdcf189a68a8",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 580,
+            "chunking": "fixed"
+          }
+        }
+      ],
+      "call_range": [
+        2,
+        4
+      ],
+      "token_usage": {
+        "answer": {
+          "prompt_tokens": 748,
+          "completion_tokens": 109,
+          "unknown_usage_attempts": 0,
+          "total_tokens": 857
+        },
+        "judge": {
+          "prompt_tokens": 656,
+          "completion_tokens": 83,
+          "unknown_usage_attempts": 0,
+          "total_tokens": 739
+        }
+      },
+      "answer_provider_latency_ms": 807.7271000001929,
+      "answer_queue_latency_ms": 10495.936700004677,
+      "answer_wall_latency_ms": 11401.487100003578,
+      "judge_provider_latency_ms": 444.87389999994775,
+      "judge_queue_latency_ms": 18064.7014999995
+    },
+    {
+      "id": "fixed_hybrid:56e1ce08e3433e14004231a6",
+      "configuration": "fixed_hybrid",
+      "split": "dev",
+      "question_id": "56e1ce08e3433e14004231a6",
+      "question_origin": "human_authored_squad",
+      "reviewer": null,
+      "review_provenance": null,
+      "review_notes": null,
+      "gold_source_chunk_id": "4c718881fda6c439",
+      "question": "An algorithm for X which reduces to C would us to do what?",
+      "reference_answers": [
+        "solve any problem in C",
+        "solve any problem in C",
+        "solve any problem in C"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "If an algorithm for problem X reduces to class C, then we can solve X using an algorithm for any problem in C, meaning X is no harder than problems in C.",
+            "citation_ids": [
+              "a177b449a4249c7f_fixed_0"
+            ]
+          },
+          {
+            "text": "Conversely, if X is hard for class C (every problem in C reduces to X), then an algorithm for X would allow us to solve any problem in C.",
+            "citation_ids": [
+              "4c718881fda6c439_fixed_0"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": {
+        "answer_relevant": true,
+        "claim_support": [
+          {
+            "claim_index": 0,
+            "supported": true
+          },
+          {
+            "claim_index": 1,
+            "supported": true
+          }
+        ],
+        "citation_support": [
+          {
+            "claim_index": 0,
+            "supported": true,
+            "citation_id": "a177b449a4249c7f_fixed_0"
+          },
+          {
+            "claim_index": 1,
+            "supported": true,
+            "citation_id": "4c718881fda6c439_fixed_0"
+          }
+        ],
+        "reason": "Claims accurately reflect source text definitions of reduction and hardness."
+      },
+      "metrics": {
+        "recall@1": 0.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 0.5,
+        "ndcg@10": 0.6309297535714575,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "citation_coverage": 1.0,
+        "abstained": 0.0
+      },
+      "error": null,
+      "cost_usd": "0.00148575",
+      "completed": true,
+      "retrieval_latency_ms": 94.97410000039963,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "gold_chunk_ids": [
+        "4c718881fda6c439_fixed_0"
+      ],
+      "ranked_chunk_ids": [
+        "a177b449a4249c7f_fixed_0",
+        "4c718881fda6c439_fixed_0",
+        "b37baff71d33ca1c_fixed_0",
+        "a78cc2bfe0b1062a_fixed_0",
+        "d04e1468058f4742_fixed_0",
+        "024f915ba795f37a_fixed_0",
+        "c99a2e485a020b20_fixed_1",
+        "6cff8048703b36a0_fixed_1",
+        "6cff8048703b36a0_fixed_0",
+        "52d2e20e1f64fd5f_fixed_0"
+      ],
+      "contexts": [
+        {
+          "chunk_id": "a177b449a4249c7f_fixed_0",
+          "text": "Many complexity classes are defined using the concept of a reduction. A reduction is a transformation of one problem into another problem. It captures the informal notion of a problem being at least as difficult as another problem. For instance, if a problem X can be solved using an algorithm for Y, X is no more difficult than Y, and we say that X reduces to Y. There are many different types of reductions, based on the method of reduction, such as Cook reductions, Karp reductions and Levin reductions, and the bound on the complexity of reductions, such as polynomial-time reductions or log-space reductions.",
+          "document_id": "a177b449a4249c7f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 613,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "4c718881fda6c439_fixed_0",
+          "text": "This motivates the concept of a problem being hard for a complexity class. A problem X is hard for a class of problems C if every problem in C can be reduced to X. Thus no problem in C is harder than X, since an algorithm for X allows us to solve any problem in C. Of course, the notion of hard problems depends on the type of reduction being used. For complexity classes larger than P, polynomial-time reductions are commonly used. In particular, the set of problems that are hard for NP is the set of NP-hard problems.",
+          "document_id": "4c718881fda6c439",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 520,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "b37baff71d33ca1c_fixed_0",
+          "text": "A problem is regarded as inherently difficult if its solution requires significant resources, whatever the algorithm used. The theory formalizes this intuition, by introducing mathematical models of computation to study these problems and quantifying the amount of resources needed to solve them, such as time and storage. Other complexity measures are also used, such as the amount of communication (used in communication complexity), the number of gates in a circuit (used in circuit complexity) and the number of processors (used in parallel computing). One of the roles of computational complexity theory is to determine the practical limits on what computers can and cannot do.",
+          "document_id": "b37baff71d33ca1c",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 682,
+            "chunking": "fixed"
+          }
+        }
+      ],
+      "call_range": [
+        4,
+        6
+      ],
+      "token_usage": {
+        "answer": {
+          "prompt_tokens": 789,
+          "completion_tokens": 355,
+          "unknown_usage_attempts": 0,
+          "total_tokens": 1144
+        },
+        "judge": {
+          "prompt_tokens": 788,
+          "completion_tokens": 131,
+          "unknown_usage_attempts": 0,
+          "total_tokens": 919
+        }
+      },
+      "answer_provider_latency_ms": 1281.0735999955796,
+      "answer_queue_latency_ms": 3.8263000024016947,
+      "answer_wall_latency_ms": 1384.5621000000392,
+      "judge_provider_latency_ms": 505.7521999988239,
+      "judge_queue_latency_ms": 28177.845800004434
+    },
+    {
+      "id": "fixed_hybrid:56e19557e3433e1400422ff0",
+      "configuration": "fixed_hybrid",
+      "split": "dev",
+      "question_id": "56e19557e3433e1400422ff0",
+      "question_origin": "human_authored_squad",
+      "reviewer": null,
+      "review_provenance": null,
+      "review_notes": null,
+      "gold_source_chunk_id": "efd5797a31b38b7c",
+      "question": "What is the term for the set of all connected graphs related to this decision problem?",
+      "reference_answers": [
+        "formal language",
+        "The formal language",
+        "The formal language associated with this decision problem"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "The set of all connected graphs that defines the decision problem is called the formal language associated with that decision problem.",
+            "citation_ids": [
+              "efd5797a31b38b7c_fixed_0"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": {
+        "answer_relevant": true,
+        "claim_support": [
+          {
+            "claim_index": 0,
+            "supported": true
+          }
+        ],
+        "citation_support": [
+          {
+            "claim_index": 0,
+            "supported": true,
+            "citation_id": "efd5797a31b38b7c_fixed_0"
+          }
+        ],
+        "reason": "Source explicitly states the formal language is the set of all connected graphs."
+      },
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "citation_coverage": 1.0,
+        "abstained": 0.0
+      },
+      "error": null,
+      "cost_usd": "0.00108390",
+      "completed": true,
+      "retrieval_latency_ms": 99.45650000008754,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "gold_chunk_ids": [
+        "efd5797a31b38b7c_fixed_0"
+      ],
+      "ranked_chunk_ids": [
+        "efd5797a31b38b7c_fixed_0",
+        "d80b4274696501d7_fixed_0",
+        "0de83409397aa1c4_fixed_0",
+        "83dbfc8bfdfb91f4_fixed_0",
+        "66f46350d5031bc5_fixed_0",
+        "22b3990a76799944_fixed_0",
+        "a78cc2bfe0b1062a_fixed_1",
+        "b1eb40a7a6c19752_fixed_0",
+        "d953cfbf0d8ad856_fixed_0",
+        "a78cc2bfe0b1062a_fixed_0"
+      ],
+      "contexts": [
+        {
+          "chunk_id": "efd5797a31b38b7c_fixed_0",
+          "text": "An example of a decision problem is the following. The input is an arbitrary graph. The problem consists in deciding whether the given graph is connected, or not. The formal language associated with this decision problem is then the set of all connected graphs—of course, to obtain a precise definition of this language, one has to decide how graphs are encoded as binary strings.",
+          "document_id": "efd5797a31b38b7c",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 380,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "d80b4274696501d7_fixed_0",
+          "text": "The graph isomorphism problem is the computational problem of determining whether two finite graphs are isomorphic. An important unsolved problem in complexity theory is whether the graph isomorphism problem is in P, NP-complete, or NP-intermediate. The answer is not known, but it is believed that the problem is at least not NP-complete. If graph isomorphism is NP-complete, the polynomial time hierarchy collapses to its second level. Since it is widely believed that the polynomial hierarchy does not collapse to any finite level, it is believed that graph isomorphism is not NP-complete. The best algorithm for this problem, due to Laszlo Babai and Eugene Luks has run time 2O(√(n log(n))) for graphs with n vertices.",
+          "document_id": "d80b4274696501d7",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 722,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "0de83409397aa1c4_fixed_0",
+          "text": "It is tempting to think that the notion of function problems is much richer than the notion of decision problems. However, this is not really the case, since function problems can be recast as decision problems. For example, the multiplication of two integers can be expressed as the set of triples (a, b, c) such that the relation a × b = c holds. Deciding whether a given triple is a member of this set corresponds to solving the problem of multiplying two numbers.",
+          "document_id": "0de83409397aa1c4",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 467,
+            "chunking": "fixed"
+          }
+        }
+      ],
+      "call_range": [
+        6,
+        8
+      ],
+      "token_usage": {
+        "answer": {
+          "prompt_tokens": 770,
+          "completion_tokens": 142,
+          "unknown_usage_attempts": 0,
+          "total_tokens": 912
+        },
+        "judge": {
+          "prompt_tokens": 684,
+          "completion_tokens": 84,
+          "unknown_usage_attempts": 0,
+          "total_tokens": 768
+        }
+      },
+      "answer_provider_latency_ms": 751.9299999985378,
+      "answer_queue_latency_ms": 5.423200003860984,
+      "answer_wall_latency_ms": 862.3391000000993,
+      "judge_provider_latency_ms": 670.736100000795,
+      "judge_queue_latency_ms": 28633.500500000082
+    },
+    {
+      "id": "fixed_hybrid:56e1c720e3433e140042316c",
+      "configuration": "fixed_hybrid",
+      "split": "dev",
+      "question_id": "56e1c720e3433e140042316c",
+      "question_origin": "human_authored_squad",
+      "reviewer": null,
+      "review_provenance": null,
+      "review_notes": null,
+      "gold_source_chunk_id": "37c468e1cf5f8802",
+      "question": "What theorems are responsible for determining questions of time and space requirements?",
+      "reference_answers": [
+        "time and space hierarchy theorems",
+        "time and space hierarchy theorems",
+        "time and space hierarchy theorems"
+      ],
+      "answer_origin": "model_generated",
+      "answer": {
+        "claims": [
+          {
+            "text": "The time hierarchy theorem determines questions about time requirements in computational complexity.",
+            "citation_ids": [
+              "37c468e1cf5f8802_fixed_0"
+            ]
+          },
+          {
+            "text": "The space hierarchy theorem determines questions about space requirements in computational complexity.",
+            "citation_ids": [
+              "37c468e1cf5f8802_fixed_0"
+            ]
+          },
+          {
+            "text": "These hierarchy theorems are used to prove strict inclusions such as P ⊂ EXPTIME and L ⊂ PSPACE.",
+            "citation_ids": [
+              "0fe3a88d4132412f_fixed_0"
+            ]
+          }
+        ],
+        "abstained": false
+      },
+      "judgement": {
+        "answer_relevant": true,
+        "claim_support": [
+          {
+            "claim_index": 0,
+            "supported": true
+          },
+          {
+            "claim_index": 1,
+            "supported": true
+          },
+          {
+            "claim_index": 2,
+            "supported": true
+          }
+        ],
+        "citation_support": [
+          {
+            "claim_index": 0,
+            "supported": true,
+            "citation_id": "37c468e1cf5f8802_fixed_0"
+          },
+          {
+            "claim_index": 1,
+            "supported": true,
+            "citation_id": "37c468e1cf5f8802_fixed_0"
+          },
+          {
+            "claim_index": 2,
+            "supported": true,
+            "citation_id": "0fe3a88d4132412f_fixed_0"
+          }
+        ],
+        "reason": "All claims are directly supported by the provided source chunks."
+      },
+      "metrics": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "mrr": 1.0,
+        "ndcg@10": 1.0,
+        "faithfulness": 1.0,
+        "answer_relevance": 1.0,
+        "citation_accuracy": 1.0,
+        "citation_coverage": 1.0,
+        "abstained": 0.0
+      },
+      "error": null,
+      "cost_usd": "0.00155955",
+      "completed": true,
+      "retrieval_latency_ms": 93.59969999786699,
+      "rewritten_query": null,
+      "gold_chunk_count": 1,
+      "gold_chunk_ids": [
+        "37c468e1cf5f8802_fixed_0"
+      ],
+      "ranked_chunk_ids": [
+        "37c468e1cf5f8802_fixed_0",
+        "0fe3a88d4132412f_fixed_0",
+        "a93d2c211cf071ed_fixed_0",
+        "0fa9079b8bea867c_fixed_0",
+        "83dbfc8bfdfb91f4_fixed_0",
+        "ee64759552e3c527_fixed_0",
+        "a05e4993d32da980_fixed_0",
+        "37c468e1cf5f8802_fixed_1",
+        "e43cc678bdf6a315_fixed_0",
+        "8a62acc96ad81002_fixed_1"
+      ],
+      "contexts": [
+        {
+          "chunk_id": "37c468e1cf5f8802_fixed_0",
+          "text": "For the complexity classes defined in this way, it is desirable to prove that relaxing the requirements on (say) computation time indeed defines a bigger set of problems. In particular, although DTIME(n) is contained in DTIME(n2), it would be interesting to know if the inclusion is strict. For time and space requirements, the answer to such questions is given by the time and space hierarchy theorems respectively. They are called hierarchy theorems because they induce a proper hierarchy on the classes defined by constraining the respective resources. Thus there are pairs of complexity classes such that one is properly included in the other. Having deduced such proper set inclusions, we can proceed to make quantitative statements about how much more additional time or space is needed in orde",
+          "document_id": "37c468e1cf5f8802",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 2,
+            "start_offset": 0,
+            "end_offset": 800,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "0fe3a88d4132412f_fixed_0",
+          "text": "The time and space hierarchy theorems form the basis for most separation results of complexity classes. For instance, the time hierarchy theorem tells us that P is strictly contained in EXPTIME, and the space hierarchy theorem tells us that L is strictly contained in PSPACE.",
+          "document_id": "0fe3a88d4132412f",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 275,
+            "chunking": "fixed"
+          }
+        },
+        {
+          "chunk_id": "a93d2c211cf071ed_fixed_0",
+          "text": "Analogous definitions can be made for space requirements. Although time and space are the most well-known complexity resources, any complexity measure can be viewed as a computational resource. Complexity measures are very generally defined by the Blum complexity axioms. Other complexity measures used in complexity theory include communication complexity, circuit complexity, and decision tree complexity.",
+          "document_id": "a93d2c211cf071ed",
+          "metadata": {
+            "title": "Computational_complexity_theory",
+            "filename": "Computational_complexity_theory.txt",
+            "section": "Computational_complexity_theory",
+            "total_chunks": 1,
+            "start_offset": 0,
+            "end_offset": 407,
+            "chunking": "fixed"
+          }
+        }
+      ],
+      "call_range": [
+        8,
+        10
+      ],
+      "token_usage": {
+        "answer": {
+          "prompt_tokens": 713,
+          "completion_tokens": 261,
+          "unknown_usage_attempts": 0,
+          "total_tokens": 974
+        },
+        "judge": {
+          "prompt_tokens": 730,
+          "completion_tokens": 178,
+          "unknown_usage_attempts": 0,
+          "total_tokens": 908
+        }
+      },
+      "answer_provider_latency_ms": 944.2960000014864,
+      "answer_queue_latency_ms": 4.8643999980413355,
+      "answer_wall_latency_ms": 1048.2676999963587,
+      "judge_provider_latency_ms": 691.7890000040643,
+      "judge_queue_latency_ms": 28269.613699994807
+    }
+  ],
+  "calibration": {
+    "status": "pending_human_labels",
+    "agreement": null
+  },
+  "calls": [
+    {
+      "model": "openai/gpt-oss-120b",
+      "client_role": "answer",
+      "status": "completed",
+      "prompt_tokens": 807,
+      "completion_tokens": 193,
+      "cost_usd": "0.00023685",
+      "cost_kind": "measured",
+      "max_completion_tokens": 1024,
+      "finish_reason": "stop",
+      "truncated": false,
+      "queue_wait_ms": 3.619399998569861,
+      "request_sent_at_utc": "2026-10-09T17:17:32.721060+00:00",
+      "provider_latency_ms": 869.8153000004822,
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "999",
+        "x-ratelimit-remaining-tokens": "6169",
+        "x-ratelimit-reset-requests": "1m26.4s",
+        "x-ratelimit-reset-tokens": "13.732s"
+      },
+      "reasoning_tokens": 72,
+      "wall_latency_ms": 873.5103999933926
+    },
+    {
+      "model": "qwen/qwen3.8-27b",
+      "client_role": "judge",
+      "status": "completed",
+      "prompt_tokens": 780,
+      "completion_tokens": 131,
+      "cost_usd": "0.001148",
+      "cost_kind": "measured",
+      "max_completion_tokens": 1024,
+      "finish_reason": "stop",
+      "truncated": false,
+      "queue_wait_ms": 2.47020000097109,
+      "request_sent_at_utc": "2026-10-09T17:17:33.601198+00:00",
+      "provider_latency_ms": 526.5479000008781,
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "986",
+        "x-ratelimit-remaining-tokens": "7129",
+        "x-ratelimit-reset-requests": "20m9.6s",
+        "x-ratelimit-reset-tokens": "6.532s"
+      },
+      "wall_latency_ms": 529.0897000013501
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "client_role": "answer",
+      "status": "completed",
+      "prompt_tokens": 748,
+      "completion_tokens": 109,
+      "cost_usd": "0.0001776",
+      "cost_kind": "measured",
+      "max_completion_tokens": 1024,
+      "finish_reason": "stop",
+      "truncated": false,
+      "queue_wait_ms": 10495.936700004677,
+      "request_sent_at_utc": "2026-10-09T17:17:44.723163+00:00",
+      "provider_latency_ms": 807.7271000001929,
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "998",
+        "x-ratelimit-remaining-tokens": "6368",
+        "x-ratelimit-reset-requests": "2m52.8s",
+        "x-ratelimit-reset-tokens": "12.239s"
+      },
+      "reasoning_tokens": 34,
+      "wall_latency_ms": 11303.726900005131
+    },
+    {
+      "model": "qwen/qwen3.8-27b",
+      "client_role": "judge",
+      "status": "completed",
+      "prompt_tokens": 656,
+      "completion_tokens": 83,
+      "cost_usd": "0.0008568",
+      "cost_kind": "measured",
+      "max_completion_tokens": 1024,
+      "finish_reason": "stop",
+      "truncated": false,
+      "queue_wait_ms": 18064.7014999995,
+      "request_sent_at_utc": "2026-10-09T17:18:03.602466+00:00",
+      "provider_latency_ms": 444.87389999994775,
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "985",
+        "x-ratelimit-remaining-tokens": "7294",
+        "x-ratelimit-reset-requests": "21m36s",
+        "x-ratelimit-reset-tokens": "5.295s"
+      },
+      "wall_latency_ms": 18509.63729999785
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "client_role": "answer",
+      "status": "completed",
+      "prompt_tokens": 789,
+      "completion_tokens": 355,
+      "cost_usd": "0.00033135",
+      "cost_kind": "measured",
+      "max_completion_tokens": 1024,
+      "finish_reason": "stop",
+      "truncated": false,
+      "queue_wait_ms": 3.8263000024016947,
+      "request_sent_at_utc": "2026-10-09T17:18:04.152254+00:00",
+      "provider_latency_ms": 1281.0735999955796,
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "997",
+        "x-ratelimit-remaining-tokens": "7018",
+        "x-ratelimit-reset-requests": "4m19.2s",
+        "x-ratelimit-reset-tokens": "7.365s"
+      },
+      "reasoning_tokens": 197,
+      "wall_latency_ms": 1284.9722000028123
+    },
+    {
+      "model": "qwen/qwen3.8-27b",
+      "client_role": "judge",
+      "status": "completed",
+      "prompt_tokens": 788,
+      "completion_tokens": 131,
+      "cost_usd": "0.0011544",
+      "cost_kind": "measured",
+      "max_completion_tokens": 1024,
+      "finish_reason": "stop",
+      "truncated": false,
+      "queue_wait_ms": 28177.845800004434,
+      "request_sent_at_utc": "2026-10-09T17:18:33.619295+00:00",
+      "provider_latency_ms": 505.7521999988239,
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "984",
+        "x-ratelimit-remaining-tokens": "7017",
+        "x-ratelimit-reset-requests": "23m2.4s",
+        "x-ratelimit-reset-tokens": "7.372s"
+      },
+      "wall_latency_ms": 28683.66010000318
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "client_role": "answer",
+      "status": "completed",
+      "prompt_tokens": 770,
+      "completion_tokens": 142,
+      "cost_usd": "0.0002007",
+      "cost_kind": "measured",
+      "max_completion_tokens": 1024,
+      "finish_reason": "stop",
+      "truncated": false,
+      "queue_wait_ms": 5.423200003860984,
+      "request_sent_at_utc": "2026-10-09T17:18:34.236827+00:00",
+      "provider_latency_ms": 751.9299999985378,
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "996",
+        "x-ratelimit-remaining-tokens": "6857",
+        "x-ratelimit-reset-requests": "5m45.6s",
+        "x-ratelimit-reset-tokens": "8.572s"
+      },
+      "reasoning_tokens": 59,
+      "wall_latency_ms": 757.4160000003758
+    },
+    {
+      "model": "qwen/qwen3.8-27b",
+      "client_role": "judge",
+      "status": "completed",
+      "prompt_tokens": 684,
+      "completion_tokens": 84,
+      "cost_usd": "0.0008832",
+      "cost_kind": "measured",
+      "max_completion_tokens": 1024,
+      "finish_reason": "stop",
+      "truncated": false,
+      "queue_wait_ms": 28633.500500000082,
+      "request_sent_at_utc": "2026-10-09T17:19:03.630967+00:00",
+      "provider_latency_ms": 670.736100000795,
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "983",
+        "x-ratelimit-remaining-tokens": "7185",
+        "x-ratelimit-reset-requests": "24m28.8s",
+        "x-ratelimit-reset-tokens": "6.112s"
+      },
+      "wall_latency_ms": 29304.33830000402
+    },
+    {
+      "model": "openai/gpt-oss-120b",
+      "client_role": "answer",
+      "status": "completed",
+      "prompt_tokens": 713,
+      "completion_tokens": 261,
+      "cost_usd": "0.00026355",
+      "cost_kind": "measured",
+      "max_completion_tokens": 1024,
+      "finish_reason": "stop",
+      "truncated": false,
+      "queue_wait_ms": 4.8643999980413355,
+      "request_sent_at_utc": "2026-10-09T17:19:04.407697+00:00",
+      "provider_latency_ms": 944.2960000014864,
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "995",
+        "x-ratelimit-remaining-tokens": "6932",
+        "x-ratelimit-reset-requests": "7m12s",
+        "x-ratelimit-reset-tokens": "8.01s"
+      },
+      "reasoning_tokens": 87,
+      "wall_latency_ms": 949.2431999969995
+    },
+    {
+      "model": "qwen/qwen3.8-27b",
+      "client_role": "judge",
+      "status": "completed",
+      "prompt_tokens": 730,
+      "completion_tokens": 178,
+      "cost_usd": "0.001296",
+      "cost_kind": "measured",
+      "max_completion_tokens": 1024,
+      "finish_reason": "stop",
+      "truncated": false,
+      "queue_wait_ms": 28269.613699994807,
+      "request_sent_at_utc": "2026-10-09T17:19:33.630561+00:00",
+      "provider_latency_ms": 691.7890000040643,
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "982",
+        "x-ratelimit-remaining-tokens": "7139",
+        "x-ratelimit-reset-requests": "25m55.199s",
+        "x-ratelimit-reset-tokens": "6.457s"
+      },
+      "wall_latency_ms": 28961.46569999837
+    }
+  ],
+  "provider_cost_usd": "0.00654845",
+  "wait_deadlines": {
+    "answer": null,
+    "judge": null
+  },
+  "waiting_until_unix": null,
+  "completion_estimate": {
+    "sample_questions": 5,
+    "remaining_configuration_questions": 0,
+    "remaining_usd": "2.80720675",
+    "limitations": "Projection from completed samples, including observed retry reservations; article/configuration mix, external account use and SambaNova limits can change completion time/cost. Quota-days are a Groq lower bound, not an ETA.",
+    "groq_tokens_per_question": 977.4,
+    "projected_remaining_groq_tokens": 0.0,
+    "groq_quota_days": 0.0,
+    "projected_remaining_cost_usd": "0E-8",
+    "budget_sufficient": true,
+    "affordable_questions": 2143
+  },
+  "summaries": [
+    {
+      "configuration": "fixed_hybrid",
+      "split": "dev",
+      "questions": 5,
+      "valid_answers": 5,
+      "valid_judgements": 5,
+      "failed_queries": 0,
+      "unrepresentable_gold": 0,
+      "recall@1": 0.8,
+      "recall@1_samples": 5,
+      "recall@5": 1.0,
+      "recall@5_samples": 5,
+      "recall@10": 1.0,
+      "recall@10_samples": 5,
+      "mrr": 0.9,
+      "mrr_samples": 5,
+      "ndcg@10": 0.9261859507142916,
+      "ndcg@10_samples": 5,
+      "faithfulness": 1.0,
+      "faithfulness_samples": 5,
+      "answer_relevance": 1.0,
+      "answer_relevance_samples": 5,
+      "citation_accuracy": 1.0,
+      "citation_accuracy_samples": 5,
+      "citation_coverage": 1.0,
+      "citation_coverage_samples": 5,
+      "abstained": 0.0,
+      "abstained_samples": 5,
+      "retrieval_p50_ms": 94.97410000039963,
+      "retrieval_p95_ms": 171.38169999816455,
+      "answer_provider_p50_ms": 869.8153000004822,
+      "answer_provider_p95_ms": 1281.0735999955796,
+      "judge_provider_p50_ms": 526.5479000008781,
+      "judge_provider_p95_ms": 691.7890000040643,
+      "answer_queue_p50_ms": 4.8643999980413355,
+      "answer_queue_p95_ms": 10495.936700004677,
+      "judge_queue_p50_ms": 28177.845800004434,
+      "judge_queue_p95_ms": 28633.500500000082,
+      "answer_wall_p50_ms": 1050.3381000016816,
+      "answer_wall_p95_ms": 11401.487100003578,
+      "provider_cost_usd_per_query": 0.00130969
+    }
+  ],
+  "diagnostics": {
+    "calls": 10,
+    "finish_reason_recorded": 10,
+    "finish_reason_length": 0,
+    "truncations": 0,
+    "http_400s": 0,
+    "http_429s": 0
+  },
+  "calibration_cost_usd": "0E-8"
+}
