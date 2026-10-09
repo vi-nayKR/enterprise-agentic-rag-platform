@@ -34,8 +34,7 @@ configurations are within noise, so **this release does not rank chunking or ret
 strategies**. Remaining answers were not extrapolated. To complete it later: new key in
 `.env`, then `python -m src.evals.benchmark --split all --resume` (needs the local
 `.cache/` checkpoint; without it, start a fresh `--split all` run).
-**The faithfulness judge is not human-validated:** the 20-item label set was never
-labelled, so judge-human agreement was not measured.
+**Human labels (reviewer: Vinay, 20 frozen dev answers):** answer relevance 17/20, claim faithfulness 25/28 (0.89), citation accuracy 14/32 (0.44). The low citation score has a concrete cause: 13 of 32 citations from the earlier local answer model cite a bare document ID instead of the retrieved chunk ID (all in `recursive_*` configurations). The current `gpt-oss-120b` setup produced 0 invalid IDs in 83 citations on the partial run. Judge-human agreement on these labels requires one judge pass over the same frozen answers (`python -m scripts.run_calibration`, about 20 calls); it was not run for v1.0 because the Groq key was retired, so no agreement or kappa is reported.
 The implementation below
 describes the existing reference, not the planned production features.
 
@@ -145,8 +144,8 @@ remains before the new cross-family smoke.
 The new configuration is Groq `openai/gpt-oss-120b` for answers and rewrites
 (low reasoning effort, 1024 completion tokens), and SambaNova `DeepSeek-V3.1` at
 `https://api.sambanova.ai/v1` for judging (1024 tokens, 30-second pacing).
-This is a **cross-family judge**. It was not human-validated (the 20-case label set was never
-labelled), and different families may still share biases or benchmark exposure.
+This is a **cross-family judge**. Human labels exist for 20 frozen answers, but judge-human agreement
+was not computed for v1.0; different families may still share biases or benchmark exposure.
 Configured judge estimates use $3/M input and $4.50/M output, following
 [SambaNova pricing](https://cloud.sambanova.ai/plans/pricing); these are not free-tier
 billing claims. SambaNova quota limits remain unverified; its own 429s use backoff.
@@ -195,8 +194,8 @@ python -m src.evals.benchmark --split all
 
 You review `data/squad_v1/test_review.jsonl` yourself and supply the judge labels
 in `data/squad_v1/labels_todo.jsonl` using the [labelling guide](data/squad_v1/LABELLING_GUIDE.md).
-The agent never fills those labels. They were not collected for v1.0, so no agreement
-score is reported. Calibration scores use frozen model answers
+The agent never fills those labels. They were completed by the user on 2026-10-10;
+`python -m scripts.run_calibration` computes agreement against the judge. Calibration scores use frozen model answers
 and evidence, not regenerated answers. Benchmark JSON and Markdown tables are
 written under `results/`; each records model versions and token costs.
 
