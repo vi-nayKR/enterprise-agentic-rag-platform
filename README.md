@@ -22,9 +22,20 @@ Traceward uses. The new [five-question cross-family smoke](results/smoke_groq_gr
 passed: 10 calls, 5/5 valid judgements, 0 failures, 0 HTTP 400/429s, 0 truncations.
 Its scores are a five-case gate on one configuration, not results. Measured usage is
 ~977 Groq tokens per question, so the full 700-answer run needs about 3.4 Groq
-quota-days, before rewrites and waiting. That is a lower bound, not an ETA. The full run
-(`python -m src.evals.benchmark --split all --resume` after starting it with
-`--split all`) has not started; judge agreement still awaits the 20 human labels.
+quota-days, before rewrites and waiting. That is a lower bound, not an ETA.
+
+**Final state (v1.0, 2026-10-10): partial ablation run, stopped by choice.** The full run
+started 2026-10-09 and was stopped on 2026-10-10 when the Groq key was retired, after
+**61 of 700 planned answers**: the first 8–9 dev questions for each of the 7
+configurations, 131 calls, 0 failures, 0 HTTP 400/429s, 0 truncations. The test split
+was not reached. The [partial report](results/ablations_groq_groq_all.md) is measured
+data with exact denominators. At n ≈ 9 per configuration the differences between
+configurations are within noise, so **this release does not rank chunking or retrieval
+strategies**. Remaining answers were not extrapolated. To complete it later: new key in
+`.env`, then `python -m src.evals.benchmark --split all --resume` (needs the local
+`.cache/` checkpoint; without it, start a fresh `--split all` run).
+**The faithfulness judge is not human-validated:** the 20-item label set was never
+labelled, so judge-human agreement was not measured.
 The implementation below
 describes the existing reference, not the planned production features.
 
@@ -134,8 +145,8 @@ remains before the new cross-family smoke.
 The new configuration is Groq `openai/gpt-oss-120b` for answers and rewrites
 (low reasoning effort, 1024 completion tokens), and SambaNova `DeepSeek-V3.1` at
 `https://api.sambanova.ai/v1` for judging (1024 tokens, 30-second pacing).
-This is a **cross-family judge**; independent 20-case human validation remains
-pending, and different families may still share biases or benchmark exposure.
+This is a **cross-family judge**. It was not human-validated (the 20-case label set was never
+labelled), and different families may still share biases or benchmark exposure.
 Configured judge estimates use $3/M input and $4.50/M output, following
 [SambaNova pricing](https://cloud.sambanova.ai/plans/pricing); these are not free-tier
 billing claims. SambaNova quota limits remain unverified; its own 429s use backoff.
@@ -170,7 +181,7 @@ Groq runs may wait and resume across token-quota windows instead.
 
 ```bash
 make labels       # Actual dev answers; creates blank labels_todo.jsonl.
-make eval-dev     # Development ablations while manual review is pending.
+make eval-dev     # Development ablations only.
 make eval         # Full run; refuses unreviewed test cases.
 ```
 
@@ -184,13 +195,13 @@ python -m src.evals.benchmark --split all
 
 You review `data/squad_v1/test_review.jsonl` yourself and supply the judge labels
 in `data/squad_v1/labels_todo.jsonl` using the [labelling guide](data/squad_v1/LABELLING_GUIDE.md).
-The agent never fills those labels. Missing calibration remains pending and
-does not become an agreement score. Calibration scores use frozen model answers
+The agent never fills those labels. They were not collected for v1.0, so no agreement
+score is reported. Calibration scores use frozen model answers
 and evidence, not regenerated answers. Benchmark JSON and Markdown tables are
 written under `results/`; each records model versions and token costs.
 
-The user authorized held-out scoring with the current AI-assisted test review,
-pending their personal spot-check. Full-run tables report all 40 test cases and
+The user authorized held-out scoring with the AI-assisted test review (no separate
+personal spot-check was recorded). Full-run tables report all 40 test cases and
 the same predictions excluding the ambiguous question at zero-based row 23
 (file line 24). The garbled formula on file line 11 is noted; no exact-match
 metric is computed. Select the configuration on dev only.
